@@ -1,3 +1,5 @@
+$bgdClr: rgb(32, 83, 75);
+
 .App {
   text-align: center;
 }
@@ -9,7 +11,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: $bgdClr;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
