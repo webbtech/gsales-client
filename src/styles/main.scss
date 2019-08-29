@@ -1,0 +1,286 @@
+$tblBorder: #EAEAEA;
+$tblCaption: #7F7F7F;
+$tblTotalB: #F9F9F9;
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,300,500');
+@import './admin.scss';
+@import './login.scss';
+@import './report.scss';
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root, .main-menu, .main {
+  // height: 100%;
+  font-family: Roboto, sans-serif;
+}
+
+h1 {
+  font-size: 22px;
+}
+
+.instruct-txt {
+  color: #666;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.active-row {
+  background-color: #FFFEC0
+}
+
+.alert-format-row {
+  background-color: #F9FAD1
+}
+
+.alert-format-cell {
+  background-color: #FFC5C4;
+}
+.alert-negative-val {
+  color: #FF070F;
+}
+
+
+form>legend {
+  font-weight: 600;
+}
+.as-link {
+  cursor: pointer;
+}
+.dash-link {
+  border-bottom: dashed 1px #666;
+  color: #000;
+  cursor: pointer;
+  text-decoration: none;
+}
+.no-wrap {
+  white-space: nowrap;
+}
+.alert {
+  color: #FF0C00;
+}
+
+.alert-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.alert-enter.alert-enter-active {
+  opacity: 1;
+}
+
+.alert-leave {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
+.alert-leave.alert-leave-active {
+  opacity: 0.01;
+}
+
+a {
+  color: #0950FF;
+}
+.text-left {
+  text-align: left !important;
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+.grid-table {
+  border-collapse: collapse;
+  // width: 100%;
+  // border: solid 1px $tblBorder;
+  // border-radius: 6px;
+  // background-color: pink;
+}
+.grid-table caption {
+  text-align: left;
+  font-weight: 500;
+  font-size: 110%;
+  color: #666;
+}
+.grid-table tr {
+  padding: 3px 6px;
+  border: solid $tblBorder 1px; 
+}
+.grid-table thead {
+  background-color: $tblBorder;
+}
+.grid-table th {
+  color: #666;
+  font-weight: 500;
+}
+.grid-table td, .grid-table th, .grid-table caption {
+  padding: 3px 6px;
+}
+.grid-table td {
+  border: solid $tblBorder 1px; 
+}
+.grid-table .grid-number {
+  text-align: right;
+}
+.tab-label {
+  font-size: 26px;
+  letter-spacing: 2
+}
+.grid-table .text-center {
+  text-align: center;
+}
+.grid-table .grid-total {
+  font-weight: 500;
+  padding: 6px;
+  background-color: $tblTotalB;
+}
+
+.store-drop-down {
+  width: 250px;
+  margin-bottom: 1em;
+}
+.store-drop-down h3 {
+  margin: 0;
+  font-weight: 500;
+}
+
+.summary-layout {
+  display: table;
+}
+.summary-layout-row {
+  display: table-row;
+}
+.summary-layout-column {
+  display: table-column;
+}
+.summary-layout-cell {
+  display: table-cell;
+  vertical-align: top;
+  padding-right: 2.25em;
+}
+.summary-layout-cell:last-child {
+  padding-right: 0;
+}
+.hspacer-lg {
+  height: 25px;
+}
+.hspacer-sm {
+  height: 5px;
+  display: block;
+  line-height: 20;
+  font-size: 5px;
+}
+
+.tbl {
+  display: table;
+  margin: 1em 0;
+}
+.tbl-row {
+  display: table-row;
+}
+.tbl-row:hover {
+  background-color: #efefef;
+}
+.tbl-cell {
+  display: table-cell;
+  // vertical-align: middle;
+  // padding-right: .75em;
+  border-bottom: 1px solid #efefef;
+  padding: .5em;
+}
+.tpl-cell:last-child {
+  padding-right: 0;
+}
+.tbl-head {
+  display: table-header-group;
+}
+.tbl-col {
+  display: table-cell;
+  font-weight: 600;
+  padding-left: .5em;
+  text-align: center;
+}
+.tbl-foot {
+  display: table-footer-group;
+}
+.tbl-foot .tbl-col {
+  text-align: left;
+  padding: .5em;
+  color: #999;
+  font-weight: 500;
+  font-size: 13px;
+}
+.tbl-heading {
+  color: #666;
+  display: table-cell;
+  font-size: 13px;
+  padding: 5px 10px;
+}
+.term-scroll {
+  max-width: 160px;
+  overflow: scroll;
+  white-space: nowrap;
+}
+.term-description {
+  max-width: 160px;
+}
+
+
+/// form table
+.form-tbl {
+  display: table;
+  margin: 1em 0;
+}
+.form-tbl-row {
+  display: table-row;
+}
+.form-tbl-cell {
+  display: table-cell;
+  padding: .5em;
+}
+.form-tpl-cell:last-child {
+  padding-right: 0;
+}
+.form-tbl-head {
+  display: table-header-group;
+}
+.form-tbl-col {
+  display: table-cell;
+  font-weight: 600;
+  text-align: center;
+}
+.form-tbl-caption {
+  display: table-caption;
+}
+.form-tbl-foot {
+  display: table-footer-group;
+}
+.form-tbl-foot .form-tbl-col {
+  text-align: left;
+  padding: .5em;
+  color: #999;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.scope-error {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  line-height: 18px;
+  min-height: 50;
+  border-radius: 0;
+  margin: 1em 0;
+  max-height: 400;
+  box-sizing: border-box;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, .25);
+  padding: 1em;
+  color: #5E4922;
+  background-color: #FBF096;
+}
+
+.scope-error:before {
+  content: "ERROR: ";
+}
