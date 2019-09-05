@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 
-import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
+import { useSelector, useDispatch } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 import AddIcon from '@material-ui/icons/Add'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
@@ -62,30 +64,41 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Selector = () => {
+const Selector = ({ history, match }) => {
   const classes = useStyles()
+  const [stationID, setStationID] = useState('')
   const station = useSelector(state => state.station)
   const sales = useSelector(state => state.sales)
-  const [selectedStation, handleStationChange] = useState('')
   const dispatch = useDispatch()
+
+  const resetStationID = useCallback(
+    () => {
+      if (!stationID && match.params.stationID) {
+        setStationID(match.params.stationID)
+      }
+    },
+    [match.params.stationID, stationID],
+  )
 
   function handleStationSelect(e) {
     const { value } = e.target
-    handleStationChange(value)
-
     const params = {
       lastDay: true,
       populate: true,
     }
     dispatch(loadShiftSales(value, params))
+    setStationID(value)
   }
 
-  function handleDateSelect(date) {
+  function handleDateSelect(dte) {
+    const fmtDate = dte.format('YYYY-MM-DD')
     const params = {
-      date: date.format('YYYY-MM-DD'),
+      date: fmtDate,
       populate: true,
     }
-    dispatch(loadShiftSales(sales.dayInfo.station.id, params))
+    dispatch(loadShiftSales(stationID, params))
+    const url = `/sales/shift-details/${stationID}/${fmtDate}`
+    history.push(url)
   }
 
   function handleChangeDay(val) {
@@ -100,8 +113,11 @@ const Selector = () => {
   }
 
   useEffect(() => {
-    dispatch(fetchStationList())
-  }, [dispatch])
+    resetStationID()
+    if (!stationID) {
+      dispatch(fetchStationList())
+    }
+  }, [dispatch, resetStationID, stationID])
 
   let stationChildren
   if (station.isFetching === false) {
@@ -109,9 +125,9 @@ const Selector = () => {
       .map(s => <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>)
   }
 
-  const displayPrev = !!(selectedStation && sales.dayInfo.recordDate)
-  const displayNext = !!(selectedStation && sales.dayInfo.recordDate < sales.dayInfo.maxDate)
-  const isLastDay = !!(selectedStation && moment(sales.dayInfo.recordDate).isSame(sales.dayInfo.maxDate, 'day'))
+  const displayPrev = !!(sales.dayInfo.recordDate)
+  const displayNext = !!(sales.dayInfo.recordDate < sales.dayInfo.maxDate)
+  const isLastDay = !!(moment(sales.dayInfo.recordDate).isSame(sales.dayInfo.maxDate, 'day'))
 
   let haveOpenShift = false
   if (R.hasPath(['shifts', 'entities', 'shifts'], sales) && Object.values(sales.shifts.entities.shifts).find(s => s.shift.flag === false)) {
@@ -134,7 +150,7 @@ const Selector = () => {
             input={<Input name="name" id="station-helper" />}
             name="station"
             onChange={handleStationSelect}
-            value={selectedStation}
+            value={stationID}
           >
             {stationChildren}
           </Select>
@@ -206,5 +222,9 @@ const Selector = () => {
     </Paper>
   )
 }
+Selector.propTypes = {
+  history: PropTypes.instanceOf(Object).isRequired,
+  match: PropTypes.instanceOf(Object).isRequired,
+}
 
-export default Selector
+export default withRouter(Selector)

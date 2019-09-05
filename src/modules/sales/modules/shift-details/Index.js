@@ -1,6 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
+import moment from 'moment'
+
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -8,6 +10,7 @@ import Selector from './Selector'
 import ShiftList from './ShiftList'
 import FuelSummary from './FuelSummary'
 import FuelCosts from './FuelCosts'
+
 
 const R = require('ramda')
 
@@ -32,8 +35,8 @@ export default function Index() {
   const haveShifts = Object.keys(sales.shifts).length > 0
   let dayID = ''
   if (R.hasPath(['dayInfo', 'station'], sales)) {
-    const dateStamp = new Date(sales.dayInfo.recordDate).getTime().toString()
-    dayID = `${sales.dayInfo.station.id}-${dateStamp}`
+    const recordDte = moment(sales.dayInfo.recordDate).format('YYYY-MM-DD')
+    dayID = `${sales.dayInfo.station.id}-${recordDte}`
   }
 
   return (

@@ -6,15 +6,18 @@ const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
   root: {
     width: '100%',
   },
-  title: {},
+  title: {
+    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
+  },
 }))
 
-export default function Index() {
+export default function ProductForm() {
   const classes = useStyles()
 
   return (
     <div className={classes.root}>
-      sales summary index
+      non fuel Form
     </div>
   )
 }

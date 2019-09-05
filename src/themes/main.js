@@ -31,6 +31,16 @@ const mainTheme = createMuiTheme({
   status: {
     danger: 'orange',
   },
+  overrides: {
+    MuiTableCell: {
+      root: {
+        fontSize: '.95rem',
+      },
+      head: {
+        fontSize: '.85rem',
+      },
+    },
+  },
 })
 
 export default mainTheme

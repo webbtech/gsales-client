@@ -15,3 +15,15 @@ export function setFuelSummaries(fuelCosts, fuelSummary) {
     return Object.assign({}, { ...fc, ...fs })
   })
 }
+
+export function setFuelSummaryTotals(fuelSummaries) {
+  const vals = {
+    dollar: 0.0,
+    litre: 0.0,
+  }
+  fuelSummaries.forEach((fs) => {
+    vals.litre += fs.litre
+    vals.dollar += fs.dollar
+  })
+  return vals
+}

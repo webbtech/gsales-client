@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+
 import { useSelector, useDispatch } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+
+import moment from 'moment'
 
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
@@ -33,7 +37,8 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export default function ShiftList({ dayID }) {
+
+function ShiftList({ dayID, history, match }) {
   const classes = useStyles()
   const [selected, setSelected] = useState(null)
   const sales = useSelector(state => state.sales)
@@ -44,21 +49,52 @@ export default function ShiftList({ dayID }) {
     shifts = Object.values(sales.shifts.entities.shifts)
   }
 
+  const setShiftNo = useCallback(
+    () => {
+      if (!selected && match.params.shift) {
+        setSelected(Number(match.params.shift))
+      } else if (selected && !match.params.shift) {
+        setSelected(null)
+      }
+    },
+    [match.params.shift, selected],
+  )
+
+  /* const resetShiftData = useCallback(
+    () => {
+      if (selected && !R.hasPath(['shift', 'sales', 'result', 'shift'], sales)) {
+        const shift = shifts.find(sh => sh.shift.number === selected)
+        if (!shift) return
+        const params = {
+          shiftID: shift.id,
+          stationID: shift.stationID.id,
+          recordNum: shift.recordNum,
+        }
+        dispatch(loadShift(params))
+      }
+    },
+    [dispatch, sales, selected, shifts],
+  ) */
+
   function handleRowClick(e, shift) {
-    setSelected(shift.shift.number)
+    const shiftNo = shift.shift.number
+    setSelected(shiftNo)
     const params = {
       shiftID: shift.id,
       stationID: shift.stationID.id,
       recordNum: shift.recordNum,
     }
     dispatch(loadShift(params))
+
+    // At this point it should be safe to assume we have a stationID parameter in our url
+    const recordDate = moment(sales.dayInfo.recordDate).format('YYYY-MM-DD')
+    const url = `/sales/shift-details/${match.params.stationID}/${recordDate}/${shiftNo}`
+    history.push(url)
   }
 
-  useEffect(() => (
-    () => {
-      setSelected(null)
-    }
-  ), [dayID])
+  useEffect(() => {
+    setShiftNo()
+  }, [dayID, setShiftNo])
 
   return (
     <Paper className={classes.root} square>
@@ -94,4 +130,8 @@ export default function ShiftList({ dayID }) {
 }
 ShiftList.propTypes = {
   dayID: PropTypes.string.isRequired,
+  history: PropTypes.instanceOf(Object).isRequired,
+  match: PropTypes.instanceOf(Object).isRequired,
 }
+
+export default withRouter(ShiftList)
