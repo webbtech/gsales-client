@@ -13,12 +13,13 @@ const getter = (obj, propName) => (obj.get ? obj.get(propName) : obj[propName])
 const useStyles = makeStyles(theme => ({
   root: {
     left: 0,
-    marginLeft: 210,
-    marginRight: theme.spacing(),
+    marginLeft: 150,
+    marginRight: 150,
+    // marginRight: theme.spacing(),
     position: 'fixed',
     right: 0,
     textAlign: 'left',
-    top: 75,
+    top: 25,
     width: 'calc(100vw - 230)',
     zIndex: 1200,
   },

@@ -9,6 +9,7 @@ import AddIcon from '@material-ui/icons/Add'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
 import Button from '@material-ui/core/Button'
+import ClearIcon from '@material-ui/icons/Clear'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Fab from '@material-ui/core/Fab'
 import FormControl from '@material-ui/core/FormControl'
@@ -24,7 +25,7 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 import { makeStyles } from '@material-ui/core/styles'
 
 import { fetchStationList } from '../../../admin/modules/station/actions'
-import { loadShiftSales } from '../../actions'
+import { clearSalesShift, loadShiftSales } from '../../actions'
 
 const R = require('ramda')
 
@@ -112,8 +113,15 @@ const Selector = ({ history, match }) => {
     handleDateSelect(d)
   }
 
+  function handleClearSalesShift() {
+    setStationID('')
+    dispatch(clearSalesShift())
+    history.push('/sales/shift-details')
+  }
+
   useEffect(() => {
     resetStationID()
+    // FIXME: this is being called when switching tabs, not good!!!!
     if (!stationID) {
       dispatch(fetchStationList())
     }
@@ -127,7 +135,7 @@ const Selector = ({ history, match }) => {
 
   const displayPrev = !!(sales.dayInfo.recordDate)
   const displayNext = !!(sales.dayInfo.recordDate < sales.dayInfo.maxDate)
-  const isLastDay = !!(moment(sales.dayInfo.recordDate).isSame(sales.dayInfo.maxDate, 'day'))
+  const isLastDay = sales.dayInfo.recordDate && !!(moment(sales.dayInfo.recordDate).isSame(sales.dayInfo.maxDate, 'day'))
 
   let haveOpenShift = false
   if (R.hasPath(['shifts', 'entities', 'shifts'], sales) && Object.values(sales.shifts.entities.shifts).find(s => s.shift.flag === false)) {
@@ -206,6 +214,18 @@ const Selector = ({ history, match }) => {
         >
           <AddIcon className={classes.leftIcon} />
           Create Next Shift
+        </Button>
+
+        <Button
+          className={classes.button}
+          color="primary"
+          // disabled={!isLastDay}
+          onClick={handleClearSalesShift}
+          type="button"
+          variant="contained"
+        >
+          <ClearIcon className={classes.leftIcon} />
+          Clear Current Day
         </Button>
 
         <Button

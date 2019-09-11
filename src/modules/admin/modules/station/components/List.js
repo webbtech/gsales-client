@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
+import PropTypes from 'prop-types'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-// import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import IconButton from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
@@ -12,45 +12,54 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
+
 import { fetchStationList } from '../actions'
 
-/* const StationMenu = withStyles({
-  paper: {
-    border: '1px solid #d3d4d5',
-  },
-})(props => (
-  <Menu
-    elevation={0}
-    getContentAnchorEl={null}
-    anchorOrigin={{
-      vertical: 'center',
-      horizontal: 'left',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'center',
-    }}
-    {...props}
-  />
-)) */
+const MenuPopupState = ({ station }) => (
+  <PopupState variant="popover" popupId="demoMenu">
+    {popupState => (
+      <React.Fragment>
+        <IconButton
+          aria-controls={station.id}
+          aria-haspopup="true"
+          aria-label="menu"
+          color="inherit"
+          edge="start"
+          {...bindTrigger(popupState)}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Menu {...bindMenu(popupState)}>
+          <MenuItem
+            onClick={popupState.close}
+            component={Link}
+            to={`/admin/stations/details/${station.id}`}
+          >
+            Details
+          </MenuItem>
+          <MenuItem
+            component={Link}
+            to={`/admin/stations/product-list/${station.id}`}
+          >
+            Products
+          </MenuItem>
+        </Menu>
+      </React.Fragment>
+    )}
+  </PopupState>
+)
+MenuPopupState.propTypes = {
+  station: PropTypes.instanceOf(Object).isRequired,
+}
 
 const List = () => {
   const station = useSelector(state => state.station)
   const dispatch = useDispatch()
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const open = Boolean(anchorEl)
 
   useEffect(() => {
     dispatch(fetchStationList())
   }, [dispatch])
-
-  function handleClick(event) {
-    setAnchorEl(event.currentTarget)
-  }
-
-  function handleClose() {
-    setAnchorEl(null)
-  }
 
   if (station.isFetching) return <div>Loading...</div>
 
@@ -75,28 +84,7 @@ const List = () => {
             <div className="tbl-cell">{s.street}</div>
             <div className="tbl-cell no-wrap">{s.phone}</div>
             <div className="tbl-cell">
-              <IconButton
-                aria-controls={s.id}
-                aria-haspopup="true"
-                aria-label="menu"
-                color="inherit"
-                edge="start"
-                onClick={handleClick}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                id={s.id}
-                keepMounted
-                onClose={handleClose}
-                open={open}
-              >
-                <MenuItem component={Link} to={`/admin/stations/details/${s.id}`}>{s.id}</MenuItem>
-                <MenuItem component={Link} to={`/admin/stations/details/56cf1815982d82b0f3000002`}>Chippawa Store</MenuItem>
-                <MenuItem component={Link} to={`/admin/stations/product-list/56cf1815982d82b0f3000001`}>Bridge Products</MenuItem>
-                <MenuItem component={Link} to={`/admin/stations/product-list-edit/56cf1815982d82b0f3000001`}>Set Bridge Products</MenuItem>
-              </Menu>
+              <MenuPopupState station={s} />
             </div>
           </div>
         ))}

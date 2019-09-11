@@ -1,7 +1,9 @@
 import React from 'react'
 
-import { Link } from 'react-router-dom'
+import { Auth } from 'aws-amplify'
+import { Link, withRouter } from 'react-router-dom'
 
+import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -21,14 +23,10 @@ const menuItems = [
     link: '/reports',
     label: 'Reports',
   },
-  {
+  /* {
     link: '/profile/',
     label: 'Profile',
-  },
-  {
-    link: '/auth/logout',
-    label: 'Logout',
-  },
+  }, */
 ]
 
 const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
@@ -39,7 +37,7 @@ const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
   },
 }))
 
-export default function MainMenu() {
+function MainMenu({ history }) {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const classes = useStyles()
@@ -51,6 +49,19 @@ export default function MainMenu() {
   function handleClose() {
     setAnchorEl(null)
   }
+
+  function handleLogout() {
+    console.log('logging out')
+    Auth.signOut()
+      .then((data) => {
+        console.log('data form then: ', data)
+        // window.location.replace('/')
+        // history.push('/')
+      })
+      .catch(err => console.log(err))
+  }
+
+  // console.log('history:', history)
 
   return (
     <React.Fragment>
@@ -77,7 +88,11 @@ export default function MainMenu() {
             {item.label}
           </MenuItem>
         ))}
+        <Divider />
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </React.Fragment>
   )
 }
+
+export default withRouter(MainMenu)

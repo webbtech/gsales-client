@@ -60,6 +60,11 @@ export default function Index() {
           )}
         </Grid>
       )}
+
+      {/* Put this at the end to avoid the 'bouncing' of elements */}
+      {sales.isFetching && (
+        <Grid item style={{ zIndex: 100 }}>Loading...</Grid>
+      )}
     </Grid>
   )
 }

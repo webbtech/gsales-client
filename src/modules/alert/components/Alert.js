@@ -6,6 +6,7 @@ import classNames from 'classnames'
 
 import { makeStyles } from '@material-ui/core/styles'
 
+const opacity = 0.96
 const useStyles = makeStyles(() => ({
   base: {
     borderRadius: 3,
@@ -25,18 +26,22 @@ const useStyles = makeStyles(() => ({
   success: {
     color: '#44662C',
     backgroundColor: '#D7EECE',
+    opacity,
   },
   info: {
     color: '#245C7E',
     backgroundColor: '#CAE3F3',
+    opacity,
   },
   warning: {
     color: '#5E4922',
     backgroundColor: '#FBF096',
+    opacity,
   },
   danger: {
     color: '#6F2526',
     backgroundColor: '#EFD6D6',
+    opacity,
   },
 }))
 
