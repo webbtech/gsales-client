@@ -7,25 +7,22 @@ import { getEnv } from '../utils/utils'
 // console.log('window.location:', window.location)
 // console.log('process.env:', process.env)
 const localhostIP = '127.0.0.1'
+const RemoteAppPort = '3100'
 
 const conf = {
   development: {
-    // AUTH_RESET_URL: `http://${localhostIP}:3102/`,
     BASE_URL: `http://${localhostIP}:3101/`,
+    // BASE_URL: 'https://ylhsjc593d.execute-api.ca-central-1.amazonaws.com/Prod/',
     CSV_DOWNLOAD_URL: `http://${localhostIP}:3101/`,
     FUELSALES_DWNLD_URL: `http://${localhostIP}:3011/fuel-sale/xlsx`,
-    DOMAIN_ID: 'local.gales.sales',
-    // LOGIN_URL: `http://${localhostIP}:3001/login`,
+    // DOMAIN_ID: 'local.gales.sales',
     REPORT_URL: `http://${localhostIP}:3102/`,
     VALIDATE_URL: `http://${localhostIP}:3003/validate`,
   },
   production: {
-    AUTH_RESET_URL: '/api-reset/',
-    BASE_URL: '/api/',
+    BASE_URL: 'https://ylhsjc593d.execute-api.ca-central-1.amazonaws.com/Prod/',
     CSV_DOWNLOAD_URL: '/api-csv-dwnld/',
-    DOMAIN_ID: 'ca.gales.sales',
     FUELSALES_DWNLD_URL: '/api-fuelsales-rpt/fuel-sale/xlsx',
-    LOGIN_URL: '/api-login/login',
     REPORT_URL: '/api-report/',
     VALIDATE_URL: '/validate',
   },
