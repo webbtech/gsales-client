@@ -7,7 +7,7 @@ import { getEnv } from '../utils/utils'
 // console.log('window.location:', window.location)
 // console.log('process.env:', process.env)
 const localhostIP = '127.0.0.1'
-const RemoteAppPort = '3100'
+// const RemoteAppPort = '3100'
 
 const conf = {
   development: {
