@@ -214,7 +214,8 @@ export default function Index({ history }) {
               <Route exact path="/sales/shift-details/:stationID/:date/:shift" component={ShiftDetails} />
               <Route path="/sales/fuel-sales" component={FuelSales} />
               <Route path="/sales/non-fuel-sales" component={NonFuelSales} />
-              <Route path="/sales/sales-summary" component={SalesSummary} />
+              <Route exact path="/sales/sales-summary" component={SalesSummary} />
+              <Route exact path="/sales/sales-summary/:stationID/:date/:shift" component={SalesSummary} />
             </Switch>
           </div>
         </Paper>

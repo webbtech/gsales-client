@@ -9,9 +9,9 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 
+import ProductForm from './Form'
 import { fetchProducts, setCurrentProduct } from '../actions'
 import { fmtNumberSimple } from '../../../../../utils/fmt'
-import ProductForm from './Form'
 
 const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
   root: {
