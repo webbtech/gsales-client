@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 
+import Adjustments from './Adjustments'
 import OtherForm from './OtherForm'
 import OtherList from './OtherList'
 import ProductForm from './ProductForm'
@@ -11,7 +12,7 @@ import ProductList from './ProductList'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles(theme => ({ // eslint-disable-line
   root: {
     width: '100%',
   },
@@ -45,6 +46,7 @@ export default function Index() {
           </Grid>
           <Grid item xs={5}>
             <OtherList />
+            <Adjustments />
           </Grid>
         </Fragment>
       )}

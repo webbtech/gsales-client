@@ -3,6 +3,7 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import LockIcon from '@material-ui/icons/Lock'
+import SearchIcon from '@material-ui/icons/Search'
 // import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -30,6 +31,18 @@ export default function ButtonsView() {
     <div className={classes.root}>
       <Button
         // disabled={pristine || submitting}
+        // disabled
+        className={classes.actionButton}
+        // color="secondary"
+        // type="submit"
+        variant="contained"
+      >
+        Shift History
+        <SearchIcon className={classes.rightIcon} />
+      </Button>
+
+      <Button
+        // disabled={pristine || submitting}
         className={classes.actionButton}
         color="secondary"
         type="submit"
@@ -38,22 +51,24 @@ export default function ButtonsView() {
         Shift Report
         <CloudDownloadIcon className={classes.rightIcon} />
       </Button>
+
       <Button
         // disabled={pristine || submitting}
         className={classes.actionButton}
         color="secondary"
-        type="submit"
+        // type="submit"
         variant="contained"
       >
         Day Report
         <CloudDownloadIcon className={classes.rightIcon} />
       </Button>
+
       <Button
         // disabled={pristine || submitting}
         disabled
         className={classes.actionButton}
         color="primary"
-        type="submit"
+        // type="submit"
         variant="contained"
       >
         Close Shift

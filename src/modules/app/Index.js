@@ -58,7 +58,7 @@ export default function AppWithAuth() {
       } catch (e) {
         console.error(e) // eslint-disable-line
       }
-      // console.log('user:', user)
+      // console.log('user:', user.signInUserSession.accessToken)
       if (cancel) return
       if (user) {
         // console.log('user', user.signInUserSession.accessToken.jwtToken) // eslint-disable-line
@@ -88,42 +88,3 @@ export default function AppWithAuth() {
     </div>
   )
 }
-
-/* export default class AppWithAuth extends React.Component {
-  state = {
-    user: '', // eslint-disable-line
-  }
-
-  async componentWillMount() {
-    const user = await Auth.currentAuthenticatedUser()
-    if (user) {
-      // this.setState({user})
-      // console.log('fetching user from Auth', user) // eslint-disable-line
-      const storage = window.localStorage
-      // console.log('user in componentDidMount: ', user.signInUserSession.accessToken.jwtToken)
-      storage.setItem('userToken', user.signInUserSession.accessToken.jwtToken)
-    }
-  }
-
-  handleAuthStateChange(state) { // eslint-disable-line
-    // console.log('state in handleAuthStateChange: ', state) // eslint-disable-line
-    // if (state === 'signedIn') {
-    // Do something when the user has signed-in
-    // }
-  }
-
-  render() {
-    // console.log('user in render: ', this.state)
-
-    return (
-      <div>
-        <Authenticator
-          // hideDefault
-          onStateChange={this.handleAuthStateChange}
-        >
-          <Index />
-        </Authenticator>
-      </div>
-    )
-  }
-} */

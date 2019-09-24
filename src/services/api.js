@@ -97,11 +97,11 @@ export default function api(endpoint, requestSchema, params = {}) {
   ps.method = method
 
   // get token from local storage
-  /* const token = localStorage.getItem('token')
+  const token = localStorage.getItem('userToken')
   if (!token) {
-    console.error('Missing token') // eslint-disable-line
+    console.error('Missing token in services.api') // eslint-disable-line
     return 'ERROR' // TODO: need to handle this better
-  } */
+  }
 
   // TODO: perhaps we need to join to existing default headers
   // that way we can just add and authorization header to default
@@ -111,6 +111,7 @@ export default function api(endpoint, requestSchema, params = {}) {
     ps.headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      Authorization: token,
       // Authorization: `Bearer ${token}`,
     }
   }
