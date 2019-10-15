@@ -31,7 +31,7 @@ export default function Index() {
         <Summary />
       </Grid>
       {isEditMode ? (
-        <Grid item>
+        <Grid item xs={12}>
           <Form />
         </Grid>
       ) : (

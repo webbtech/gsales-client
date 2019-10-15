@@ -40,8 +40,20 @@ export function* watchEmployeePersist() {
   yield takeLatest(employeeActions.EMPLOYEE_PERSIST.REQUEST, employeePersist)
 }
 
+export function* fetchActiveEmployees() {
+  const { activeEmployeesEntity } = employeeActions
+
+  const endpoint = 'employee-list'
+  yield call(callApi, activeEmployeesEntity, endpoint, Schemas.EMPLOYEE_ARRAY)
+}
+
+export function* watchFetchActiveEmployees() {
+  yield takeLatest(employeeActions.ACTIVE_EMPLOYEES.REQUEST, fetchActiveEmployees)
+}
+
 export default function* rootSaga() {
   yield all([
+    watchFetchActiveEmployees(),
     watchEmployeeSearch(),
     watchEmployeePersist(),
   ])

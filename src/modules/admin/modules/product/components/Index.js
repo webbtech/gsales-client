@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import AppBar from '@material-ui/core/AppBar'
 import Button from '@material-ui/core/Button'

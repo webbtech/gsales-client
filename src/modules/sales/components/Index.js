@@ -1,4 +1,9 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -6,14 +11,16 @@ import {
   Redirect,
   Route,
   Switch,
+  withRouter,
 } from 'react-router-dom'
 
-import moment from 'moment'
+import {
+  AppBar,
+  Paper,
+  Tab,
+  Tabs,
+} from '@material-ui/core'
 
-import AppBar from '@material-ui/core/AppBar'
-import Paper from '@material-ui/core/Paper'
-import Tab from '@material-ui/core/Tab'
-import Tabs from '@material-ui/core/Tabs'
 import { makeStyles } from '@material-ui/core/styles'
 
 import TitleBar from './TitleBar'
@@ -24,6 +31,7 @@ import ShiftDetails from '../modules/shift-details/Index'
 
 import { alertSend } from '../../alert/actions'
 import { loadShift, loadShiftSales } from '../actions'
+import { ParamContext } from './ParamContext'
 
 const R = require('ramda')
 
@@ -46,10 +54,10 @@ const useStyles = makeStyles(theme => ({
 function getLocationParams() {
   const pathParts = window.location.pathname.split('/')
   const params = {
-    tabName: pathParts[2],
-    stationID: pathParts[3],
-    date: pathParts[4],
+    recordDate: pathParts[4],
     shift: pathParts[5],
+    stationID: pathParts[3],
+    tabName: pathParts[2],
   }
   return params
 }
@@ -73,63 +81,75 @@ const tabs = [
   },
 ]
 
-export default function Index({ history }) {
+function Index({ history }) {
   const classes = useStyles()
   const [tabKey, setTabKey] = useState(0)
   const sales = useSelector(state => state.sales)
   const dispatch = useDispatch()
 
+  const { shiftParams, setShiftParams } = useContext(ParamContext)
+
   /**
-   * Callback function to set path params
-   * Typically this is called when a station is selected and we want to update params
-   * to reflect the change
+   * Callback function to set stationID and recordDate each time station is selected
    */
-  const setShiftParams = useCallback(
+  const setUrlParams = useCallback(
     () => {
-      const { date, tabName, stationID } = getLocationParams()
-      const haveParams = !!(stationID && date)
-      const haveSalesRecordDate = R.hasPath(['dayInfo', 'recordDate'], sales)
-      const haveSalesStationID = R.hasPath(['dayInfo', 'station', 'id'], sales)
-      if (!haveParams && tabName === 'shift-details' && haveSalesRecordDate && haveSalesStationID) {
-        const recordDate = moment(sales.dayInfo.recordDate).format('YYYY-MM-DD')
-        const stnID = sales.dayInfo.station.id
-        const url = `/sales/shift-details/${stnID}/${recordDate}`
+      if (sales.isFetching || !shiftParams.recordDate || !shiftParams.stationID) return
+
+      let url = '/sales/shift-details/'
+      const { shiftNo, stationID } = getLocationParams()
+
+      if ((shiftParams.stationID && !stationID)
+        || (stationID && shiftParams.stationID !== stationID)) {
+        url += `${shiftParams.stationID}/${shiftParams.recordDate}`
         history.push(url)
       }
+
+      // If we have a recently created shift
+      if (!shiftNo && !shiftParams.shiftNo && R.hasPath(['shift', 'sales', 'result', 'shift', 'shift', 'number'], sales)) {
+        const shiftNumber = sales.shift.sales.result.shift.shift.number
+
+        // At this point we should already have the require params in shiftParams
+        url += `${shiftParams.stationID}/${shiftParams.recordDate}/${shiftNumber}`
+        history.push(url)
+        setShiftParams({ shiftNo: shiftNumber })
+      }
     },
-    [history, sales],
+    [history, sales, setShiftParams, shiftParams]
   )
 
   /**
    * Callback function to fetch shiftSales after reloading page
-   * Objective with carrying the various params in the url was that we could reload page at will
-   * This function reloads the shiftSales after a reload
+   * We're looking at the shiftParams object for required params
    */
   const resetSales = useCallback(
     () => {
-      if (sales.isFetching === true) return
-      if (R.hasPath(['dayInfo', 'station', 'id'], sales)) return
-      const { date, stationID } = getLocationParams()
-      if (date && stationID) {
-        const params = {
-          date,
-          populate: true,
-        }
-        dispatch(loadShiftSales(stationID, params))
+      if (sales.isFetching) return
+      if (R.hasPath(['dayInfo', 'station', 'id'], sales) || !shiftParams.stationID || !shiftParams.recordDate) return
+      const params = {
+        date: shiftParams.recordDate,
+        populate: true,
       }
+      dispatch(loadShiftSales(shiftParams.stationID, params))
     },
-    [dispatch, sales],
+    [dispatch, sales, shiftParams],
   )
 
   /**
    * Callback function to load shiftData
    * Similar to the @resetSales function, this loads shift data after a page reload
    */
+  // NOTE: this is causing issues when creating and deleting last shift
   const resetShiftData = useCallback(
     () => {
-      if (R.hasPath(['shift', 'sales', 'result', 'shift'], sales) || !R.hasPath(['shifts', 'entities', 'shifts'], sales)) return
-      let { shift: shiftNo } = getLocationParams()
-      shiftNo = Number(shiftNo)
+      if (sales.isFetching) return
+      if (
+        R.hasPath(['shift', 'sales', 'result', 'shift'], sales)
+        || !R.hasPath(['shifts', 'entities', 'shifts'], sales)
+        || !shiftParams.shiftNo
+      ) return
+
+      const shiftNo = Number(shiftParams.shiftNo)
       const shifts = Object.values(sales.shifts.entities.shifts)
       const shift = shifts.find(sh => sh.shift.number === shiftNo)
       if (!shift) return
@@ -140,7 +160,7 @@ export default function Index({ history }) {
       }
       dispatch(loadShift(params))
     },
-    [dispatch, sales],
+    [dispatch, sales, shiftParams],
   )
 
   /**
@@ -150,7 +170,9 @@ export default function Index({ history }) {
    */
   const resetTab = useCallback(
     () => {
-      const { tabName } = getLocationParams()
+      if (sales.isFetching) return
+
+      const { tabName } = shiftParams
       const tabPath = tabs[tabKey].path.split('/')[2]
       if (tabPath !== tabName) {
         const searchTabPath = `/sales/${tabName}`
@@ -158,15 +180,48 @@ export default function Index({ history }) {
         setTabKey(newVal)
       }
     },
-    [tabKey],
+    [sales, shiftParams, tabKey],
+  )
+
+  /**
+   * Callback to set sales context shiftParams
+   */
+  const setContextInfo = useCallback(
+    () => {
+      if (!sales.dayInfo.recordDate || sales.isFetching) return
+
+      const ps = {}
+      if (
+        (!shiftParams.recordDate && sales.dayInfo.recordDate)
+          || (shiftParams.recordDate !== sales.dayInfo.recordDate)
+      ) {
+        ps.recordDate = sales.dayInfo.recordDate
+      }
+
+      // Set maxDate - this is only set once when station is selected - to be persisted
+      if (!shiftParams.maxDate && sales.dayInfo.maxDate) {
+        ps.maxDate = sales.dayInfo.maxDate
+      }
+
+      // Set lastDay
+      if (!shiftParams.lastDay && sales.dayInfo.lastDay) {
+        ps.lastDay = sales.dayInfo.lastDay
+      }
+
+      if (Object.keys(ps).length) {
+        setShiftParams(ps)
+      }
+    },
+    [shiftParams, sales, setShiftParams]
   )
 
   useEffect(() => {
-    setShiftParams(sales)
     resetSales()
+    setContextInfo()
+    setUrlParams()
     resetShiftData()
     resetTab()
-  }, [resetSales, resetShiftData, resetTab, sales, setShiftParams])
+  }, [resetSales, resetShiftData, resetTab, setContextInfo, setUrlParams])
 
   function handleChange(event, newValue) {
     const hasShiftResult = R.hasPath(['shift', 'sales', 'result'], sales)
@@ -175,6 +230,7 @@ export default function Index({ history }) {
       return
     }
     setTabKey(newValue)
+    setShiftParams({ tabName: tabs[newValue].path.split('/')[2] })
     // If user is selecting the 'shift-details' without selecting the station and shift, allow
     if (newValue === 0 && !hasShiftResult) {
       history.push(`${tabs[newValue].path}`)
@@ -226,3 +282,5 @@ export default function Index({ history }) {
 Index.propTypes = {
   history: PropTypes.instanceOf(Object).isRequired,
 }
+
+export default withRouter(Index)

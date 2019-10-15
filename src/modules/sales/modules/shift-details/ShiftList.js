@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useContext,
+  useState,
+} from 'react'
 import PropTypes from 'prop-types'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -18,6 +23,7 @@ import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { loadShift } from '../../actions'
+import { ParamContext } from '../../components/ParamContext'
 
 const R = require('ramda')
 
@@ -43,6 +49,7 @@ function ShiftList({ dayID, history, match }) {
   const [selected, setSelected] = useState(null)
   const sales = useSelector(state => state.sales)
   const dispatch = useDispatch()
+  const { shiftParams, setShiftParams } = useContext(ParamContext)
 
   let shifts = []
   if (R.hasPath(['shifts', 'entities', 'shifts'], sales)) {
@@ -51,34 +58,21 @@ function ShiftList({ dayID, history, match }) {
 
   const setShiftNo = useCallback(
     () => {
+      let shift
       if (!selected && match.params.shift) {
-        setSelected(Number(match.params.shift))
+        shift = Number(match.params.shift)
+        setSelected(shift)
       } else if (selected && !match.params.shift) {
+        shift = null
         setSelected(null)
       }
     },
     [match.params.shift, selected],
   )
 
-  /* const resetShiftData = useCallback(
-    () => {
-      if (selected && !R.hasPath(['shift', 'sales', 'result', 'shift'], sales)) {
-        const shift = shifts.find(sh => sh.shift.number === selected)
-        if (!shift) return
-        const params = {
-          shiftID: shift.id,
-          stationID: shift.stationID.id,
-          recordNum: shift.recordNum,
-        }
-        dispatch(loadShift(params))
-      }
-    },
-    [dispatch, sales, selected, shifts],
-  ) */
-
   function handleRowClick(e, shift) {
     const shiftNo = shift.shift.number
-    setSelected(shiftNo)
+    setShiftParams({ shiftNo })
     const params = {
       shiftID: shift.id,
       stationID: shift.stationID.id,
@@ -115,7 +109,7 @@ function ShiftList({ dayID, history, match }) {
               hover
               onClick={event => handleRowClick(event, shift)}
               role="checkbox"
-              selected={selected === shift.shift.number}
+              selected={shiftParams.shiftNo === shift.shift.number}
             >
               <TableCell>{shift.shift.number}</TableCell>
               <TableCell align="center">

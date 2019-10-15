@@ -16,6 +16,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import FormatNumber from '../../../shared/FormatNumber'
 import { fmtNumber } from '../../../../utils/fmt'
 
+import { splitFields as splitCashAndCardFields } from '../../constants'
+
 const useStyles = makeStyles(theme => ({
   iconButton: {
     padding: 0,
@@ -35,9 +37,8 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function CashCardRow({ field, label, value }) {
+function CashCardRow({ label, value }) {
   const classes = useStyles()
-
   return (
     <TableRow>
       <TableCell>{label}</TableCell>
@@ -53,7 +54,6 @@ function CashCardRow({ field, label, value }) {
   )
 }
 CashCardRow.propTypes = {
-  field: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   value: PropTypes.number.isRequired,
 }
@@ -64,12 +64,15 @@ export default function CashAndCardsView() {
 
   const shift = sales.dayInfo.activeShift
   if (!shift) return null
-  // console.log('shift:', shift)
   const { salesSummary } = shift
   const creditCardTotal = Object.values(shift.creditCard).reduce((a, b) => a + b, 0.00)
-  console.log('creditCardTotal:', creditCardTotal)
   const cashSubtotal = creditCardTotal + shift.cash.dieselDiscount + shift.cash.debit
-  // console.log('salesSummary:', salesSummary)
+  const [fieldSet1, fieldSet2] = splitCashAndCardFields()
+
+  const setValue = (fObj, shiftData) => {
+    const parts = fObj.field.split('.')
+    return shiftData[parts[0]][parts[1]]
+  }
 
   return (
     <Paper className={classes.root} square>
@@ -79,13 +82,9 @@ export default function CashAndCardsView() {
       <Table className={classes.table} size="small">
         <TableBody>
 
-          <CashCardRow field="creditCard.visa" label="Visa" value={shift.creditCard.visa} />
-          <CashCardRow field="creditCard.mc" label="Mastercard" value={shift.creditCard.mc} />
-          <CashCardRow field="creditCard.gales" label="Gales Card" value={shift.creditCard.gales} />
-          <CashCardRow field="creditCard.amex" label="Amex" value={shift.creditCard.amex} />
-          <CashCardRow field="creditCard.discover" label="Discover" value={shift.creditCard.discover} />
-          <CashCardRow field="cash.debit" label="Debit" value={shift.cash.debit} />
-          <CashCardRow field="cash.dieselDiscount" label="Diesel Discount" value={shift.cash.dieselDiscount} />
+          {fieldSet1.map(f => (
+            <CashCardRow label={f.label} value={setValue(f, shift)} />
+          ))}
 
           <TableRow>
             <TableCell className={classes.totalsCell}>Subtotal</TableCell>
@@ -93,15 +92,9 @@ export default function CashAndCardsView() {
             <TableCell align="center" className={classes.iconCell} />
           </TableRow>
 
-          <CashCardRow field="cash.lotteryPayout" label="Lottery Payout" value={shift.cash.lotteryPayout} />
-          <CashCardRow field="cash.payout" label="Gales Loyalty Payout" value={shift.cash.payout} />
-          <CashCardRow field="cash.payout" label="Supplier Payout" value={shift.cash.payout} />
-          <CashCardRow field="cash.bills" label="Cash" value={shift.cash.bills} />
-          <CashCardRow field="cash.giftCertRedeem" label="Gift Cert Redeem" value={shift.cash.giftCertRedeem} />
-          <CashCardRow field="cash.osAdjusted" label="OS Adjusted" value={shift.cash.osAdjusted} />
-          <CashCardRow field="cash.driveOffNSF" label="Drive offs / NSF" value={shift.cash.driveOffNSF} />
-          <CashCardRow field="cash.writeOff" label="Write offs" value={shift.cash.writeOff} />
-          <CashCardRow field="cash.other" label="Other" value={shift.cash.other} />
+          {fieldSet2.map(f => (
+            <CashCardRow label={f.label} value={setValue(f, shift)} />
+          ))}
 
           <TableRow>
             <TableCell className={classes.totalsCell}>Total</TableCell>

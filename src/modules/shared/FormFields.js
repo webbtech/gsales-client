@@ -1,15 +1,27 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControl from '@material-ui/core/FormControl'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormHelperText from '@material-ui/core/FormHelperText'
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  InputLabel,
+  NativeSelect,
+  Radio,
+  RadioGroup,
+  TextField,
+} from '@material-ui/core'
+
+// import Checkbox from '@material-ui/core/Checkbox'
+// import FormControl from '@material-ui/core/FormControl'
+// import FormControlLabel from '@material-ui/core/FormControlLabel'
+// import FormHelperText from '@material-ui/core/FormHelperText'
 // import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import NativeSelect from '@material-ui/core/NativeSelect'
+// import InputLabel from '@material-ui/core/InputLabel'
+// import NativeSelect from '@material-ui/core/NativeSelect'
 // import Select from '@material-ui/core/Select'
-import TextField from '@material-ui/core/TextField'
+// import TextField from '@material-ui/core/TextField'
 // import FormGroup from '@material-ui/core/FormGroup'
 // import { List, ListItem } from 'material-ui/List'
 // import DatePicker from 'material-ui/DatePicker'
@@ -118,6 +130,24 @@ RenderSelectField.defaultProps = {
   meta: null,
 }
 
+export const RenderRadioButton = ({ input, ...rest }) => (
+  <FormControl>
+    <RadioGroup {...input} {...rest}>
+      {rest.values.map(v => (
+        <FormControlLabel
+          control={<Radio />}
+          key={v.value}
+          label={v.label}
+          value={v.value}
+        />
+      ))}
+    </RadioGroup>
+  </FormControl>
+)
+RenderRadioButton.propTypes = {
+  input: PropTypes.instanceOf(Object).isRequired,
+}
+
 /* export const RenderCheckboxList = ({ // eslint-disable-line react/no-multi-comp
   children,
   input,
@@ -194,16 +224,4 @@ RenderDatePicker.propTypes = {
   input: PropTypes.object.isRequired,
   label: PropTypes.string,
   meta: PropTypes.object.isRequired,
-} */
-
-/* export const RenderSelectField =({defaultValue, input, meta: { touched, error }, label, ...others}) => { // eslint-disable-line react/no-multi-comp, no-unused-vars
-  return (
-    <SelectField
-        label={label}
-        {...others}
-        {...input}
-        error={touched && !!error}
-        errorText={error}
-    />
-  )
 } */

@@ -1,4 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import PropTypes from 'prop-types'
 
 import moment from 'moment'
@@ -8,24 +12,32 @@ import { withRouter } from 'react-router-dom'
 import AddIcon from '@material-ui/icons/Add'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
-import Button from '@material-ui/core/Button'
 import ClearIcon from '@material-ui/icons/Clear'
 import DeleteIcon from '@material-ui/icons/Delete'
-import Fab from '@material-ui/core/Fab'
-import FormControl from '@material-ui/core/FormControl'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import MenuItem from '@material-ui/core/MenuItem'
+
+import {
+  Button,
+  Dialog,
+  Fab,
+  FormControl,
+  FormHelperText,
+  Input,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Typography,
+} from '@material-ui/core'
+
 import MomentUtils from '@date-io/moment'
-import Paper from '@material-ui/core/Paper'
-import Select from '@material-ui/core/Select'
-import Typography from '@material-ui/core/Typography'
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers'
 import { makeStyles } from '@material-ui/core/styles'
 
+import NewShiftForm from './NewShiftForm'
+import ShiftDeleteDialog from './ShiftDeleteDialog'
+import { clearSalesShift, deleteShift, loadShiftSales } from '../../actions'
 import { fetchStationList } from '../../../admin/modules/station/actions'
-import { clearSalesShift, loadShiftSales } from '../../actions'
+import { initialState, ParamContext } from '../../components/ParamContext'
 
 const R = require('ramda')
 
@@ -51,6 +63,9 @@ const useStyles = makeStyles(theme => ({
   formControl: {
     marginBottom: theme.spacing(4),
   },
+  leftIcon: {
+    marginRight: theme.spacing(1),
+  },
   root: {
     width: 300,
     minHeight: 300,
@@ -65,21 +80,14 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Selector = ({ history, match }) => {
+const Selector = ({ history }) => {
   const classes = useStyles()
-  const [stationID, setStationID] = useState('')
+  const [openForm, setOpenForm] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false)
   const station = useSelector(state => state.station)
   const sales = useSelector(state => state.sales)
   const dispatch = useDispatch()
-
-  const resetStationID = useCallback(
-    () => {
-      if (!stationID && match.params.stationID) {
-        setStationID(match.params.stationID)
-      }
-    },
-    [match.params.stationID, stationID],
-  )
+  const { shiftParams, setShiftParams } = useContext(ParamContext)
 
   function handleStationSelect(e) {
     const { value } = e.target
@@ -88,11 +96,16 @@ const Selector = ({ history, match }) => {
       populate: true,
     }
     dispatch(loadShiftSales(value, params))
-    setStationID(value)
+    setShiftParams({ ...initialState, stationID: value })
   }
 
   function handleDateSelect(dte) {
     const fmtDate = dte.format('YYYY-MM-DD')
+
+    // ensure lastDay and shiftNo are reset, once data loads it will be reset
+    const lastDay = !!(moment(dte).isSame(shiftParams.maxDate, 'day'))
+    setShiftParams({ recordDate: fmtDate, lastDay, shiftNo: null })
+    const { stationID } = shiftParams
     const params = {
       date: fmtDate,
       populate: true,
@@ -114,28 +127,57 @@ const Selector = ({ history, match }) => {
   }
 
   function handleClearSalesShift() {
-    setStationID('')
+    setShiftParams(null)
     dispatch(clearSalesShift())
     history.push('/sales/shift-details')
   }
 
-  useEffect(() => {
-    resetStationID()
-    // FIXME: this is being called when switching tabs, not good!!!!
-    if (!stationID) {
-      dispatch(fetchStationList())
-    }
-  }, [dispatch, resetStationID, stationID])
-
-  let stationChildren
-  if (station.isFetching === false) {
-    stationChildren = Object.values(station.items)
-      .map(s => <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>)
+  function handleOpenForm() {
+    setOpenForm(true)
   }
 
+  function handleCloseForm() {
+    setOpenForm(false)
+  }
+
+  function handleOpenDelete() {
+    setOpenDelete(true)
+  }
+
+  function handleCloseDelete() {
+    setOpenDelete(false)
+  }
+
+  function handleDeleteShift() {
+    const { recordDate, stationID } = shiftParams
+    // First clear shiftNo from url
+    setShiftParams({ shiftNo: null })
+    const url = `/sales/shift-details/${stationID}/${recordDate}`
+    history.push(url)
+
+    const params = {
+      action: 'delete',
+      stationID,
+    }
+    dispatch(deleteShift(params))
+    setOpenDelete(false)
+  }
+
+  let stationChildren
+  const items = Object.values(station.items)
+  if (items.length && !stationChildren) {
+    stationChildren = items.map(s => <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>)
+  }
+
+  useEffect(() => {
+    if (!stationChildren) {
+      dispatch(fetchStationList())
+    }
+  }, [dispatch, stationChildren])
+
   const displayPrev = !!(sales.dayInfo.recordDate)
-  const displayNext = !!(sales.dayInfo.recordDate < sales.dayInfo.maxDate)
-  const isLastDay = sales.dayInfo.recordDate && !!(moment(sales.dayInfo.recordDate).isSame(sales.dayInfo.maxDate, 'day'))
+  const displayNext = !!(sales.dayInfo.recordDate < shiftParams.maxDate)
+  const isLastDay = shiftParams.lastDay
 
   let haveOpenShift = false
   if (R.hasPath(['shifts', 'entities', 'shifts'], sales) && Object.values(sales.shifts.entities.shifts).find(s => s.shift.flag === false)) {
@@ -158,7 +200,7 @@ const Selector = ({ history, match }) => {
             input={<Input name="name" id="station-helper" />}
             name="station"
             onChange={handleStationSelect}
-            value={stationID}
+            value={shiftParams.stationID}
           >
             {stationChildren}
           </Select>
@@ -207,18 +249,7 @@ const Selector = ({ history, match }) => {
 
         <Button
           className={classes.button}
-          color="primary"
-          disabled={!displayCreateNextShift}
-          type="button"
-          variant="contained"
-        >
-          <AddIcon className={classes.leftIcon} />
-          Create Next Shift
-        </Button>
-
-        <Button
-          className={classes.button}
-          color="primary"
+          color="secondary"
           // disabled={!isLastDay}
           onClick={handleClearSalesShift}
           type="button"
@@ -230,8 +261,21 @@ const Selector = ({ history, match }) => {
 
         <Button
           className={classes.button}
-          color="secondary"
+          color="primary"
+          disabled={!displayCreateNextShift}
+          onClick={handleOpenForm}
+          type="button"
+          variant="contained"
+        >
+          <AddIcon className={classes.leftIcon} />
+          Create Next Shift
+        </Button>
+
+        <Button
+          className={classes.button}
+          color="primary"
           disabled={!isLastDay}
+          onClick={handleOpenDelete}
           type="button"
           variant="contained"
         >
@@ -239,12 +283,24 @@ const Selector = ({ history, match }) => {
           Delete Last Shift
         </Button>
       </div>
+      <Dialog
+        open={openForm}
+        onClose={handleCloseForm}
+        maxWidth="lg"
+      >
+        <NewShiftForm onCloseHandler={handleCloseForm} />
+      </Dialog>
+
+      <ShiftDeleteDialog
+        handler={handleDeleteShift}
+        onClose={handleCloseDelete}
+        open={openDelete}
+      />
     </Paper>
   )
 }
 Selector.propTypes = {
   history: PropTypes.instanceOf(Object).isRequired,
-  match: PropTypes.instanceOf(Object).isRequired,
 }
 
 export default withRouter(Selector)

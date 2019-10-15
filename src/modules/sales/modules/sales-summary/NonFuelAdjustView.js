@@ -36,9 +36,6 @@ export default function NonFuelAdjustView() {
 
   const haveAdjust = !!shift.nonFuelAdjustVals.length
 
-  console.log('shift:', shift.nonFuelAdjustVals)
-  console.log('haveAdjust:', shift.nonFuelAdjustVals.length)
-
   return (
     <Paper className={classes.root} square>
       <Typography variant="h6" className={classes.title}>

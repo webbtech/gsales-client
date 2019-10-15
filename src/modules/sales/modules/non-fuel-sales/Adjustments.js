@@ -30,8 +30,10 @@ export default function Adjustments() {
 
   let jRecords = []
   const { records } = journal.response.entities
-  const recordVals = Object.values(records)
-  jRecords = recordVals.filter(jr => (jr.type === 'nonFuelSaleAdjust' && jr.values.close))
+  if (records) {
+    const recordVals = Object.values(records)
+    jRecords = recordVals.filter(jr => (jr.type === 'nonFuelSaleAdjust' && jr.values.close))
+  }
 
   return (
     <Paper className={classes.root} square>

@@ -32,10 +32,10 @@ export default function Index() {
     <Grid container className={classes.root} spacing={2}>
       {isEditMode ? (
         <Fragment>
-          <Grid item>
+          <Grid item xs={7}>
             <ProductForm />
           </Grid>
-          <Grid item>
+          <Grid item xs={5}>
             <OtherForm />
           </Grid>
         </Fragment>

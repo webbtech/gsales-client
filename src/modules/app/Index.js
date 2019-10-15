@@ -15,6 +15,7 @@ import Menu from './Menu'
 import Admin from '../admin/Index'
 import Reports from '../reports/components/Index'
 import Sales from '../sales/components/Index'
+import { ParamProvider } from '../sales/components/ParamContext'
 
 import ForgotPassword from '../auth/components/ForgotPassword'
 import RequireNewPassword from '../auth/components/RequireNewPassword'
@@ -23,6 +24,10 @@ import SignIn from '../auth/components/SignIn'
 import awsExports from '../auth/awsExports'
 
 Amplify.configure(awsExports)
+
+const SalesWithProvider = () => (
+  <ParamProvider><Sales /></ParamProvider>
+)
 
 function Index({ authState }) {
   // console.log('authState:', authState)
@@ -35,7 +40,7 @@ function Index({ authState }) {
           <Route exact path="/" component={Menu} />
           <Route path="/admin" component={Admin} />
           <Route path="/reports" component={Reports} />
-          <Route path="/sales" component={Sales} />
+          <Route path="/sales" component={SalesWithProvider} />
         </Switch>
       </Router>
     </React.Fragment>

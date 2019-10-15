@@ -4,10 +4,13 @@ import { useSelector } from 'react-redux'
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 
+import CashAndCardsForm from './CashAndCardsForm'
 import CashAndCardsView from './CashAndCardsView'
 import SalesView from './SalesView'
 import AttendantView from './AttendantView'
+import AttendantForm from './AttendantForm'
 import OvershortDetailsView from './OvershortDetailsView'
+import OvershortDetailsForm from './OvershortDetailsForm'
 import NonFuelAdjustView from './NonFuelAdjustView'
 import ButtonsView from './ButtonsView'
 
@@ -32,9 +35,19 @@ export default function Index() {
   return (
     <Grid container className={classes.root} spacing={2}>
       {isEditMode ? (
-        <div className={classes.root}>
-          sales summary edit
-        </div>
+        <Fragment>
+          <Grid item xs={5}>
+            <SalesView />
+            <CashAndCardsForm />
+          </Grid>
+          <Grid item xs={5}>
+            <AttendantForm />
+            <OvershortDetailsForm />
+          </Grid>
+          <Grid item xs={2}>
+            <ButtonsView />
+          </Grid>
+        </Fragment>
       ) : (
         <Fragment>
           <Grid item xs={5}>

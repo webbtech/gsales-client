@@ -67,14 +67,14 @@ export default function AttendantView() {
           </TableRow>
 
           <TableRow>
-            <TableCell>Sheet completed</TableCell>
+            <TableCell>Sheet Completed</TableCell>
             <TableCell>
               <CheckComplete value={shift.attendant.sheetComplete} />
             </TableCell>
           </TableRow>
 
           <TableRow>
-            <TableCell>Over-short checked</TableCell>
+            <TableCell>Over-short Checked</TableCell>
             <TableCell>
               <CheckComplete value={shift.attendant.overshortComplete} />
             </TableCell>
