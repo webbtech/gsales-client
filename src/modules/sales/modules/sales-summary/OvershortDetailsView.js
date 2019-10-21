@@ -60,8 +60,9 @@ export default function OvershortDetailsView() {
         </TableBody>
       </Table>
       <Button
-        // disabled={pristine || submitting}
         className={classes.adjustButton}
+        color="secondary"
+        variant="outlined"
       >
         Edit Description
         <EditIcon color="secondary" className={classes.editIcon} />

@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { fmtNumber } from '../../../../utils/fmt'
+import FormatNumber from '../../../shared/FormatNumber'
 
 const R = require('ramda')
 
@@ -65,7 +66,9 @@ export default function List() {
               <TableCell align="right">{fmtNumber(fs.litres.close, 3)}</TableCell>
               <TableCell align="right">{fmtNumber(fs.litres.net, 3)}</TableCell>
               <TableCell align="right">{fmtNumber(fs.dollars.theoretical)}</TableCell>
-              <TableCell align="right">{fmtNumber(fs.dollars.diff)}</TableCell>
+              <TableCell align="right">
+                <FormatNumber value={fs.dollars.diff} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

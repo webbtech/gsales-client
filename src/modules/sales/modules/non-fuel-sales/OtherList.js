@@ -39,9 +39,9 @@ function NonFuelView({ shift }) {
     <Table className={classes.table} size="small">
       <TableBody>
         <TableRow>
-          <TableCell size="small">Gift Certificates</TableCell>
-          <TableCell align="right" size="small">{fmtNumber(shift.otherNonFuel.giftCerts)}</TableCell>
-          <TableCell align="center" size="small" className={classes.iconCell}><UpdateIcon /></TableCell>
+          <TableCell>Gift Certificates</TableCell>
+          <TableCell align="right">{fmtNumber(shift.otherNonFuel.giftCerts)}</TableCell>
+          <TableCell align="center" padding="none"><UpdateIcon /></TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -58,19 +58,19 @@ function BobsNonFuelView({ shift }) {
     <Table className={classes.table} size="small">
       <TableBody>
         <TableRow>
-          <TableCell size="small">Gift Certificates</TableCell>
-          <TableCell align="right" size="small">{fmtNumber(shift.otherNonFuelBobs.bobsGiftCerts)}</TableCell>
-          <TableCell align="center" size="small" className={classes.iconCell}><UpdateIcon /></TableCell>
+          <TableCell>Gift Certificates</TableCell>
+          <TableCell align="right">{fmtNumber(shift.otherNonFuelBobs.bobsGiftCerts)}</TableCell>
+          <TableCell align="center" padding="none"><UpdateIcon /></TableCell>
         </TableRow>
         <TableRow>
-          <TableCell size="small">Non-Fuel</TableCell>
-          <TableCell align="right" size="small">{fmtNumber(shift.otherNonFuel.bobs)}</TableCell>
-          <TableCell align="center" size="small" className={classes.iconCell}><UpdateIcon /></TableCell>
+          <TableCell>Non-Fuel</TableCell>
+          <TableCell align="right">{fmtNumber(shift.otherNonFuel.bobs)}</TableCell>
+          <TableCell align="center" padding="none"><UpdateIcon /></TableCell>
         </TableRow>
         <TableRow>
-          <TableCell size="small">Fuel Misc. Adj.</TableCell>
-          <TableCell align="right" size="small">{fmtNumber(shift.salesSummary.bobsFuelAdj)}</TableCell>
-          <TableCell align="center" size="small" className={classes.iconCell}><UpdateIcon /></TableCell>
+          <TableCell>Fuel Misc. Adjustment</TableCell>
+          <TableCell align="right">{fmtNumber(shift.salesSummary.bobsFuelAdj)}</TableCell>
+          <TableCell align="center" padding="none"><UpdateIcon /></TableCell>
         </TableRow>
       </TableBody>
     </Table>

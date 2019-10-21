@@ -83,7 +83,7 @@ export default function CashAndCardsView() {
         <TableBody>
 
           {fieldSet1.map(f => (
-            <CashCardRow label={f.label} value={setValue(f, shift)} />
+            <CashCardRow key={f.field} label={f.label} value={setValue(f, shift)} />
           ))}
 
           <TableRow>
@@ -93,7 +93,7 @@ export default function CashAndCardsView() {
           </TableRow>
 
           {fieldSet2.map(f => (
-            <CashCardRow label={f.label} value={setValue(f, shift)} />
+            <CashCardRow key={f.field} label={f.label} value={setValue(f, shift)} />
           ))}
 
           <TableRow>

@@ -9,19 +9,19 @@ import {
   Typography,
 } from '@material-ui/core'
 
+import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/core/styles'
-import DeleteIcon from '@material-ui/icons/Delete'
 
 const useStyles = makeStyles(theme => ({
   button: {
     width: '100%',
   },
   container: {
-    maxWidth: 350,
+    maxWidth: 420,
     margin: theme.spacing(2),
   },
-  leftIcon: {
-    marginRight: theme.spacing(1),
+  rightIcon: {
+    marginLeft: theme.spacing(1),
   },
 }))
 
@@ -40,10 +40,15 @@ export default function ShiftDeleteDialog(props) {
   return (
     <Dialog onClose={handleClose} open={open}>
       <div className={classes.container}>
-        <DialogTitle id="dialog-title">Delete Shift Confirmation</DialogTitle>
+        <DialogTitle id="dialog-title">Close Shift Confirmation</DialogTitle>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Typography variant="body1" gutterBottom>Are you certain you want to delete the last shift?</Typography>
+            <Typography variant="body1">
+              {'Please confirm that you want to close the shift, and that'}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              {'Cash & Cards, Attendant and Overshort Details are saved.'}
+            </Typography>
           </Grid>
           <Grid item xs={8}>
             <Button
@@ -53,14 +58,13 @@ export default function ShiftDeleteDialog(props) {
               type="button"
               variant="contained"
             >
-              <DeleteIcon className={classes.leftIcon} />
-              Delete Last Shift
+              Close Shift
+              <CloseIcon className={classes.rightIcon} />
             </Button>
           </Grid>
 
           <Grid item xs={4}>
             <Button
-              // color="primary"
               className={classes.button}
               onClick={handleClose}
               type="button"

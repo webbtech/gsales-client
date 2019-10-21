@@ -1,5 +1,5 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import {
   Button,
@@ -10,15 +10,14 @@ import {
   TableCell,
   TableRow,
   TextField,
-  // Tooltip,
   Typography,
 } from '@material-ui/core'
 
 import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 
-// import { fmtNumber } from '../../../../utils/fmt'
 import FormatNumber from '../../../shared/FormatNumber'
+import { patchShift } from '../../actions'
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -58,7 +57,27 @@ export default function OvershortDetailsForm() {
   const classes = useStyles()
   const sales = useSelector(state => state.sales)
   const shift = sales.dayInfo.activeShift
-  console.log('shift:', shift)
+  const [osDescrip, setOsDescrip] = useState('')
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    setOsDescrip(shift.overshort.descrip)
+  }, [shift.overshort.descrip])
+
+  function handleSubmit() {
+    const params = {
+      action: 'patchShift',
+      shiftID: shift.id,
+      stationID: shift.stationID,
+      recordNum: shift.recordNum,
+      actionArgs: {
+        field: 'overshort.descrip',
+        value: osDescrip,
+        method: 'simple',
+      },
+    }
+    dispatch(patchShift(params))
+  }
 
   return (
     <Paper className={classes.root} square>
@@ -79,21 +98,17 @@ export default function OvershortDetailsForm() {
             <TableCell>Description</TableCell>
             <TableCell align="right">
               <TextField
-                // autoComplete="off"
-                // defaultValue={fmtNumber(defaultValue)}
                 className={classes.commentsField}
-                // id={field}
+                id="overshort.descrip"
                 inputProps={{
                   className: classes.commentsInput,
                 }}
+                margin="dense"
                 multiline
+                onChange={e => setOsDescrip(e.currentTarget.value)}
                 rows="2"
                 rowsMax="4"
-                // inputRef={(ref) => { refs.current[field] = ref }}
-                margin="dense"
-              // onBlur={handleBlur}
-              // onKeyDown={e => navigateFunc(e, field)}
-              // onFocus={handleFocus}
+                value={osDescrip}
               />
             </TableCell>
           </TableRow>
@@ -106,12 +121,11 @@ export default function OvershortDetailsForm() {
           <Button
             className={classes.actionButton}
             color="primary"
-            // onClick={handleSubmit}
-            // ref={submitButtonEl}
+            onClick={handleSubmit}
             type="submit"
             variant="contained"
           >
-            Save Overshort Details
+            Save Overshort
             <SaveIcon className={classes.rightIcon} />
           </Button>
         </Grid>

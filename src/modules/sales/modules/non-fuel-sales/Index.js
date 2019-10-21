@@ -23,6 +23,8 @@ export default function Index() {
   const classes = useStyles()
   const sales = useSelector(state => state.sales)
 
+  if (!R.hasPath(['shift', 'sales', 'result', 'shift'], sales)) return null
+
   let isEditMode = false
   if (R.hasPath(['shift', 'sales', 'result', 'shift', 'shift', 'flag'], sales)) {
     isEditMode = !sales.shift.sales.result.shift.shift.flag

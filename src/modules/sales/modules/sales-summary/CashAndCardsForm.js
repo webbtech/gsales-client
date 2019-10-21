@@ -209,6 +209,7 @@ export default function CashAndCardsForm() {
   const creditCardTotal = Object.values(shift.creditCard).reduce((a, b) => a + b, 0.00)
   const cashTotal = Object.values(shift.cash).reduce((a, b) => a + b, 0.00)
   const cashSubtotal = creditCardTotal + shift.cash.dieselDiscount + shift.cash.debit
+  const cashCCTotal = creditCardTotal + cashTotal
 
   return (
     <Paper className={classes.root} square>
@@ -251,7 +252,7 @@ export default function CashAndCardsForm() {
 
             <TableRow>
               <TableCell className={classes.totalsCell}>Total</TableCell>
-              <TableCell align="right" className={classes.totalsCell}>{fmtNumber(cashTotal)}</TableCell>
+              <TableCell align="right" className={classes.totalsCell}>{fmtNumber(cashCCTotal)}</TableCell>
             </TableRow>
 
           </TableBody>

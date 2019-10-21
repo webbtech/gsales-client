@@ -26,8 +26,10 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import clsx from 'clsx'
 
-import { fmtNumber } from '../../../../utils/fmt'
+import DispenserResetDialog from './DispenserResetDialog'
 import FormatNumber from '../../../shared/FormatNumber'
+import FuelSaleAdjustDialog from './FuelSaleAdjustDialog'
+import { fmtNumber } from '../../../../utils/fmt'
 import { saveFuelSales } from '../../actions'
 
 const R = require('ramda')
@@ -49,9 +51,6 @@ const useStyles = makeStyles(theme => ({
   },
   iconButton: {
     padding: 4,
-  },
-  iconCell: {
-    width: theme.spacing(4),
   },
   iconSpaceLeft: {
     marginLeft: theme.spacing(0.5),
@@ -223,10 +222,15 @@ export default function Form() {
   const refsArray = useRef([])
   const submitButtonEl = useRef(null)
   const [fuelValues, setFuelValues] = useState({})
+  const [openAdjust, setOpenAdjust] = useState(false)
+  const [openReset, setOpenReset] = useState(false)
+  const [selectedRecord, setSelectedRecord] = useState({})
   const dispatch = useDispatch()
 
   const { fuelDefinitions } = sales.shift.sales.entities
-  const { fuelCosts } = sales.shift.sales.result.shift
+  const { shift } = sales.shift.sales.result
+  const { fuelCosts } = shift
+  const shiftID = shift.id
 
   useEffect(() => {
     setFuelValues(sales.shift.sales.entities.fuelSale)
@@ -259,7 +263,6 @@ export default function Form() {
   }
 
   function handleSubmit() {
-    const { shift } = sales.shift.sales.result
     const params = {
       recordNum: shift.recordNum,
       shiftID: shift.id,
@@ -267,6 +270,24 @@ export default function Form() {
       fuelSales: fuelValues,
     }
     dispatch(saveFuelSales(params))
+  }
+
+  const handleOpenAdjust = (id) => {
+    setSelectedRecord(fuelValues[id])
+    setOpenAdjust(true)
+  }
+
+  const handleCloseAdjust = () => {
+    setOpenAdjust(false)
+  }
+
+  const handleOpenReset = (id) => {
+    setSelectedRecord(fuelValues[id])
+    setOpenReset(true)
+  }
+
+  const handleCloseReset = () => {
+    setOpenReset(false)
   }
 
   let c = 0
@@ -334,13 +355,19 @@ export default function Form() {
           <FormatNumber value={fs.dollars.diff} decimal={4} />
         </TableCell>
 
-        <TableCell align="center" size="small">
-          <IconButton className={classes.iconButton} aria-label="edit">
+        <TableCell align="center" padding="none">
+          <IconButton
+            className={classes.iconButton}
+            onClick={() => handleOpenAdjust(fs.id)}
+          >
             <Tooltip title="Adjust" placement="left">
               <UpdateIcon />
             </Tooltip>
           </IconButton>
-          <IconButton className={clsx(classes.iconButton, classes.iconSpaceLeft)} aria-label="edit">
+          <IconButton
+            className={clsx(classes.iconButton, classes.iconSpaceLeft)}
+            onClick={() => handleOpenReset(fs.id)}
+          >
             <Tooltip title="Reset" placement="left">
               <RestoreIcon />
             </Tooltip>
@@ -358,20 +385,22 @@ export default function Form() {
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>
-            <TableCell colSpan={2} size="small">Nozzle</TableCell>
-            <TableCell align="center" size="small">Open $</TableCell>
-            <TableCell align="center" size="small">Close $</TableCell>
-            <TableCell align="center" size="small">Net $</TableCell>
-            <TableCell align="center" size="small">Open L</TableCell>
-            <TableCell align="center" size="small">Close L</TableCell>
-            <TableCell align="center" size="small">Net L</TableCell>
-            <TableCell align="center" size="small">Theoretical</TableCell>
-            <TableCell align="center" size="small">Difference</TableCell>
-            <TableCell align="center" size="small">Action</TableCell>
+            <TableCell colSpan={2}>Nozzle</TableCell>
+            <TableCell align="center">Open $</TableCell>
+            <TableCell align="center">Close $</TableCell>
+            <TableCell align="center">Net $</TableCell>
+            <TableCell align="center">Open L</TableCell>
+            <TableCell align="center">Close L</TableCell>
+            <TableCell align="center">Net L</TableCell>
+            <TableCell align="center">Theoretical</TableCell>
+            <TableCell align="center">Difference</TableCell>
+            <TableCell align="center">Action</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>{dispenserRows}</TableBody>
       </Table>
+
       <Grid container spacing={2} className={classes.buttonRow}>
         <Grid item xs={8} />
         <Grid item xs={4}>
@@ -388,6 +417,19 @@ export default function Form() {
           </Button>
         </Grid>
       </Grid>
+
+      <FuelSaleAdjustDialog
+        onClose={handleCloseAdjust}
+        open={openAdjust}
+        selectedRecord={selectedRecord}
+        shiftID={shiftID}
+      />
+      <DispenserResetDialog
+        onClose={handleCloseReset}
+        open={openReset}
+        selectedRecord={selectedRecord}
+        shiftID={shiftID}
+      />
     </Paper>
   )
 }

@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { setFuelCosts } from '../../utils'
-import { updateShift } from '../../actions'
+import { patchShift } from '../../actions'
 
 const R = require('ramda')
 
@@ -48,7 +48,7 @@ function CostCell({ fuelCost, shift }) {
         method: 'updateFuelCost',
       },
     }
-    dispatch(updateShift(params))
+    dispatch(patchShift(params))
   }
 
   if (!editableTypes.includes(fuelCost.id)) {

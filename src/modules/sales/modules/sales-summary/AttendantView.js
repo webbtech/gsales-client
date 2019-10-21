@@ -89,8 +89,9 @@ export default function AttendantView() {
         </TableBody>
       </Table>
       <Button
-        // disabled={pristine || submitting}
         className={classes.adjustButton}
+        color="secondary"
+        variant="outlined"
       >
         Adjustment Comments
         <EditIcon color="secondary" className={classes.editIcon} />

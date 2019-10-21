@@ -109,19 +109,24 @@ const InputField = (props) => {
     switch (fieldType) {
       case 'restock':
         ret.qty.restock = value
-        ret.qty.close = Number(ret.qty.open) + Number(ret.qty.restock)
         break
 
       case 'sold':
         ret.qty.sold = value
-        ret.qty.close = Number(ret.qty.open) + Number(ret.qty.restock) - Number(ret.qty.sold)
         ret.sales = Number(ret.qty.sold) * ret.productID.cost
         break
 
       default:
         break
     }
+
+    const soldVal = Number.isNaN(Number(ret.qty.sold)) ? 0 : Number(ret.qty.sold)
+    ret.qty.close = Number(ret.qty.open) + Number(ret.qty.restock) - soldVal
     setStateValues({ ...stateValues, [nfsID]: ret })
+  }
+
+  function handleFocus(e) {
+    e.target.select()
   }
 
   function setValue(e) {
@@ -144,10 +149,10 @@ const InputField = (props) => {
   function getValue() {
     switch (fieldType) {
       case 'restock':
-        return nfs.qty.restock ? nfs.qty.restock : ''
+        return typeof nfs.qty.restock !== 'undefined' ? nfs.qty.restock : ''
 
       case 'sold':
-        return nfs.qty.sold ? nfs.qty.sold : ''
+        return nfs.qty.sold !== 'undefined' ? nfs.qty.sold : ''
 
       default:
         return ''
@@ -169,6 +174,7 @@ const InputField = (props) => {
         inputRef={(ref) => { refs.current[fieldCounter] = ref }}
         onBlur={calcValues}
         onChange={setValue}
+        onFocus={handleFocus}
         onKeyDown={e => navigateFunc(e, { row, cell })}
         margin="dense"
       />
@@ -202,10 +208,10 @@ export default function ProductForm() {
     setProductValues(sales.shift.sales.entities.nonFuelSale)
   }, [sales])
 
-  function handleNavigate(event, ref) {
+  function handleNavigate(e, ref) {
     let nextField
 
-    if (event.keyCode === 38) { // up arrow key
+    if (e.keyCode === 38) { // up arrow key
       if (ref.cell === 1) { // move to next cell
         if (ref.row === 1) { return }
         nextField = ((ref.row - 1) * 10) + ref.cell + 1
@@ -213,7 +219,7 @@ export default function ProductForm() {
         nextField = (ref.row * 10) + 1
       }
       refsArray.current[nextField].focus()
-    } else if (event.keyCode === 40) { // down arrow key
+    } else if (e.keyCode === 40) { // down arrow key
       if (ref.cell === 1) { // move to next cell
         nextField = (ref.row * 10) + ref.cell + 1
       } else if (ref.cell === 2) { // move next row
@@ -245,7 +251,9 @@ export default function ProductForm() {
     c += 1
     const rCtr = c * 10 + 1
     const sCtr = c * 10 + 2
-    productTotal += nfs.sales
+    if (nfs.sales) {
+      productTotal += nfs.sales
+    }
 
     return (
       <TableRow key={nfs.id}>
@@ -299,6 +307,7 @@ export default function ProductForm() {
             <TableCell align="center" size="small">Sales</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           {productRows}
           <TableRow>

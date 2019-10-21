@@ -15,6 +15,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import { setFuelCosts, setFuelSummaries, setFuelSummaryTotals } from '../../utils'
 import { fmtNumber } from '../../../../utils/fmt'
+import FormatNumber from '../../../shared/FormatNumber'
 
 const R = require('ramda')
 
@@ -67,6 +68,7 @@ export default function Summary() {
             <TableCell align="center" size="small">Total</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           <TableRow>
             <TableCell size="small">Dollar</TableCell>
@@ -76,13 +78,14 @@ export default function Summary() {
                 key={fs.id}
                 size="small"
               >
-                {fmtNumber(fs.dollar)}
+                <FormatNumber value={fs.dollar} />
               </TableCell>
             ))}
             <TableCell align="right" size="small">
-              {fmtNumber(fuelSummaryTotals.dollar)}
+              <FormatNumber value={fuelSummaryTotals.dollar} />
             </TableCell>
           </TableRow>
+
           <TableRow>
             <TableCell size="small">Litre</TableCell>
             {fuelSummaries.map(fs => (

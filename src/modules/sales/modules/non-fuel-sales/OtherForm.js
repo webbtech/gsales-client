@@ -70,7 +70,7 @@ const InputField = (props) => {
   function handleBlur(e) {
     let { value } = e.currentTarget
     let calc = ''
-    value = value.replace(/[^0-9\\+\\-\\.]/g, '')
+    value = value.replace(/[^0-9\\+\-\\.]/g, '')
     if ((/-|\+/).test(value)) { // if value has + or - characters, we have calculation
       calc = value
       value = eval(value) // eslint-disable-line no-eval
@@ -134,8 +134,8 @@ function NonFuelForm(props) {
     <Table className={classes.table} size="small">
       <TableBody>
         <TableRow>
-          <TableCell size="small">Gift Certificates</TableCell>
-          <TableCell align="right" className={classes.inputCell} size="small">
+          <TableCell>Gift Certificates</TableCell>
+          <TableCell align="right" className={classes.inputCell}>
             <InputField
               field="otherNonFuel.giftCerts"
               stateValues={stateValues}
@@ -163,8 +163,8 @@ function BobsNonFuelForm(props) {
     <Table className={classes.table} size="small">
       <TableBody>
         <TableRow>
-          <TableCell size="small">Gift Certificates</TableCell>
-          <TableCell align="right" className={classes.inputCell} size="small">
+          <TableCell>Gift Certificates</TableCell>
+          <TableCell align="right" className={classes.inputCell}>
             <InputField
               field="otherNonFuelBobs.bobsGiftCerts"
               stateValues={stateValues}
@@ -173,8 +173,8 @@ function BobsNonFuelForm(props) {
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell size="small">Non-Fuel</TableCell>
-          <TableCell align="right" className={classes.inputCell} size="small">
+          <TableCell>Non-Fuel</TableCell>
+          <TableCell align="right" className={classes.inputCell}>
             <InputField
               field="otherNonFuel.bobs"
               stateValues={stateValues}
@@ -183,8 +183,8 @@ function BobsNonFuelForm(props) {
           </TableCell>
         </TableRow>
         <TableRow>
-          <TableCell size="small">Fuel Misc. Adj.</TableCell>
-          <TableCell align="right" className={classes.inputCell} size="small">
+          <TableCell>Fuel Misc. Adjustment</TableCell>
+          <TableCell align="right" className={classes.inputCell}>
             <InputField
               field="salesSummary.bobsFuelAdj"
               stateValues={stateValues}

@@ -12,7 +12,7 @@ import * as salesActions from './actions'
 import * as alertActions from '../alert/actions'
 import { fetchJournals } from '../journal/actions'
 
-// ============================== Fetch Day ============================== //
+// ============================== Fetch Day ==================================================== //
 
 export function* fetchDay(stationID, params) {
   let endpoint = 'sales'
@@ -37,7 +37,7 @@ function* watchFetchDay() {
   }
 }
 
-// ============================== Fetch Shift Sales ============================== //
+// ============================== Fetch Shift Sales ============================================ //
 
 export function* fetchShiftSales({ shiftID, stationID, recordNum }) {
   const endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
@@ -55,7 +55,7 @@ function* watchShiftSales() {
   }
 }
 
-// ============================== Shift Patch ============================== //
+// ============================== Shift Patch ================================================== //
 
 export function* shiftPatch({
   params: {
@@ -77,7 +77,7 @@ export function* shiftPatch({
     return
   }
 
-  const { shiftPatchEntity } = salesActions
+  const { shiftEntity, shiftPatchEntity } = salesActions
   let endpoint
   let apiParams
 
@@ -88,23 +88,26 @@ export function* shiftPatch({
         method: 'PATCH',
         body: actionArgs,
       }
-      const res = yield call(callApi, shiftPatchEntity, endpoint, Schemas.SHIFT, apiParams)
+      yield call(callApi, shiftPatchEntity, endpoint, Schemas.SHIFT, apiParams)
 
-      if (res.result === shiftID) { // actually, if we're getting a 'res', the call was successful
-        endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
-        const { shiftEntity } = salesActions
-        yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
-      }
+      endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
+      yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+      yield put(alertActions.alertSend({ message: 'Shift successfully updated', type: 'success', dismissAfter: 2000 }))
       break
     }
 
-    case 'close':
+    case 'closeShift':
       endpoint = `sale/${shiftID}`
       apiParams = {
         method: 'PATCH',
         body: actionArgs,
       }
-      yield call(callApi, shiftPatch, endpoint, Schemas.SHIFT, apiParams)
+      yield call(callApi, shiftPatchEntity, endpoint, Schemas.SHIFT, apiParams)
+
+      // Now reload shift data
+      endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
+      yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+      yield put(alertActions.alertSend({ message: 'Shift successfully closed', type: 'success', dismissAfter: 2000 }))
       break
 
     default:
@@ -116,7 +119,7 @@ function* watchShiftPatch() {
   yield takeLatest(salesActions.SHIFT_PATCH.REQUEST, shiftPatch)
 }
 
-// ============================== Shift Action ============================== //
+// ============================== Shift Action ================================================= //
 
 export function* shiftAction({
   params: {
@@ -198,7 +201,7 @@ function* watchShiftAction() {
   yield takeLatest(salesActions.SHIFT_ACTION.REQUEST, shiftAction)
 }
 
-// ============================== Save Fuel Sales Action ============================== //
+// ============================== Save Fuel Sales Action ======================================= //
 
 export function* persistFuelSales({
   params: {
@@ -241,7 +244,6 @@ export function* persistFuelSales({
   // Now reload shift data
   endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
   yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
-
   yield put(alertActions.alertSend({ message: 'Fuel Sales successfully saved', type: 'success', dismissAfter: 2000 }))
 }
 
@@ -249,7 +251,133 @@ function* watchSaveFuelSales() {
   yield takeLatest(salesActions.FUEL_SALE_SAVE.REQUEST, persistFuelSales)
 }
 
-// ============================== Save NonFuel Misc Action ============================== //
+// ============================== Save Fuel Sales Adjustment Action ============================ //
+
+export function* persistFuelSalesAdjustment({
+  params: {
+    dispenserID,
+    recordNum,
+    shiftID,
+    stationID,
+    values,
+  },
+}) {
+  if (!dispenserID) {
+    const msg = 'Missing dispenserID parameter in persistFuelSalesAdjustment'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!recordNum) {
+    const msg = 'Missing recordNum parameter in persistFuelSalesAdjustment'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!shiftID) {
+    const msg = 'Missing shiftID parameter in persistFuelSalesAdjustment'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!stationID) {
+    const msg = 'Missing stationID parameter in persistFuelSalesAdjustment'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!values) {
+    const msg = 'Missing values parameter in persistFuelSalesAdjustment'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+
+  const { persistFuelSaleAdjustmentEntity, shiftEntity } = salesActions
+  let endpoint = 'fuel-sales-opening'
+  const apiParams = {
+    method: 'PUT',
+    body: {
+      stationID,
+      recordNum,
+      dispenserID,
+      values,
+    },
+  }
+  yield call(callApi, persistFuelSaleAdjustmentEntity, endpoint, Schemas.FUEL_SALE, apiParams)
+
+  // Refetch journal entries
+  yield put(fetchJournals({ recordNum, stationID }))
+
+  // Now reload shift data
+  endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
+  yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+  yield put(alertActions.alertSend({ message: 'Fuel Sale adjustment successfully saved', type: 'success', dismissAfter: 2000 }))
+}
+
+function* watchFuelSalesAdjustment() {
+  yield takeLatest(salesActions.FUEL_SALE_ADJUST.REQUEST, persistFuelSalesAdjustment)
+}
+
+// ============================== Save Dispenser Reset Action ================================== //
+
+export function* persistResetDispenser({
+  params: {
+    dispenserID,
+    recordNum,
+    shiftID,
+    stationID,
+    values,
+  },
+}) {
+  if (!dispenserID) {
+    const msg = 'Missing dispenserID parameter in persistResetDispenser'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!recordNum) {
+    const msg = 'Missing recordNum parameter in persistResetDispenser'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!shiftID) {
+    const msg = 'Missing shiftID parameter in persistResetDispenser'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!stationID) {
+    const msg = 'Missing stationID parameter in persistResetDispenser'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!values) {
+    const msg = 'Missing values parameter in persistResetDispenser'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+
+  const { persistDispenserResetEntity, shiftEntity } = salesActions
+  let endpoint = 'fuel-sales-reset'
+  const apiParams = {
+    method: 'PUT',
+    body: {
+      stationID,
+      recordNum,
+      dispenserID,
+      values,
+    },
+  }
+  yield call(callApi, persistDispenserResetEntity, endpoint, Schemas.FUEL_SALE, apiParams)
+
+  // Refetch journal entries
+  yield put(fetchJournals({ recordNum, stationID }))
+
+  // Now reload shift data
+  endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
+  yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+  yield put(alertActions.alertSend({ message: 'Dispenser reset successfully saved', type: 'success', dismissAfter: 2000 }))
+}
+
+function* watchResetDispenser() {
+  yield takeLatest(salesActions.RESET_DISPENSER.REQUEST, persistResetDispenser)
+}
+
+// ============================== Save NonFuel Misc Action ===================================== //
 
 export function* persistNonFuelMisc({
   params: {
@@ -301,7 +429,7 @@ function* watchSaveNonFuelMisc() {
   yield takeLatest(salesActions.NON_FUEL_MISC_SAVE.REQUEST, persistNonFuelMisc)
 }
 
-// ============================== Save NonFuel Products Action ============================== //
+// ============================== Save NonFuel Products Action ================================= //
 
 export function* persistNonFuelProducts({
   params: {
@@ -364,7 +492,91 @@ function* watchSaveNonFuelProducts() {
   yield takeLatest(salesActions.NON_FUEL_PRODUCTS_SAVE.REQUEST, persistNonFuelProducts)
 }
 
-// ============================== Save NonFuel Products Action ============================== //
+// ============================== Save NonFuel Product Adjustment Action ======================= //
+
+export function* persistNonFuelProductAdjust({
+  params: {
+    description,
+    nonFuelID,
+    productID,
+    recordNum,
+    salesID,
+    stationID,
+    type,
+    values,
+  },
+}) {
+  if (!description) {
+    const msg = 'Missing description parameter in persistNonFuelProductAdjust'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!nonFuelID) {
+    const msg = 'Missing nonFuelID parameter in persistNonFuelProductAdjust'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!productID) {
+    const msg = 'Missing productID parameter in persistNonFuelProductAdjust'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!recordNum) {
+    const msg = 'Missing recordNum parameter in persistNonFuelProductAdjust'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!salesID) {
+    const msg = 'Missing salesID parameter in persistNonFuelProductAdjust'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!stationID) {
+    const msg = 'Missing stationID parameter in persistNonFuelProductAdjust'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!type) {
+    const msg = 'Missing type parameter in persistNonFuelProductAdjust'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!values) {
+    const msg = 'Missing values parameter in persistNonFuelProductAdjust'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+
+  const { persistNonFuelProductAdjustEntity, shiftEntity } = salesActions
+  let endpoint = `sale-non-fuel/${salesID}`
+  const apiParams = {
+    method: 'PATCH',
+    body: {
+      description,
+      nonFuelSaleID: nonFuelID,
+      productID,
+      values,
+    },
+  }
+  yield call(callApi, persistNonFuelProductAdjustEntity, endpoint, Schemas.SHIFT, apiParams)
+
+  // set adjustRecordID to false so we can safely close dialog
+  /* yield put({ type: salesActions.SET_ADJUST_RECORD_ID.SUCCESS })
+
+  // Fetch journal entries at this time
+  endpoint = `journal-report?stationID=${args.params.stationID}&recordNum=${args.params.recordNum}`
+  yield call(callApi, fetchJournalEntries, endpoint, Schemas.DEFAULTS)
+
+  // fetch the shift sales after the update
+  endpoint = `sales/shiftSales?shiftID=${args.params.salesID}&stationID=${args.params.stationID}&recordNum=${args.params.recordNum}`
+  yield call(callApi, shift, endpoint, Schemas.SHIFT_SALES) */
+}
+
+function* watchSaveNonFuelProductAdjust() {
+
+}
+
+// ============================== Save Shift Summary Action ================================= //
 
 export function* persistShiftSummary({
   params: {
@@ -416,7 +628,7 @@ function* watchSaveShiftSummary() {
   yield takeLatest(salesActions.SHIFT_SUMMARY.REQUEST, persistShiftSummary)
 }
 
-// ============================== Save Attendant Action ============================== //
+// ============================== Save Attendant Action ======================================== //
 
 export function* persistAttendant({
   params: {
@@ -468,15 +680,17 @@ function* watchSaveAttendant() {
   yield takeLatest(salesActions.ATTENDANT_SAVE.REQUEST, persistAttendant)
 }
 
-
-// ============================== Root Saga ============================== //
+// ============================== Root Saga ==================================================== //
 
 export default function* rootSaga() {
   yield all([
     watchFetchDay(),
+    watchFuelSalesAdjustment(),
+    watchResetDispenser(),
     watchSaveAttendant(),
     watchSaveFuelSales(),
     watchSaveNonFuelMisc(),
+    watchSaveNonFuelProductAdjust(),
     watchSaveNonFuelProducts(),
     watchSaveShiftSummary(),
     watchShiftAction(),
