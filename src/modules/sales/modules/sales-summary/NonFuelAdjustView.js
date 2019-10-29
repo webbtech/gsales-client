@@ -39,8 +39,9 @@ export default function NonFuelAdjustView() {
   return (
     <Paper className={classes.root} square>
       <Typography variant="h6" className={classes.title}>
-        Non-fuel Adjustment Summary
+        Non-fuel Attendant Adjustment Summary
       </Typography>
+
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>

@@ -4,17 +4,35 @@ import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import AppBar from '@material-ui/core/AppBar'
-import IconButton from '@material-ui/core/IconButton'
-import Menu from '@material-ui/core/Menu'
-import MenuIcon from '@material-ui/icons/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import {
+  AppBar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Typography,
+} from '@material-ui/core'
 
+import { makeStyles } from '@material-ui/core/styles'
+import MenuIcon from '@material-ui/icons/Menu'
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
 
 import { fetchStationList } from '../actions'
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexGrow: 1,
+    height: 'calc(100vh - 65px)',
+  },
+  main: {
+    padding: theme.spacing(2.5),
+  },
+}))
 
 const MenuPopupState = ({ station }) => (
   <PopupState variant="popover" popupId="demoMenu">
@@ -44,6 +62,12 @@ const MenuPopupState = ({ station }) => (
           >
             Products
           </MenuItem>
+          <MenuItem
+            component={Link}
+            to={`/admin/stations/dispensers/${station.id}`}
+          >
+            Dispensers
+          </MenuItem>
         </Menu>
       </React.Fragment>
     )}
@@ -54,6 +78,7 @@ MenuPopupState.propTypes = {
 }
 
 const List = () => {
+  const classes = useStyles()
   const station = useSelector(state => state.station)
   const dispatch = useDispatch()
 
@@ -72,23 +97,30 @@ const List = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <div className="tbl" style={{ width: '100%' }}>
-        <div className="tbl-head">
-          <div className="tbl-col text-left">Name</div>
-          <div className="tbl-col text-left">Street</div>
-          <div className="tbl-col text-left">Phone</div>
-        </div>
-        {Object.values(station.items).map(s => (
-          <div key={s.id} className="tbl-row">
-            <div className="tbl-cell no-wrap">{s.name}</div>
-            <div className="tbl-cell">{s.street}</div>
-            <div className="tbl-cell no-wrap">{s.phone}</div>
-            <div className="tbl-cell">
-              <MenuPopupState station={s} />
-            </div>
-          </div>
-        ))}
-      </div>
+
+      <Table size="small" className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Street</TableCell>
+            <TableCell>Phone</TableCell>
+            <TableCell />
+          </TableRow>
+        </TableHead>
+
+        <TableBody>
+          {Object.values(station.items).map(s => (
+            <TableRow key={s.id}>
+              <TableCell>{s.name}</TableCell>
+              <TableCell>{s.street}</TableCell>
+              <TableCell>{s.phone}</TableCell>
+              <TableCell padding="none">
+                <MenuPopupState station={s} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </React.Fragment>
   )
 }

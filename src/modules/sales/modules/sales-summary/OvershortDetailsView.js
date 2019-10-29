@@ -44,11 +44,12 @@ export default function OvershortDetailsView() {
       <Typography variant="h6" className={classes.title}>
         Overshort Details
       </Typography>
+
       <Table className={classes.table} size="small">
         <TableBody>
           <TableRow>
             <TableCell>Amount</TableCell>
-            <TableCell>
+            <TableCell align="right">
               <FormatNumber value={shift.overshort.amount} />
             </TableCell>
           </TableRow>
@@ -59,6 +60,7 @@ export default function OvershortDetailsView() {
           </TableRow>
         </TableBody>
       </Table>
+
       <Button
         className={classes.adjustButton}
         color="secondary"

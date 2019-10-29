@@ -3,10 +3,11 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import {
+  AppBar,
   Button,
   Dialog,
-  DialogTitle,
-  Divider,
+  DialogContent,
+  Fab,
   FormControl,
   FormControlLabel,
   Grid,
@@ -18,6 +19,7 @@ import {
   TableRow,
   TableCell,
   TextField,
+  Toolbar,
   Typography,
 } from '@material-ui/core'
 
@@ -32,8 +34,9 @@ const useStyles = makeStyles(theme => ({
   button: {
     width: '100%',
   },
-  container: {
-    margin: theme.spacing(2),
+  content: {
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
   descriptionField: {
     width: '100%',
@@ -50,11 +53,21 @@ const useStyles = makeStyles(theme => ({
   rightIcon: {
     marginLeft: theme.spacing(1),
   },
+  subtitle: {
+    borderBottomColor: theme.palette.text.secondary,
+    borderBottomStyle: 'solid',
+    borderBottomWidth: 1.5,
+    color: theme.palette.text.secondary,
+    marginBottom: theme.spacing(2),
+  },
   table: {
     marginBottom: theme.spacing(3),
   },
   textField: {
     width: 60,
+  },
+  title: {
+    flexGrow: 1,
   },
 }))
 
@@ -95,6 +108,7 @@ const ProductAdjustDialog = (props) => {
         adjustSales: '',
         adjustSold: '',
         adjustStock: selectedRecord.qty.restock - value,
+        adjustType: 'stock',
         adjustValue: value,
       })
     } else if (state.type === 'sold') {
@@ -107,6 +121,7 @@ const ProductAdjustDialog = (props) => {
         adjustSales: parseFloat(sales),
         adjustSold: sold,
         adjustStock: selectedRecord.qty.restock,
+        adjustType: 'sales',
         adjustValue: value,
       })
     }
@@ -122,7 +137,7 @@ const ProductAdjustDialog = (props) => {
     const description = `${selectedRecord.productID.name} - sold: ${sold}, stock: ${stock}, close: ${state.adjustClose}, sales: ${state.adjustSales}`
 
     const adjustAttend = {
-      amount: state.adjustAttendantAmount || null,
+      amount: parseFloat(state.adjustAttendantAmount),
       comments: state.adjustAttendantComments || null,
       productID: selectedRecord.productID.id,
       productName: selectedRecord.productID.name,
@@ -143,11 +158,12 @@ const ProductAdjustDialog = (props) => {
         sales: state.adjustSales,
         sold,
         stock: selectedRecord.qty.restock,
-        type: state.type || null,
+        type: state.adjustType,
       },
     }
 
     dispatch(adjustNonFuelProduct(params))
+    handleClose()
   }
 
   if (!selectedRecord.qty) return null
@@ -161,13 +177,22 @@ const ProductAdjustDialog = (props) => {
       onClose={handleClose}
       open={open}
     >
-      <div className={classes.container}>
-        <DialogTitle id="simple-dialog-title">Adjust Product</DialogTitle>
+      <AppBar position="static" color="secondary">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" className={classes.title}>
+            Adjust Product
+          </Typography>
+          <Fab onClick={handleClose} size="small">
+            <CloseIcon />
+          </Fab>
+        </Toolbar>
+      </AppBar>
 
-        <Typography variant="subtitle2">
+      <DialogContent className={classes.content}>
+        <Typography variant="h6" className={classes.subtitle}>
           Product Info
         </Typography>
-        <Divider />
+
         <Table size="small" className={classes.table}>
           <TableHead>
             <TableRow>
@@ -192,10 +217,10 @@ const ProductAdjustDialog = (props) => {
           </TableBody>
         </Table>
 
-        <Typography variant="subtitle2">
+        <Typography variant="h6" className={classes.subtitle}>
           Adjustment
         </Typography>
-        <Divider />
+
         <Table size="small" className={classes.table}>
           <TableHead>
             <TableRow>
@@ -243,10 +268,10 @@ const ProductAdjustDialog = (props) => {
           </TableBody>
         </Table>
 
-        <Typography variant="subtitle2">
+        <Typography variant="h6" className={classes.subtitle}>
           Attendant Details
         </Typography>
-        <Divider />
+
         <Table size="small" className={classes.table}>
           <TableHead>
             <TableRow>
@@ -312,7 +337,7 @@ const ProductAdjustDialog = (props) => {
             </Button>
           </Grid>
         </Grid>
-      </div>
+      </DialogContent>
     </Dialog>
   )
 }

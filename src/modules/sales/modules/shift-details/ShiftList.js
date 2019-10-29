@@ -95,6 +95,7 @@ function ShiftList({ dayID, history, match }) {
       <Typography variant="h6" className={classes.title}>
         Shifts
       </Typography>
+
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>
@@ -102,6 +103,7 @@ function ShiftList({ dayID, history, match }) {
             <TableCell align="center">Status</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           {shifts.map(shift => (
             <TableRow
@@ -112,7 +114,7 @@ function ShiftList({ dayID, history, match }) {
               selected={shiftParams.shiftNo === shift.shift.number}
             >
               <TableCell>{shift.shift.number}</TableCell>
-              <TableCell align="center">
+              <TableCell align="center" padding="none">
                 {shift.shift.flag ? (<LockIcon />) : (<LockOpenIcon color="primary" />)}
               </TableCell>
             </TableRow>

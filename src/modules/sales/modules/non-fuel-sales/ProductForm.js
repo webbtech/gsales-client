@@ -40,7 +40,8 @@ const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
     color: 'red',
   },
   inputCell: {
-    paddingTop: theme.spacing(2),
+    padding: theme.spacing(1),
+    paddingTop: theme.spacing(1.2),
     paddingBottom: 0,
     width: 100,
   },
@@ -164,6 +165,7 @@ const InputField = (props) => {
   return (
     <FormControl>
       <TextField
+        autoComplete="off"
         className={classes.textField}
         error={err}
         id={`${fieldCounter}`}

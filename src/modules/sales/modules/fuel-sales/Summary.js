@@ -19,7 +19,7 @@ import FormatNumber from '../../../shared/FormatNumber'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles(theme => ({
   root: {
     paddingBottom: theme.spacing(1),
   },
@@ -33,13 +33,16 @@ export default function Summary() {
   const classes = useStyles()
   const sales = useSelector(state => state.sales)
 
-  // console.log('sales:', sales)
   let shiftData
   if (R.hasPath(['shift', 'sales', 'result', 'shift'], sales)) {
     shiftData = sales.shift.sales.result.shift
   }
   if (!shiftData) return null
   if (!R.hasPath(['salesSummary', 'fuel'], shiftData)) return null
+
+  // this assumes that if we have salesSummary.otherFuelLitre,
+  // we would also have salesSummary.otherFuelDollar
+  const haveOtherPropane = R.hasPath(['salesSummary', 'otherFuelLitre'], shiftData)
 
   const { fuelDefinitions } = sales.shift.sales.entities
 
@@ -52,54 +55,67 @@ export default function Summary() {
       <Typography variant="h6" className={classes.title}>
         Summary
       </Typography>
+
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>
-            <TableCell size="small" />
+            <TableCell />
             {fuelSummaries.map(fs => (
               <TableCell
                 align="center"
                 key={fs.id}
-                size="small"
               >
                 {fs.label}
               </TableCell>
             ))}
-            <TableCell align="center" size="small">Total</TableCell>
+            <TableCell align="center">Total</TableCell>
+            {haveOtherPropane && <TableCell align="center">Other Propane</TableCell>}
           </TableRow>
         </TableHead>
 
         <TableBody>
           <TableRow>
-            <TableCell size="small">Dollar</TableCell>
+            <TableCell>Dollar</TableCell>
             {fuelSummaries.map(fs => (
               <TableCell
                 align="right"
                 key={fs.id}
-                size="small"
               >
                 <FormatNumber value={fs.dollar} />
               </TableCell>
             ))}
-            <TableCell align="right" size="small">
+
+            <TableCell align="right">
               <FormatNumber value={fuelSummaryTotals.dollar} />
             </TableCell>
+
+            {haveOtherPropane && (
+              <TableCell align="right">
+                <FormatNumber value={shiftData.salesSummary.otherFuelDollar} />
+              </TableCell>
+            )}
           </TableRow>
 
           <TableRow>
-            <TableCell size="small">Litre</TableCell>
+            <TableCell>Litre</TableCell>
             {fuelSummaries.map(fs => (
               <TableCell
                 align="right"
                 key={fs.id}
-                size="small"
               >
                 {fmtNumber(fs.litre, 3)}
               </TableCell>
             ))}
+
             <TableCell align="right" size="small">
               {fmtNumber(fuelSummaryTotals.litre)}
             </TableCell>
+
+            {haveOtherPropane && (
+              <TableCell align="right">
+                <FormatNumber value={shiftData.salesSummary.otherFuelLitre} decimal={3} />
+              </TableCell>
+            )}
           </TableRow>
         </TableBody>
       </Table>

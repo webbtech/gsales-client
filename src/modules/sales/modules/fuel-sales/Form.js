@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   },
   inputCell: {
     padding: theme.spacing(1),
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1.2),
     paddingBottom: 0,
   },
   narrowCell: {
@@ -305,7 +305,7 @@ export default function Form() {
           {fuelDefinitions[fs.dispenserID.gradeID].label}
         </TableCell>
         <TableCell align="right" className={classes.dataCell}>{fmtNumber(fs.dollars.open)}</TableCell>
-        <TableCell align="right" className={classes.inputCell}>
+        <TableCell align="right" className={classes.inputCell} padding="none">
           <InputField
             cell={1}
             fieldCounter={fCtr}
@@ -328,7 +328,7 @@ export default function Form() {
           <FormatNumber value={fs.litres.open} decimal={3} />
         </TableCell>
 
-        <TableCell align="right" className={classes.inputCell}>
+        <TableCell align="right" className={classes.inputCell} padding="none">
           <InputField
             cell={2}
             fieldCounter={lCtr}
@@ -352,7 +352,7 @@ export default function Form() {
         </TableCell>
 
         <TableCell align="right" className={classes.dataCell}>
-          <FormatNumber value={fs.dollars.diff} decimal={4} />
+          <FormatNumber value={fs.dollars.diff} />
         </TableCell>
 
         <TableCell align="center" padding="none">
@@ -382,19 +382,20 @@ export default function Form() {
       <Typography variant="h6" className={classes.title}>
         Sales
       </Typography>
+
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>
             <TableCell colSpan={2}>Nozzle</TableCell>
-            <TableCell align="center">Open $</TableCell>
-            <TableCell align="center">Close $</TableCell>
-            <TableCell align="center">Net $</TableCell>
-            <TableCell align="center">Open L</TableCell>
-            <TableCell align="center">Close L</TableCell>
-            <TableCell align="center">Net L</TableCell>
-            <TableCell align="center">Theoretical</TableCell>
-            <TableCell align="center">Difference</TableCell>
-            <TableCell align="center">Action</TableCell>
+            <TableCell align="right">Open $</TableCell>
+            <TableCell align="right">Close $</TableCell>
+            <TableCell align="right">Net $</TableCell>
+            <TableCell align="right">Open L</TableCell>
+            <TableCell align="right">Close L</TableCell>
+            <TableCell align="right">Net L</TableCell>
+            <TableCell align="right">Theoretical</TableCell>
+            <TableCell align="right">Difference</TableCell>
+            <TableCell align="right">Action</TableCell>
           </TableRow>
         </TableHead>
 

@@ -20,8 +20,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import { fmtNumber } from '../../../../utils/fmt'
 import ProductAdjustDialog from './ProductAdjustDialog'
 
-// const R = require('ramda')
-
 const useStyles = makeStyles(theme => ({
   iconButton: {
     padding: 4,
@@ -96,7 +94,7 @@ const ProductList = () => {
 
         <TableBody>
           {Object.values(productValues).map(nfs => (
-            <TableRow key={nfs.id}>
+            <TableRow key={nfs.id} hover>
               <TableCell>{nfs.productID.name}</TableCell>
               <TableCell align="center">{nfs.qty.open}</TableCell>
               <TableCell align="center">{nfs.qty.restock}</TableCell>

@@ -2,20 +2,32 @@ import React, { useEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 
-import AppBar from '@material-ui/core/AppBar'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import {
+  AppBar,
+  Button,
+  Dialog,
+  Table,
+  TableCell,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Typography,
+  TableBody,
+} from '@material-ui/core'
+
 import { makeStyles } from '@material-ui/core/styles'
 
 import ProductForm from './Form'
 import { fetchProducts, setCurrentProduct } from '../actions'
 import { fmtNumberSimple } from '../../../../../utils/fmt'
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles(theme => ({
   root: {
     width: 900,
+    marginBottom: theme.spacing(2),
+  },
+  table: {
+    marginTop: theme.spacing(1),
   },
   title: {
     flexGrow: 1,
@@ -24,23 +36,20 @@ const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
 
 const List = ({ handleClickOpen, products }) => (
   Object.values(products).map(p => (
-    <div
-      className="tbl-row as-link"
+    <TableRow
       key={p.id}
+      hover
       onClick={() => handleClickOpen(p.id)}
-      onKeyDown={handleClickOpen}
-      role="button"
-      tabIndex="0"
     >
-      <div className="tbl-cell no-wrap">{p.name}</div>
-      <div className="tbl-cell no-wrap">{p.category}</div>
-      <div className="tbl-cell no-wrap">{p.type}</div>
-      <div className="tbl-cell text-right">{fmtNumberSimple(p.cost)}</div>
-      <div className="tbl-cell">{p.taxable ? 'T' : 'F'}</div>
-      <div className="tbl-cell">{p.commissionEligible ? 'T' : 'F'}</div>
-      <div className="tbl-cell">{p.oilProduct ? 'T' : 'F'}</div>
-      <div className="tbl-cell no-wrap">{p.sortOrder}</div>
-    </div>
+      <TableCell>{p.name}</TableCell>
+      <TableCell>{p.category}</TableCell>
+      <TableCell>{p.type}</TableCell>
+      <TableCell align="right">{fmtNumberSimple(p.cost)}</TableCell>
+      <TableCell>{p.taxable ? 'T' : 'F'}</TableCell>
+      <TableCell>{p.commissionEligible ? 'T' : 'F'}</TableCell>
+      <TableCell>{p.oilProduct ? 'T' : 'F'}</TableCell>
+      <TableCell>{p.sortOrder}</TableCell>
+    </TableRow>
   ))
 )
 
@@ -79,29 +88,34 @@ export default function Product() {
           <Button color="inherit" onClick={handleClickOpen}>New Product</Button>
         </Toolbar>
       </AppBar>
+
       {!haveProducts ? (
         <div>Loading...</div>
       ) : (
-        <div className="tbl" style={{ width: '100%' }}>
-          <div className="tbl-head">
-            <div className="tbl-col text-left">Name</div>
-            <div className="tbl-col text-left">Category</div>
-            <div className="tbl-col text-left">Type</div>
-            <div className="tbl-col text-left">Cost</div>
-            <div className="tbl-col text-left">Tax</div>
-            <div className="tbl-col text-left">Commission</div>
-            <div className="tbl-col text-left">Oil</div>
-            <div className="tbl-col text-left">Sort</div>
-          </div>
-          <List products={product.items} handleClickOpen={handleClickOpen} />
-        </div>
+        <Table size="small" className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Cost</TableCell>
+              <TableCell>Tax</TableCell>
+              <TableCell>Commission</TableCell>
+              <TableCell>Oil</TableCell>
+              <TableCell>Sort</TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            <List products={product.items} handleClickOpen={handleClickOpen} />
+          </TableBody>
+        </Table>
       )}
+
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
-        // fullWidth="800"
-        maxWidth="lg"
       >
         <ProductForm onCloseHandler={handleClose} />
       </Dialog>

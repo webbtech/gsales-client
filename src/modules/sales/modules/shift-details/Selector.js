@@ -191,6 +191,7 @@ const Selector = ({ history }) => {
       <Typography variant="h6" className={classes.title}>
         Shift Selector
       </Typography>
+
       <div className={classes.form}>
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="station-helper">Station</InputLabel>

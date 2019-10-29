@@ -51,6 +51,7 @@ export default function AttendantView() {
       <Typography variant="h6" className={classes.title}>
         Attendant
       </Typography>
+
       <Table className={classes.table} size="small">
         <TableBody>
           <TableRow>
@@ -68,26 +69,27 @@ export default function AttendantView() {
 
           <TableRow>
             <TableCell>Sheet Completed</TableCell>
-            <TableCell>
+            <TableCell align="center" padding="checkbox">
               <CheckComplete value={shift.attendant.sheetComplete} />
             </TableCell>
           </TableRow>
 
           <TableRow>
             <TableCell>Over-short Checked</TableCell>
-            <TableCell>
+            <TableCell align="center" padding="checkbox">
               <CheckComplete value={shift.attendant.overshortComplete} />
             </TableCell>
           </TableRow>
 
           <TableRow>
             <TableCell>Overshort Amount Submitted</TableCell>
-            <TableCell>
+            <TableCell align="right">
               <FormatNumber value={shift.attendant.overshortValue} />
             </TableCell>
           </TableRow>
         </TableBody>
       </Table>
+
       <Button
         className={classes.adjustButton}
         color="secondary"

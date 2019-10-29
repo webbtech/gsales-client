@@ -548,7 +548,7 @@ export function* persistNonFuelProductAdjust({
   }
 
   const { persistNonFuelProductAdjustEntity, shiftEntity } = salesActions
-  let endpoint = `sale-non-fuel/${salesID}`
+  let endpoint = `non-fuel-sale/${salesID}`
   const apiParams = {
     method: 'PATCH',
     body: {
@@ -560,25 +560,22 @@ export function* persistNonFuelProductAdjust({
   }
   yield call(callApi, persistNonFuelProductAdjustEntity, endpoint, Schemas.SHIFT, apiParams)
 
-  // set adjustRecordID to false so we can safely close dialog
-  /* yield put({ type: salesActions.SET_ADJUST_RECORD_ID.SUCCESS })
+  // Refetch journal entries
+  yield put(fetchJournals({ recordNum, stationID }))
 
-  // Fetch journal entries at this time
-  endpoint = `journal-report?stationID=${args.params.stationID}&recordNum=${args.params.recordNum}`
-  yield call(callApi, fetchJournalEntries, endpoint, Schemas.DEFAULTS)
-
-  // fetch the shift sales after the update
-  endpoint = `sales/shiftSales?shiftID=${args.params.salesID}&stationID=${args.params.stationID}&recordNum=${args.params.recordNum}`
-  yield call(callApi, shift, endpoint, Schemas.SHIFT_SALES) */
+  // Now reload shift data
+  endpoint = `sales/shiftSales?shiftID=${salesID}&stationID=${stationID}&recordNum=${recordNum}`
+  yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+  yield put(alertActions.alertSend({ message: 'Product adjustment successfully saved', type: 'success', dismissAfter: 2000 }))
 }
 
 function* watchSaveNonFuelProductAdjust() {
-
+  yield takeLatest(salesActions.NON_FUEL_PRODUCT_ADJUST.REQUEST, persistNonFuelProductAdjust)
 }
 
-// ============================== Save Shift Summary Action ================================= //
+// ============================== Save Shift Summary Action ==================================== //
 
-export function* persistShiftSummary({
+function* persistShiftSummary({
   params: {
     items,
     recordNum,
@@ -620,7 +617,6 @@ export function* persistShiftSummary({
   // Now reload shift data
   endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
   yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
-
   yield put(alertActions.alertSend({ message: 'Shift summary successfully saved', type: 'success', dismissAfter: 2000 }))
 }
 
@@ -628,9 +624,62 @@ function* watchSaveShiftSummary() {
   yield takeLatest(salesActions.SHIFT_SUMMARY.REQUEST, persistShiftSummary)
 }
 
+// ============================== Patch Shift Summary Action =================================== //
+
+function* patchShiftSummary({
+  params: {
+    adjustment,
+    recordNum,
+    shift,
+    stationID,
+  },
+}) {
+  if (!adjustment) {
+    const msg = 'Missing adjustment parameter in patchShiftSummary'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!stationID) {
+    const msg = 'Missing stationID parameter in patchShiftSummary'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!shift) {
+    const msg = 'Missing shift parameter in patchShiftSummary'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!recordNum) {
+    const msg = 'Missing recordNum parameter in patchShiftSummary'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+
+  const shiftID = shift.id
+  const { patchShiftSummaryEntity, shiftEntity } = salesActions
+  let endpoint = `sale-summary/${shiftID}`
+  const apiParams = {
+    method: 'PATCH',
+    body: {
+      adjustment,
+      shift,
+    },
+  }
+  yield call(callApi, patchShiftSummaryEntity, endpoint, Schemas.SHIFT, apiParams)
+
+  // Now reload shift data
+  endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
+  yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+  yield put(alertActions.alertSend({ message: 'Shift summary successfully saved', type: 'success', dismissAfter: 2000 }))
+}
+
+function* watchPatchShiftSummary() {
+  yield takeLatest(salesActions.SHIFT_SUMMARY_PATCH.REQUEST, patchShiftSummary)
+}
+
 // ============================== Save Attendant Action ======================================== //
 
-export function* persistAttendant({
+function* persistAttendant({
   params: {
     attendant,
     recordNum,
@@ -680,18 +729,81 @@ function* watchSaveAttendant() {
   yield takeLatest(salesActions.ATTENDANT_SAVE.REQUEST, persistAttendant)
 }
 
+// ============================== Save OtherFuel Action ======================================= //
+
+function* persistOtherFuel({
+  params: {
+    dollar,
+    litre,
+    recordNum,
+    shiftID,
+    stationID,
+  },
+}) {
+  if (!dollar) {
+    const msg = 'Missing dollar parameter in persistOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!litre) {
+    const msg = 'Missing litre parameter in persistOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!stationID) {
+    const msg = 'Missing stationID parameter in persistOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!shiftID) {
+    const msg = 'Missing shiftID parameter in persistOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!recordNum) {
+    const msg = 'Missing recordNum parameter in persistOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+
+  const { persistOtherFuelEntity, shiftEntity } = salesActions
+  let endpoint = `sale-otherfuel/${shiftID}`
+  const apiParams = {
+    method: 'PUT',
+    body: {
+      values: {
+        fuel: 'propane',
+        otherDollar: dollar,
+        otherLitre: litre,
+      },
+    },
+  }
+  yield call(callApi, persistOtherFuelEntity, endpoint, Schemas.SHIFT, apiParams)
+
+  // Now reload shift data
+  endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
+  yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+  yield put(alertActions.alertSend({ message: 'Propane sales successfully saved', type: 'success', dismissAfter: 2000 }))
+}
+
+function* watchSaveOtherFuel() {
+  yield takeLatest(salesActions.OTHER_FUEL_SAVE.REQUEST, persistOtherFuel)
+}
+
 // ============================== Root Saga ==================================================== //
 
 export default function* rootSaga() {
   yield all([
     watchFetchDay(),
     watchFuelSalesAdjustment(),
+    watchPatchShiftSummary(),
     watchResetDispenser(),
     watchSaveAttendant(),
     watchSaveFuelSales(),
     watchSaveNonFuelMisc(),
     watchSaveNonFuelProductAdjust(),
     watchSaveNonFuelProducts(),
+    watchSaveOtherFuel(),
     watchSaveShiftSummary(),
     watchShiftAction(),
     watchShiftPatch(),

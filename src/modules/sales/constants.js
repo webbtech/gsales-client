@@ -1,22 +1,3 @@
-/* export const cashAndCardsFields = [
-  'creditCard.visa',
-  'creditCard.mc',
-  'creditCard.gales',
-  'creditCard.amex',
-  'creditCard.discover',
-  'cash.debit',
-  'cash.dieselDiscount',
-  'cash.lotteryPayout',
-  'cash.payout',
-  'cash.bills',
-  'cash.galesLoyaltyRedeem',
-  'cash.giftCertRedeem',
-  'cash.osAdjusted',
-  'cash.driveOffNSF',
-  'cash.writeOff',
-  'cash.other',
-] */
-
 export const cashAndCards = {
   'creditCard.visa': 'VISA',
   'creditCard.mc': 'Mastercard',

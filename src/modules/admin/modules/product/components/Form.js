@@ -4,11 +4,17 @@ import PropTypes from 'prop-types'
 import { Field, reduxForm } from 'redux-form'
 import { connect, useSelector, useDispatch } from 'react-redux'
 
-import AppBar from '@material-ui/core/AppBar'
-import Button from '@material-ui/core/Button'
-import DialogContent from '@material-ui/core/DialogContent'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import {
+  AppBar,
+  Button,
+  DialogContent,
+  Fab,
+  Grid,
+  Toolbar,
+  Typography,
+} from '@material-ui/core'
+
+import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/core/styles'
 
 import {
@@ -22,12 +28,15 @@ import { persistProduct } from '../actions'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles(theme => ({
   root: {
-    // width: 900,
+    marginBottom: theme.spacing(2),
   },
   form: {
-    // width: 800,
+    marginTop: theme.spacing(1),
+  },
+  submitButton: {
+    width: '100%',
   },
   textField: {
     width: 225,
@@ -106,115 +115,107 @@ let Form = (props) => {
           <Typography variant="h6" color="inherit" className={classes.title}>
             {formLabel}
           </Typography>
-          <Button color="inherit" onClick={onCloseHandler}>Close</Button>
+          <Fab onClick={onCloseHandler} size="small">
+            <CloseIcon />
+          </Fab>
         </Toolbar>
       </AppBar>
+
       <DialogContent>
         <form
           onSubmit={handleSubmit(onHandleSubmit)}
           className={classes.form}
         >
-          <div className="form-tbl">
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="Name"
-                  name="name"
-                />
-              </div>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <Field
+                className={classes.textField}
+                component={RenderTextField}
+                label="Name"
+                name="name"
+              />
+            </Grid>
 
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="Cost"
-                  name="cost"
-                />
-              </div>
+            <Grid item xs={6}>
+              <Field
+                className={classes.textField}
+                component={RenderTextField}
+                label="Cost"
+                name="cost"
+              />
+            </Grid>
 
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="Sort Order"
-                  name="sortOrder"
-                  type="number"
-                />
-              </div>
-            </div>
+            <Grid item xs={6}>
+              <Field
+                className={classes.textField}
+                component={RenderTextField}
+                label="Sort Order"
+                name="sortOrder"
+                type="number"
+              />
+            </Grid>
 
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderSelectField}
-                  label="Category"
-                  name="category"
-                >
-                  {categoryChildren}
-                </Field>
-              </div>
+            <Grid item xs={6}>
+              <Field
+                className={classes.textField}
+                component={RenderSelectField}
+                label="Category"
+                name="category"
+              >
+                {categoryChildren}
+              </Field>
+            </Grid>
 
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderSelectField}
-                  label="Type"
-                  name="type"
-                >
-                  {typeChildren}
-                </Field>
-              </div>
+            <Grid item xs={6}>
+              <Field
+                className={classes.textField}
+                component={RenderSelectField}
+                label="Type"
+                name="type"
+              >
+                {typeChildren}
+              </Field>
+            </Grid>
 
-              <div className="form-tbl-cell" />
-            </div>
+            <Grid item xs={6}>
+              <Field
+                component={RenderCheckboxWithLabel}
+                label="Oil Product"
+                name="oilProduct"
+                color="primary"
+              />
+            </Grid>
 
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  component={RenderCheckboxWithLabel}
-                  label="Oil Product"
-                  name="oilProduct"
-                  color="primary"
-                />
-              </div>
+            <Grid item xs={6}>
+              <Field
+                component={RenderCheckboxWithLabel}
+                label="Commission Eligible"
+                name="commissionEligible"
+                color="primary"
+              />
+            </Grid>
 
-              <div className="form-tbl-cell">
-                <Field
-                  component={RenderCheckboxWithLabel}
-                  label="Commission Eligible"
-                  name="commissionEligible"
-                  color="primary"
-                />
-              </div>
+            <Grid item xs={6}>
+              <Field
+                component={RenderCheckboxWithLabel}
+                label="Taxable"
+                name="taxable"
+                color="primary"
+              />
+            </Grid>
 
-              <div className="form-tbl-cell">
-                <Field
-                  component={RenderCheckboxWithLabel}
-                  label="Taxable"
-                  name="taxable"
-                  color="primary"
-                />
-              </div>
-            </div>
-
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell" />
-              <div className="form-tbl-cell">
-                <Button
-                  disabled={pristine || submitting}
-                  color="primary"
-                  type="submit"
-                  variant="contained"
-                >
-                  Save Product
-                </Button>
-              </div>
-              <div className="form-tbl-cell" />
-            </div>
-          </div>
+            <Grid item xs={6}>
+              <Button
+                disabled={pristine || submitting}
+                color="primary"
+                className={classes.submitButton}
+                type="submit"
+                variant="contained"
+              >
+                Save Product
+              </Button>
+            </Grid>
+          </Grid>
         </form>
       </DialogContent>
     </div>

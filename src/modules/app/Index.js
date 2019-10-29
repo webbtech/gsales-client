@@ -29,6 +29,8 @@ const SalesWithProvider = () => (
   <ParamProvider><Sales /></ParamProvider>
 )
 
+// console.log('theme:', mainTheme)
+
 function Index({ authState }) {
   // console.log('authState:', authState)
   if (authState !== 'signedIn') return null

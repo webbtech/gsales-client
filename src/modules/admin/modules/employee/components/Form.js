@@ -4,11 +4,17 @@ import PropTypes from 'prop-types'
 import { Field, reduxForm } from 'redux-form'
 import { connect, useSelector, useDispatch } from 'react-redux'
 
-import AppBar from '@material-ui/core/AppBar'
-import Button from '@material-ui/core/Button'
-import DialogContent from '@material-ui/core/DialogContent'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import {
+  AppBar,
+  Button,
+  DialogContent,
+  Fab,
+  Grid,
+  Toolbar,
+  Typography,
+} from '@material-ui/core'
+
+import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/core/styles'
 
 import {
@@ -23,13 +29,18 @@ import { capitalize } from '../../../../../utils/fmt'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles(theme => ({
   root: {
   },
   form: {
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
+  },
+  submitButton: {
+    width: '100%',
   },
   textField: {
-    width: 225,
+    width: '100%',
   },
   title: {
     flexGrow: 1,
@@ -114,90 +125,87 @@ let Form = (props) => {
           <Typography variant="h6" color="inherit" className={classes.title}>
             {formLabel}
           </Typography>
-          <Button color="inherit" onClick={onCloseHandler}>Close</Button>
+          <Fab onClick={onCloseHandler} size="small">
+            <CloseIcon />
+          </Fab>
         </Toolbar>
       </AppBar>
+
       <DialogContent>
         <form
           onSubmit={handleSubmit(onHandleSubmit)}
           className={classes.form}
         >
-          <div className="form-tbl">
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  autoFocus
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="First Name"
-                  name="nameFirst"
-                  normalize={upper}
-                />
-              </div>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <Field
+                autoFocus
+                className={classes.textField}
+                component={RenderTextField}
+                label="First Name"
+                name="nameFirst"
+                normalize={upper}
+              />
+            </Grid>
 
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="Last Name"
-                  name="nameLast"
-                  normalize={upper}
-                />
-              </div>
-            </div>
+            <Grid item xs={6}>
+              <Field
+                className={classes.textField}
+                component={RenderTextField}
+                label="Last Name"
+                name="nameLast"
+                normalize={upper}
+              />
+            </Grid>
 
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderSelectField}
-                  label="Primary Station"
-                  name="primaryStationID"
-                >
-                  {stationChildren}
-                </Field>
-              </div>
+            <Grid item xs={6}>
+              <Field
+                className={classes.textField}
+                component={RenderSelectField}
+                helperText="Employee primary station"
+                label="Primary Station"
+                name="primaryStationID"
+                placeholder="Select Station"
+              >
+                {stationChildren}
+              </Field>
+            </Grid>
 
-              <div className="form-tbl-cell">
-                <Field
-                  component={RenderCheckboxWithLabel}
-                  label="Active"
-                  name="active"
-                  color="primary"
-                  checked={state.active}
-                  onChange={handleChange('active')}
-                  value="active"
-                />
-              </div>
-            </div>
+            <Grid item xs={6}>
+              <Field
+                component={RenderCheckboxWithLabel}
+                label="Active"
+                name="active"
+                color="primary"
+                checked={state.active}
+                onChange={handleChange('active')}
+                value="active"
+              />
+            </Grid>
 
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="Notes"
-                  multiline
-                  name="notes"
-                  rowsMax="2"
-                />
-              </div>
-            </div>
+            <Grid item xs={12}>
+              <Field
+                className={classes.textField}
+                component={RenderTextField}
+                label="Notes"
+                multiline
+                name="notes"
+                rowsMax="2"
+              />
+            </Grid>
 
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell" />
-              <div className="form-tbl-cell">
-                <Button
-                  disabled={pristine || submitting}
-                  color="primary"
-                  type="submit"
-                  variant="contained"
-                >
-                  Save Employee
-                </Button>
-              </div>
-            </div>
-          </div>
+            <Grid item xs={6}>
+              <Button
+                disabled={pristine || submitting}
+                color="primary"
+                className={classes.submitButton}
+                type="submit"
+                variant="contained"
+              >
+                Save Employee
+              </Button>
+            </Grid>
+          </Grid>
         </form>
       </DialogContent>
     </div>
@@ -205,7 +213,7 @@ let Form = (props) => {
 }
 Form.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  initialValues: PropTypes.func,
+  initialValues: PropTypes.instanceOf(Object),
   onCloseHandler: PropTypes.func.isRequired,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
@@ -222,7 +230,9 @@ Form = reduxForm({
 
 export default connect(
   state => ({
-    initialValues: state.employee.items[state.employee.item.employeeID],
+    initialValues: state.employee.item.employeeID
+      ? state.employee.items[state.employee.item.employeeID]
+      : {},
   }),
   {}
 )(Form)

@@ -56,7 +56,7 @@ export default function List() {
         </TableHead>
         <TableBody>
           {fuelSales.map(fs => (
-            <TableRow key={fs.id}>
+            <TableRow key={fs.id} hover>
               <TableCell>{fs.dispenserID.number}</TableCell>
               <TableCell>{fuelDefinitions[fs.dispenserID.gradeID].label}</TableCell>
               <TableCell align="right">{fmtNumber(fs.dollars.open)}</TableCell>

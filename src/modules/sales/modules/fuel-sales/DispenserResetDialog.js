@@ -3,9 +3,11 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import {
+  AppBar,
   Button,
   Dialog,
-  DialogTitle,
+  DialogContent,
+  Fab,
   FormControl,
   FormHelperText,
   Grid,
@@ -14,6 +16,8 @@ import {
   TableRow,
   TableCell,
   TextField,
+  Toolbar,
+  Typography,
 } from '@material-ui/core'
 
 import CloseIcon from '@material-ui/icons/Close'
@@ -27,9 +31,10 @@ const useStyles = makeStyles(theme => ({
   button: {
     width: '100%',
   },
-  container: {
+  content: {
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
     width: 500,
-    margin: theme.spacing(2),
   },
   descriptionField: {
     width: '100%',
@@ -48,6 +53,9 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: 160,
+  },
+  title: {
+    flexGrow: 1,
   },
 }))
 
@@ -134,9 +142,18 @@ const DispenserResetDialog = (props) => {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <div className={classes.container}>
-        <DialogTitle id="simple-dialog-title">Reset Dispenser</DialogTitle>
+      <AppBar position="static" color="secondary">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" className={classes.title}>
+            Reset Dispenser
+          </Typography>
+          <Fab onClick={handleClose} size="small">
+            <CloseIcon />
+          </Fab>
+        </Toolbar>
+      </AppBar>
 
+      <DialogContent className={classes.content}>
         <Table size="small" className={classes.table}>
           <TableBody>
             <TableRow>
@@ -240,7 +257,7 @@ const DispenserResetDialog = (props) => {
             </Button>
           </Grid>
         </Grid>
-      </div>
+      </DialogContent>
     </Dialog>
   )
 }

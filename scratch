@@ -1,4 +1,18 @@
-dlr: 171780.40
-ltr: 135108.970
+{/* <Table size="small"> */}
+          {/* <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Cost</TableCell>
+              <TableCell>Tax</TableCell>
+              <TableCell>Commission</TableCell>
+              <TableCell>Oil</TableCell>
+              <TableCell>Sort</TableCell>
+            </TableRow>
+          </TableHead> */}
 
-Cash & Cards SubTotal
+          {/* <TableBody>
+            <List products={product.items} handleClickOpen={handleClickOpen} />
+          </TableBody> */}
+        {/* <Table> */}

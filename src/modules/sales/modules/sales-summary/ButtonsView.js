@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Button from '@material-ui/core/Button'
+
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import LockIcon from '@material-ui/icons/Lock'
 import SearchIcon from '@material-ui/icons/Search'
-// import LockOpenIcon from '@material-ui/icons/LockOpen'
+
 import { makeStyles } from '@material-ui/core/styles'
 
 import ShiftCloseDialog from './ShiftCloseDialog'
+import ShiftReportDialog from './ShiftReportDialog'
 import { patchShift } from '../../actions'
 
 const R = require('ramda')
@@ -33,6 +35,7 @@ const useStyles = makeStyles(theme => ({
 export default function ButtonsView() {
   const classes = useStyles()
   const [openDelete, setOpenDialog] = useState(false)
+  const [openReport, setOpenReport] = useState(false)
   const sales = useSelector(state => state.sales)
   const dispatch = useDispatch()
 
@@ -62,14 +65,19 @@ export default function ButtonsView() {
     setOpenDialog(false)
   }
 
+  const handleOpenReportDialog = () => {
+    setOpenReport(true)
+  }
+
+  const handleCloseReportDialog = () => {
+    setOpenReport(false)
+  }
+
   return (
     <div className={classes.root}>
       <Button
-        // disabled={pristine || submitting}
-        // disabled
         className={classes.actionButton}
-        // color="secondary"
-        // type="submit"
+        onClick={handleOpenReportDialog}
         variant="contained"
       >
         Shift History
@@ -113,6 +121,11 @@ export default function ButtonsView() {
         handler={handleCloseShift}
         onClose={handleCloseDialog}
         open={openDelete}
+      />
+      <ShiftReportDialog
+        onClose={handleCloseReportDialog}
+        open={openReport}
+        shift={shift}
       />
     </div>
   )

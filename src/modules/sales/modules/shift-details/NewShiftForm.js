@@ -32,7 +32,7 @@ import ClearIcon from '@material-ui/icons/Clear'
 
 import { ParamContext } from '../../components/ParamContext'
 import { createShift } from '../../actions'
-import { fetchActiveEmployees } from '../../../admin/modules/employee/actions'
+import { fetchEmployees } from '../../../admin/modules/employee/actions'
 
 const useStyles = makeStyles(theme => ({
   closeButton: {
@@ -151,7 +151,7 @@ const Form = ({ history, onCloseHandler }) => {
   })
 
   useEffect(() => {
-    dispatch(fetchActiveEmployees())
+    dispatch(fetchEmployees())
   }, [dispatch])
 
   if (!employee.isFetching && employee.items) {

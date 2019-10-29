@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles'
 
 import Form from './Form'
+import PropaneForm from './PropaneForm'
 import List from './List'
 import Summary from './Summary'
 
@@ -25,6 +26,13 @@ export default function Index() {
     isEditMode = !sales.shift.sales.result.shift.shift.flag
   }
 
+  let havePropane = false
+  if (R.hasPath(['shift', 'sales', 'result', 'shift'], sales)) {
+    const { shift } = sales.shift.sales.result
+    havePropane = !!shift.fuelCosts.fuel6
+  }
+
+
   return (
     <Grid container className={classes.root} spacing={2}>
       <Grid item>
@@ -33,6 +41,7 @@ export default function Index() {
       {isEditMode ? (
         <Grid item xs={12}>
           <Form />
+          {havePropane && <PropaneForm />}
         </Grid>
       ) : (
         <Grid item xs={11}>

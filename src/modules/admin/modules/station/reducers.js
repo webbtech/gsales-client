@@ -1,3 +1,6 @@
+/* eslint-disable  no-param-reassign, arrow-parens, default-case */
+import produce from 'immer'
+
 import * as ActionTypes from './actions'
 
 const initialState = {
@@ -7,7 +10,8 @@ const initialState = {
   item: {},
 }
 
-export default function stations(state = initialState, action) {
+// TODO: complete conversion to immer
+export const station = (state = initialState, action) => produce(state, draft => {
   switch (action.type) {
     case ActionTypes.STATIONS.REQUEST:
       return { ...state, isFetching: true }
@@ -40,39 +44,28 @@ export default function stations(state = initialState, action) {
     case ActionTypes.STATION_PERSIST.SUCCESS:
       return { ...state, isFetching: false, response: action.response }
 
-      // case defs.STATION_REQUEST:
-      // return Object.assign({}, state, { isFetching: true })
-
-    /* case defs.STATION_SET_VIEW:
-      return Object.assign({}, state, {
-        isFetching: false,
-        view: action.view,
-        id: action.id,
-      })
-    case defs.STATION_LIST_SUCCESS:
-      return {
-        isFetching: false,
-        items: action.response.entities.items,
-        receivedAt: Date.now(),
-        error: false,
-        view: action.view,
-      }
-    case defs.STATION_SUCCESS:
-      return {
-        isFetching: false,
-        item: Object.assign({}, state.item, action.response.entities.items[action.response.result]),
-        receivedAt: Date.now(),
-        error: false,
-        id: action.response.result,
-      }
-    case defs.STATION_FAILURE:
-      return {
-        isFetching: false,
-        items: [],
-        receivedAt: Date.now(),
-        error: action.error,
-      } */
     default:
       return state
   }
-}
+})
+
+export const dispensers = (
+  state = { isFetching: false, error: false, items: {} },
+  action,
+) => produce(state, draft => {
+  switch (action.type) {
+    case ActionTypes.STATION_DISPENSERS.REQUEST:
+      draft.isFetching = true
+      break
+
+    case ActionTypes.STATION_DISPENSERS.SUCCESS:
+      draft.isFetching = false
+      draft.items = action.response.entities.items
+      break
+
+    case ActionTypes.STATION_DISPENSERS.FAILURE:
+      draft.isFetching = false
+      draft.error = action.error
+      break
+  }
+})

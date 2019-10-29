@@ -50,9 +50,10 @@ export default function Adjustments() {
             <TableCell align="center" size="small">Prev Close</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           {jRecords.map(jr => (
-            <TableRow key={jr.id}>
+            <TableRow key={jr.id} hover>
               <TableCell size="small">{jr.values.adjustAttend.productName}</TableCell>
               <TableCell align="center" size="small">{jr.values.type}</TableCell>
               <TableCell align="center" size="small">{jr.values.adjust}</TableCell>

@@ -75,7 +75,7 @@ export default function SalesView() {
               <TableCell>Other Fuel</TableCell>
               <TableCell align="right">{fmtNumber(shift.salesSummary.otherFuelDollar)}</TableCell>
               {editOK === true && (
-                <TableCell align="center" className={classes.iconCell}>
+                <TableCell className={classes.iconCell} padding="none">
                   <IconButton className={classes.iconButton} aria-label="edit" disabled={!editOK}>
                     <Tooltip title="Adjust Other Fuel" placement="right">
                       <UpdateIcon />

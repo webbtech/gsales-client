@@ -7,6 +7,11 @@
     "fuelsales",
     "haspopup",
     "labelledby",
-    "mastercard"
+    "mastercard",
+    "otherfuel"
+  ],
+  "cSpell.ignoreWords": [
+    "esnext",
+    "interop"
   ]
 }

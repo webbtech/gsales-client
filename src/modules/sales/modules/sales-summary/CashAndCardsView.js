@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
 
@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography'
 import UpdateIcon from '@material-ui/icons/Update'
 import { makeStyles } from '@material-ui/core/styles'
 
+import ShiftAdjustDialog from './ShiftAdjustDialog'
 import FormatNumber from '../../../shared/FormatNumber'
 import { fmtNumber } from '../../../../utils/fmt'
 
@@ -21,9 +22,6 @@ import { splitFields as splitCashAndCardFields } from '../../constants'
 const useStyles = makeStyles(theme => ({
   iconButton: {
     padding: 0,
-  },
-  iconCell: {
-    width: theme.spacing(4),
   },
   root: {
     width: '100%',
@@ -37,14 +35,18 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function CashCardRow({ label, value }) {
+function CashCardRow({ label, openHandler, value }) {
   const classes = useStyles()
+
   return (
     <TableRow>
       <TableCell>{label}</TableCell>
       <TableCell align="right"><FormatNumber value={value} /></TableCell>
-      <TableCell align="center" className={classes.iconCell}>
-        <IconButton className={classes.iconButton} aria-label="edit">
+      <TableCell align="center" padding="none">
+        <IconButton
+          className={classes.iconButton}
+          onClick={() => openHandler()}
+        >
           <Tooltip title={`Adjust ${label}`} placement="right">
             <UpdateIcon />
           </Tooltip>
@@ -55,12 +57,24 @@ function CashCardRow({ label, value }) {
 }
 CashCardRow.propTypes = {
   label: PropTypes.string.isRequired,
+  openHandler: PropTypes.func.isRequired,
   value: PropTypes.number.isRequired,
 }
 
 export default function CashAndCardsView() {
   const classes = useStyles()
   const sales = useSelector(state => state.sales)
+  const [openAdjust, setOpenAdjust] = useState(false)
+  const [field, setField] = useState(null)
+
+  const handleOpenAdjust = (f) => {
+    setField(f)
+    setOpenAdjust(true)
+  }
+
+  const handleCloseAdjust = () => {
+    setOpenAdjust(false)
+  }
 
   const shift = sales.dayInfo.activeShift
   if (!shift) return null
@@ -79,31 +93,48 @@ export default function CashAndCardsView() {
       <Typography variant="h6" className={classes.title}>
         Cash & Cards
       </Typography>
+
       <Table className={classes.table} size="small">
         <TableBody>
-
           {fieldSet1.map(f => (
-            <CashCardRow key={f.field} label={f.label} value={setValue(f, shift)} />
+            <CashCardRow
+              key={f.field}
+              label={f.label}
+              openHandler={() => handleOpenAdjust(f.field)}
+              value={setValue(f, shift)}
+            />
           ))}
 
           <TableRow>
             <TableCell className={classes.totalsCell}>Subtotal</TableCell>
             <TableCell align="right" className={classes.totalsCell}>{fmtNumber(cashSubtotal)}</TableCell>
-            <TableCell align="center" className={classes.iconCell} />
+            <TableCell align="center" padding="none" />
           </TableRow>
 
           {fieldSet2.map(f => (
-            <CashCardRow key={f.field} label={f.label} value={setValue(f, shift)} />
+            <CashCardRow
+              key={f.field}
+              label={f.label}
+              openHandler={() => handleOpenAdjust(f.field)}
+              value={setValue(f, shift)}
+            />
           ))}
 
           <TableRow>
             <TableCell className={classes.totalsCell}>Total</TableCell>
             <TableCell align="right" className={classes.totalsCell}>{fmtNumber(salesSummary.cashCCTotal)}</TableCell>
-            <TableCell align="center" className={classes.iconCell} />
+            <TableCell align="center" padding="none" />
           </TableRow>
-
         </TableBody>
       </Table>
+
+      <ShiftAdjustDialog
+        field={field}
+        onClose={handleCloseAdjust}
+        open={openAdjust}
+        shift={shift}
+        type="cashCards"
+      />
     </Paper>
   )
 }
