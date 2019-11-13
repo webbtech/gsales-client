@@ -14,7 +14,10 @@ import mainTheme from '../../themes/main'
 import Menu from './Menu'
 import Admin from '../admin/Index'
 import Reports from '../reports/components/Index'
+import Toaster from '../shared/Toaster'
 import Sales from '../sales/components/Index'
+import { ParamProvider } from '../sales/components/ParamContext'
+import { ToasterProvider } from '../shared/ToasterContext'
 
 import ForgotPassword from '../auth/components/ForgotPassword'
 import RequireNewPassword from '../auth/components/RequireNewPassword'
@@ -24,20 +27,29 @@ import awsExports from '../auth/awsExports'
 
 Amplify.configure(awsExports)
 
+const SalesWithProvider = () => (
+  <ParamProvider><Sales /></ParamProvider>
+)
+
+// console.log('theme:', mainTheme)
+
 function Index({ authState }) {
   // console.log('authState:', authState)
   if (authState !== 'signedIn') return null
   return (
     <React.Fragment>
-      <Alerts />
-      <Router>
-        <Switch>
-          <Route exact path="/" component={Menu} />
-          <Route path="/admin" component={Admin} />
-          <Route path="/reports" component={Reports} />
-          <Route path="/sales" component={Sales} />
-        </Switch>
-      </Router>
+      <ToasterProvider>
+        <Alerts />
+        <Router>
+          <Switch>
+            <Route exact path="/" component={Menu} />
+            <Route path="/admin" component={Admin} />
+            <Route path="/reports" component={Reports} />
+            <Route path="/sales" component={SalesWithProvider} />
+          </Switch>
+        </Router>
+        <Toaster />
+      </ToasterProvider>
     </React.Fragment>
   )
 }
@@ -58,7 +70,7 @@ export default function AppWithAuth() {
       } catch (e) {
         console.error(e) // eslint-disable-line
       }
-      // console.log('user:', user)
+      // console.log('user:', user.signInUserSession.accessToken)
       if (cancel) return
       if (user) {
         // console.log('user', user.signInUserSession.accessToken.jwtToken) // eslint-disable-line
@@ -88,42 +100,3 @@ export default function AppWithAuth() {
     </div>
   )
 }
-
-/* export default class AppWithAuth extends React.Component {
-  state = {
-    user: '', // eslint-disable-line
-  }
-
-  async componentWillMount() {
-    const user = await Auth.currentAuthenticatedUser()
-    if (user) {
-      // this.setState({user})
-      // console.log('fetching user from Auth', user) // eslint-disable-line
-      const storage = window.localStorage
-      // console.log('user in componentDidMount: ', user.signInUserSession.accessToken.jwtToken)
-      storage.setItem('userToken', user.signInUserSession.accessToken.jwtToken)
-    }
-  }
-
-  handleAuthStateChange(state) { // eslint-disable-line
-    // console.log('state in handleAuthStateChange: ', state) // eslint-disable-line
-    // if (state === 'signedIn') {
-    // Do something when the user has signed-in
-    // }
-  }
-
-  render() {
-    // console.log('user in render: ', this.state)
-
-    return (
-      <div>
-        <Authenticator
-          // hideDefault
-          onStateChange={this.handleAuthStateChange}
-        >
-          <Index />
-        </Authenticator>
-      </div>
-    )
-  }
-} */

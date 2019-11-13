@@ -1,20 +1,25 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 import { Field, reduxForm } from 'redux-form'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import AppBar from '@material-ui/core/AppBar'
-import Button from '@material-ui/core/Button'
+import {
+  AppBar,
+  Button,
+  Grid,
+  Toolbar,
+  Typography,
+} from '@material-ui/core'
+
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/ArrowBackIos'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import { withStyles } from '@material-ui/styles'
 
-import { fetchStation, persistStation } from '../actions'
+import { makeStyles } from '@material-ui/core/styles'
+
+import Loader from '../../../../shared/Loader'
+import { fetchMonthlyStation, persistStation } from '../actions'
 
 import {
   RenderCheckboxWithLabel,
@@ -33,175 +38,140 @@ const fields = [
 
 const required = value => (value ? undefined : 'Required')
 
-const styles = {
+const useStyles = makeStyles(theme => ({
   root: {
-    width: '100%',
+    flexGrow: 1,
   },
   form: {
     width: 600,
+    padding: theme.spacing(2),
   },
   textField: {
-    width: 275,
+    width: '100%',
   },
-}
+}))
 
-class Form extends Component {
-  constructor(props) {
-    super(props)
-    this.onHandleSubmit = this.onHandleSubmit.bind(this)
-  }
+let Form = (props) => {
+  const {
+    handleSubmit,
+    match,
+    pristine,
+    submitting,
+  } = props
+  const classes = useStyles()
+  const dispatch = useDispatch()
+  const station = useSelector(state => state.station.item)
 
-  componentDidMount() {
-    const {
-      match,
-      actions,
-    } = this.props
-
+  useEffect(() => {
     if (match.params && match.params.stationID) {
-      this.stationID = match.params.stationID
-      actions.fetchStation(this.stationID)
+      const { stationID } = match.params
+      dispatch(fetchMonthlyStation(stationID))
     }
+  }, [dispatch, match.params])
+
+  const onHandleSubmit = (values) => {
+    dispatch(persistStation({ stationID: values.id, values: R.pick(fields, values) }))
   }
 
-  onHandleSubmit(values) {
-    const { actions } = this.props
-    actions.persistStation({ stationID: values.id, values: R.pick(fields, values) })
-  }
+  if (station.isFetching) return <Loader />
 
-  render() {
-    const {
-      classes,
-      handleSubmit,
-      pristine,
-      station,
-      submitting,
-    } = this.props
+  return (
+    <div className={classes.root}>
+      <AppBar position="static" color="secondary">
+        <Toolbar>
+          <IconButton edge="start" component={Link} to="/admin/stations" color="inherit" aria-label="menu">
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" color="inherit">
+            Station Details Form
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
-    if (station.isFetching) return <div>Loading...</div>
+      <form
+        onSubmit={handleSubmit(onHandleSubmit)}
+        className={classes.form}
+      >
+        <Grid container spacing={3}>
+          <Grid item xs={6}>
+            <Field
+              className={classes.textField}
+              component={RenderTextField}
+              label="Station Name"
+              name="name"
+              validate={required}
+            />
+          </Grid>
 
-    return (
-      <div className={classes.root}>
-        <AppBar position="static" color="secondary">
-          <Toolbar>
-            <IconButton edge="start" component={Link} to="/admin/stations" color="inherit" aria-label="menu">
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" color="inherit">
-              Station Details Form
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <form
-          onSubmit={handleSubmit(this.onHandleSubmit)}
-          className={classes.form}
-        >
-          <div className="form-tbl">
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="Station Name"
-                  name="name"
-                  validate={required}
-                />
-              </div>
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="Street"
-                  name="street"
-                  validate={required}
-                />
-              </div>
-            </div>
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="City"
-                  name="city"
-                  validate={required}
-                />
-              </div>
-              <div className="form-tbl-cell">
-                <Field
-                  className={classes.textField}
-                  component={RenderTextField}
-                  label="Phone"
-                  name="phone"
-                  validate={required}
-                />
-              </div>
-            </div>
+          <Grid item xs={6}>
+            <Field
+              className={classes.textField}
+              component={RenderTextField}
+              label="Street"
+              name="street"
+              validate={required}
+            />
+          </Grid>
 
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell">
-                <Field
-                  component={RenderCheckboxWithLabel}
-                  label="Is Bobs Store?"
-                  name="isBobs"
-                  color="primary"
-                />
-              </div>
-              <div className="form-tbl-cell" />
-            </div>
+          <Grid item xs={6}>
+            <Field
+              className={classes.textField}
+              component={RenderTextField}
+              label="City"
+              name="city"
+              validate={required}
+            />
+          </Grid>
 
-            <div className="form-tbl-row">
-              <div className="form-tbl-cell" />
-              <div className="form-tbl-cell">
-                <Button
-                  disabled={pristine || submitting}
-                  color="primary"
-                  type="submit"
-                  variant="contained"
-                >
-                  Update Station
-                </Button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    )
-  }
+          <Grid item xs={6}>
+            <Field
+              className={classes.textField}
+              component={RenderTextField}
+              label="Phone"
+              name="phone"
+              validate={required}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Field
+              component={RenderCheckboxWithLabel}
+              label="Is Bobs Store?"
+              name="isBobs"
+              color="primary"
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              disabled={pristine || submitting}
+              color="primary"
+              type="submit"
+              variant="contained"
+            >
+              Update Station
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    </div>
+  )
 }
 Form.propTypes = {
-  actions: PropTypes.instanceOf(Object).isRequired,
-  classes: PropTypes.instanceOf(Object).isRequired,
   handleSubmit: PropTypes.func.isRequired,
   match: PropTypes.instanceOf(Object).isRequired,
   pristine: PropTypes.bool.isRequired,
-  station: PropTypes.instanceOf(Object).isRequired,
   submitting: PropTypes.bool.isRequired,
 }
 
-function mapStateToProps(state) {
-  return {
-    alerts: state.alerts,
-    station: state.station,
-    initialValues: state.station.item,
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators({
-      fetchStation,
-      persistStation,
-    }, dispatch),
-  }
-}
-
-const ReduxForm = reduxForm({
+Form = reduxForm({
   form: 'station',
-  // validate,
   enableReinitialize: true,
 })(Form)
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(ReduxForm))
+  state => ({
+    initialValues: state.station.item,
+  }),
+  {}
+)(Form)

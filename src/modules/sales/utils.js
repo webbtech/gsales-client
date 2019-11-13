@@ -1,3 +1,5 @@
+import { cashAndCards } from './constants'
+
 export function setFuelCosts(fuelDefs, fCosts) {
   const ret = []
   Object.values(fuelDefs).forEach((fd) => {
@@ -26,4 +28,25 @@ export function setFuelSummaryTotals(fuelSummaries) {
     vals.dollar += fs.dollar
   })
   return vals
+}
+
+export const getMiscFieldLabel = (field) => {
+  switch (field) {
+    case 'otherNonFuel.giftCerts':
+    case 'otherNonFuelBobs.bobsGiftCerts':
+      return 'Gift Certificates'
+
+    case 'otherNonFuel.bobs':
+      return 'Non-Fuel'
+
+    case 'salesSummary.bobsFuelAdj':
+      return 'Fuel Misc. Adjustment'
+
+    default:
+      return ''
+  }
+}
+
+export const getCashCardsFieldLabel = (field) => {
+  return cashAndCards[field]
 }

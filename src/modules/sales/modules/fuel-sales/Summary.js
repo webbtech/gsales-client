@@ -1,40 +1,33 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import Paper from '@material-ui/core/Paper'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@material-ui/core'
 
-import { setFuelCosts, setFuelSummaries, setFuelSummaryTotals } from '../../utils'
+import FormatNumber from '../../../shared/FormatNumber'
+import SectionTitle from '../../../shared/SectionTitle'
 import { fmtNumber } from '../../../../utils/fmt'
+import { setFuelCosts, setFuelSummaries, setFuelSummaryTotals } from '../../utils'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
-  root: {
-    paddingBottom: theme.spacing(1),
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-  },
-}))
-
 export default function Summary() {
-  const classes = useStyles()
   const sales = useSelector(state => state.sales)
 
-  // console.log('sales:', sales)
   let shiftData
   if (R.hasPath(['shift', 'sales', 'result', 'shift'], sales)) {
     shiftData = sales.shift.sales.result.shift
   }
   if (!shiftData) return null
+  if (!R.hasPath(['salesSummary', 'fuel'], shiftData)) return null
+
+  const havePropane = !!shiftData.fuelCosts.fuel6
 
   const { fuelDefinitions } = sales.shift.sales.entities
 
@@ -43,56 +36,69 @@ export default function Summary() {
   const fuelSummaryTotals = setFuelSummaryTotals(fuelSummaries)
 
   return (
-    <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Summary
-      </Typography>
-      <Table className={classes.table} size="small">
+    <Paper square>
+      <SectionTitle title="Summary" />
+
+      <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell size="small" />
+            <TableCell />
             {fuelSummaries.map(fs => (
               <TableCell
                 align="center"
                 key={fs.id}
-                size="small"
               >
                 {fs.label}
               </TableCell>
             ))}
-            <TableCell align="center" size="small">Total</TableCell>
+            <TableCell align="center">Total</TableCell>
+            {havePropane && <TableCell align="center">Other Propane</TableCell>}
           </TableRow>
         </TableHead>
+
         <TableBody>
           <TableRow>
-            <TableCell size="small">Dollar</TableCell>
+            <TableCell>Dollar</TableCell>
             {fuelSummaries.map(fs => (
               <TableCell
                 align="right"
                 key={fs.id}
-                size="small"
               >
-                {fmtNumber(fs.dollar)}
+                <FormatNumber value={fs.dollar} />
               </TableCell>
             ))}
-            <TableCell align="right" size="small">
-              {fmtNumber(fuelSummaryTotals.dollar)}
+
+            <TableCell align="right">
+              <FormatNumber value={fuelSummaryTotals.dollar} />
             </TableCell>
+
+            {havePropane && (
+              <TableCell align="right">
+                <FormatNumber value={shiftData.salesSummary.otherFuelDollar} />
+              </TableCell>
+            )}
           </TableRow>
+
           <TableRow>
-            <TableCell size="small">Litre</TableCell>
+            <TableCell>Litre</TableCell>
             {fuelSummaries.map(fs => (
               <TableCell
                 align="right"
                 key={fs.id}
-                size="small"
               >
                 {fmtNumber(fs.litre, 3)}
               </TableCell>
             ))}
+
             <TableCell align="right" size="small">
-              {fmtNumber(fuelSummaryTotals.litre)}
+              {fmtNumber(fuelSummaryTotals.litre, 3)}
             </TableCell>
+
+            {havePropane && (
+              <TableCell align="right">
+                <FormatNumber value={shiftData.salesSummary.otherFuelLitre} decimal={3} />
+              </TableCell>
+            )}
           </TableRow>
         </TableBody>
       </Table>

@@ -8,6 +8,9 @@ const configSchema = new schema.Entity('config')
 const daySalesSchema = new schema.Entity('shifts', {
   idAttribute: 'id',
 })
+const dispensersSchema = new schema.Entity('items', {
+  idAttribute: 'id',
+})
 const employeeSchema = new schema.Entity('employee')
 const employeesSchema = new schema.Entity('items', {
   idAttribute: 'id',
@@ -37,13 +40,11 @@ const stationsSchema = new schema.Entity('items', {
 
 
 // const salesReportSchema = new schema.Entity('record')
-// const dispenser = new schema.Entity('dispenser')
 // const fuelSales = new schema.Entity('fuelSales')
 // const nonFuelSales = new schema.Entity('nonFuelSales')
 // const reportData = new schema.Entity('reportData')
 const newShift = {
   configSchema,
-  // dispensers: arrayOf(dispenser),
   shiftSchema,
   stationSchema,
 }
@@ -61,6 +62,7 @@ export const Schemas = {
   DAYSALES: daySalesSchema,
   DAYSALES_ARRAY: new schema.Array(daySalesSchema),
   DEFAULTS: new schema.Array(recordsSchema),
+  DISPENSERS: new schema.Array(dispensersSchema),
   EMPLOYEE: employeeSchema,
   EMPLOYEE_ARRAY: new schema.Array(employeesSchema),
   FUEL_SALE: fuelSaleSchema,
@@ -97,11 +99,11 @@ export default function api(endpoint, requestSchema, params = {}) {
   ps.method = method
 
   // get token from local storage
-  /* const token = localStorage.getItem('token')
+  const token = localStorage.getItem('userToken')
   if (!token) {
-    console.error('Missing token') // eslint-disable-line
+    console.error('Missing token in services.api') // eslint-disable-line
     return 'ERROR' // TODO: need to handle this better
-  } */
+  }
 
   // TODO: perhaps we need to join to existing default headers
   // that way we can just add and authorization header to default
@@ -111,6 +113,7 @@ export default function api(endpoint, requestSchema, params = {}) {
     ps.headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      Authorization: token,
       // Authorization: `Bearer ${token}`,
     }
   }

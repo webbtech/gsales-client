@@ -3,7 +3,7 @@ import * as ActionTypes from './actions'
 const initialState = {
   isFetching: false,
   error: false,
-  items: [],
+  items: null,
   item: {},
 }
 

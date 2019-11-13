@@ -2,7 +2,6 @@ import {
   all,
   put,
   call,
-  takeEvery,
   takeLatest,
 } from 'redux-saga/effects'
 
@@ -11,20 +10,42 @@ import { Schemas } from '../../../../services/api'
 import * as stationActions from './actions'
 import * as alertActions from '../../../alert/actions'
 
-export function* stationList() {
-  // const { config, station } = stationActions
+// ============================== Fetch Stations =============================================== //
+function* stationList() {
   const { stationsEntity } = stationActions
-  // yield call(callApi, config, 'config/1', Schemas.CONFIG)
   yield call(callApi, stationsEntity, 'stations?list=true', Schemas.STATION_ARRAY)
 }
 
-export function* station(args) {
-  const { stationEntity } = stationActions
+function* watchStationList() {
+  yield takeLatest(stationActions.STATIONS.REQUEST, stationList)
+}
 
+// ============================== Fetch Station ================================================ //
+
+function* station(args) {
+  const { stationEntity } = stationActions
   yield call(callApi, stationEntity, `station/${args.stationID}`, Schemas.STATION)
 }
 
-export function* stationPersist({ params: { stationID, values } }) {
+function* watchStationFetch() {
+  yield takeLatest(stationActions.STATION.REQUEST, station)
+}
+
+// ============================== Fetch Station Dispensers ===================================== //
+
+function* fetchStationDispensers({ stationID }) {
+  const { stationDispensersEntity } = stationActions
+  const endpoint = `dispensers?station=${stationID}`
+  yield call(callApi, stationDispensersEntity, endpoint, Schemas.DISPENSERS)
+}
+
+function* watchFetchStationDispensers() {
+  yield takeLatest(stationActions.STATION_DISPENSERS.REQUEST, fetchStationDispensers)
+}
+
+// ============================== Save Station ================================================= //
+
+function* stationPersist({ params: { stationID, values } }) {
   const { persistStationEntity } = stationActions
   const apiParams = {
     method: 'PUT',
@@ -36,20 +57,13 @@ export function* stationPersist({ params: { stationID, values } }) {
   yield put(alertActions.alertSend({ message: 'Station details successfully updated', type: 'success', dismissAfter: 2000 }))
 }
 
-export function* watchStationList() {
-  yield takeEvery(stationActions.STATIONS.REQUEST, stationList)
-}
-
-export function* watchStationFetch() {
-  yield takeEvery(stationActions.STATION.REQUEST, station)
-}
-
-export function* watchStationPersist() {
+function* watchStationPersist() {
   yield takeLatest(stationActions.STATION_PERSIST.REQUEST, stationPersist)
 }
 
 export default function* rootSaga() {
   yield all([
+    watchFetchStationDispensers(),
     watchStationList(),
     watchStationFetch(),
     watchStationPersist(),

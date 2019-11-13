@@ -2,33 +2,31 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 
-import Paper from '@material-ui/core/Paper'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SectionTitle from '../../../shared/SectionTitle'
 import { setFuelCosts } from '../../utils'
-import { updateShift } from '../../actions'
+import { patchShift } from '../../actions'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     flexGrow: 1,
   },
   table: {
     minWidth: 200,
   },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-  },
-}))
+})
 
 function CostCell({ fuelCost, shift }) {
   const editableTypes = [1, 4]
@@ -48,7 +46,7 @@ function CostCell({ fuelCost, shift }) {
         method: 'updateFuelCost',
       },
     }
-    dispatch(updateShift(params))
+    dispatch(patchShift(params))
   }
 
   if (!editableTypes.includes(fuelCost.id)) {
@@ -87,9 +85,8 @@ export default function FuelSummary() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Fuel Costs
-      </Typography>
+      <SectionTitle title="Fuel Costs" />
+
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>

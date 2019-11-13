@@ -1,9 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import Button from '@material-ui/core/Button'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
+import {
+  Button,
+  Paper,
+  Typography,
+} from '@material-ui/core'
+
 import { makeStyles } from '@material-ui/core/styles'
 
 import TitleBar from './TitleBar'
@@ -23,7 +26,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(0.75),
     marginTop: theme.spacing(0.75),
   },
-  title: {},
 }))
 
 export default function Menu() {

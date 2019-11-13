@@ -4,30 +4,31 @@ import PropTypes from 'prop-types'
 import { Field, reduxForm } from 'redux-form'
 import { connect, useSelector, useDispatch } from 'react-redux'
 
-import AppBar from '@material-ui/core/AppBar'
-import Button from '@material-ui/core/Button'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import {
+  AppBar,
+  Button,
+  Grid,
+  Toolbar,
+  Typography,
+} from '@material-ui/core'
+
 import { makeStyles } from '@material-ui/core/styles'
 
+import Loader from '../../../../shared/Loader'
 import { RenderTextField } from '../../../../shared/FormFields'
-
 import { fetchConfig, persistConfig } from '../actions'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles(theme => ({
   root: {
     width: 500,
   },
   form: {
-    marginLeft: theme.spacing.unit,
-  },
-  submitButton: {
-    marginTop: theme.spacing.unit * 2,
+    padding: theme.spacing(1),
   },
   textField: {
-    width: 225,
+    width: '100%',
   },
   title: {
     flexGrow: 1,
@@ -85,89 +86,79 @@ let Config = (props) => {
           </Typography>
         </Toolbar>
       </AppBar>
+
       <div className={classes.form}>
         {config.isFetching ? (
-          <div>Loading...</div>
+          <Loader />
         ) : (
           <form
             onSubmit={handleSubmit(onHandleSubmit)}
             className={classes.form}
           >
-            <div className="form-tbl">
-              <div className="form-tbl-row">
-                <div className="form-tbl-cell">
-                  <Field
-                    className={classes.textField}
-                    component={RenderTextField}
-                    label="Coloured Diesel Discount"
-                    name="colouredDieselDsc"
-                    type="number"
-                  />
-                </div>
-              </div>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+                <Field
+                  className={classes.textField}
+                  component={RenderTextField}
+                  label="Coloured Diesel Discount"
+                  name="colouredDieselDsc"
+                  type="number"
+                />
+              </Grid>
 
-              <div className="form-tbl-row">
-                <div className="form-tbl-cell">
-                  <Field
-                    className={classes.textField}
-                    component={RenderTextField}
-                    label="Commission (%)"
-                    name="commission"
-                    type="number"
-                  />
-                </div>
-              </div>
+              <Grid item xs={6}>
+                <Field
+                  className={classes.textField}
+                  component={RenderTextField}
+                  label="Commission (%)"
+                  name="commission"
+                  type="number"
+                />
+              </Grid>
 
-              <div className="form-tbl-row">
-                <div className="form-tbl-cell">
-                  <Field
-                    className={classes.textField}
-                    component={RenderTextField}
-                    label="Discrepancy Flag Value"
-                    name="discrepancyFlag"
-                    type="number"
-                  />
-                </div>
-              </div>
+              <Grid item xs={6}>
+                <Field
+                  className={classes.textField}
+                  component={RenderTextField}
+                  label="Discrepancy Flag Value"
+                  name="discrepancyFlag"
+                  type="number"
+                />
+              </Grid>
 
-              <div className="form-tbl-row">
-                <div className="form-tbl-cell">
-                  <Field
-                    className={classes.textField}
-                    component={RenderTextField}
-                    label="HST"
-                    name="hST"
-                    type="number"
-                  />
-                </div>
-              </div>
+              <Grid item xs={6}>
+                <Field
+                  className={classes.textField}
+                  component={RenderTextField}
+                  label="HST"
+                  name="hST"
+                  type="number"
+                />
+              </Grid>
 
-              <div className="form-tbl-row">
-                <div className="form-tbl-cell">
-                  <Field
-                    className={classes.textField}
-                    component={RenderTextField}
-                    label="Hi-Grade Premium"
-                    name="hiGradePremium"
-                    type="number"
-                  />
-                </div>
-              </div>
+              <Grid item xs={6}>
+                <Field
+                  className={classes.textField}
+                  component={RenderTextField}
+                  label="Hi-Grade Premium"
+                  name="hiGradePremium"
+                  type="number"
+                />
+              </Grid>
 
-              <div className="form-tbl-row">
-                <div className="form-tbl-cell">
-                  <Button
-                    className={classes.submitButton}
-                    disabled={pristine || submitting}
-                    color="primary"
-                    type="submit"
-                    variant="contained"
-                  >
-                    Save Configuration
-                  </Button>
-                </div>
-              </div>
-            </div>
+              <Grid item xs={6} />
+              <Grid item xs={6}>
+                <Button
+                  className={classes.submitButton}
+                  disabled={pristine || submitting}
+                  color="primary"
+                  type="submit"
+                  variant="contained"
+                >
+                  Save Configuration
+                </Button>
+              </Grid>
+            </Grid>
           </form>
         )}
       </div>

@@ -1,11 +1,12 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
-import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
+import { makeStyles } from '@material-ui/core/styles'
 
 import List from './List'
 import DetailsForm from './DetailsForm'
+import Dispensers from './Dispensers'
 import ProductList from './ProductList'
 import ProductListEdit from './ProductListEdit'
 
@@ -28,6 +29,7 @@ const Index = () => {
         <Switch>
           <Route exact path="/admin/stations" component={List} />
           <Route exact path="/admin/stations/details/:stationID" component={DetailsForm} />
+          <Route exact path="/admin/stations/dispensers/:stationID" component={Dispensers} />
           <Route exact path="/admin/stations/product-list/:stationID" component={ProductList} />
           <Route exact path="/admin/stations/product-list-edit/:stationID" component={ProductListEdit} />
         </Switch>

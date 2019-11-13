@@ -44,17 +44,46 @@ const daySaleRequest = (action, state) => produce(state, draft => {
   }
 })
 
+const shiftAction = (
+  action,
+  state = { isFetching: false, error: false },
+) => produce(state, draft => {
+  switch (action.type) {
+    case ActionTypes.SHIFT_ACTION.REQUEST:
+      draft.isFetching = true
+      break
+
+    case ActionTypes.SHIFT_ACTION.SUCCESS:
+      draft.isFetching = false
+      break
+
+    case ActionTypes.SHIFT_ACTION.FAILURE:
+      draft.isFetching = false
+      draft.error = action.error
+      break
+  }
+})
+
 const daySales = (state = initialState, action) => produce(state, draft => {
   switch (action.type) {
     case ActionTypes.SHIFT_SALES.REQUEST:
+      draft.isFetching = true
+      return
+
     case ActionTypes.SHIFT_SALES.FAILURE:
+      draft.isFetching = false
       return
 
     case ActionTypes.SHIFT_SALES.SUCCESS:
       draft.dayInfo.activeShift = action.response.result.shift
-      draft.shift.isFetching = false
+      draft.isFetching = false
       draft.shift.sales = action.response
       return
+
+    case ActionTypes.SHIFT_ACTION.REQUEST:
+    case ActionTypes.SHIFT_ACTION.FAILURE:
+    case ActionTypes.SHIFT_ACTION.SUCCESS:
+      return { ...state, shift: shiftAction(action) }
 
     case ActionTypes.SHIFT_PATCH.REQUEST:
       // TODO: test and optimize
@@ -80,6 +109,13 @@ const daySales = (state = initialState, action) => produce(state, draft => {
 
     case ActionTypes.CLEAR_ALL_SALES:
       return initialState
+
+    case ActionTypes.FUEL_SALE_SAVE.REQUEST:
+    case ActionTypes.FUEL_SALE_SAVE.FAILURE:
+      return
+
+    case ActionTypes.FUEL_SALE_SAVE.SUCCESS:
+      draft.shift.sales.entities.shift = action.response.entities.shift
   }
 })
 

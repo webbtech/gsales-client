@@ -3,81 +3,105 @@ import PropTypes from 'prop-types'
 
 import { useSelector, useDispatch } from 'react-redux'
 
-import AppBar from '@material-ui/core/AppBar'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import FormControl from '@material-ui/core/FormControl'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import Switch from '@material-ui/core/Switch'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import {
+  AppBar,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormHelperText,
+  Input,
+  InputLabel,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Typography,
+} from '@material-ui/core'
+
 import { makeStyles } from '@material-ui/core/styles'
 
-import { searchEmployees, setCurrentEmployee } from '../actions'
-import EmployeeForm from './Form'
+import EmployeeFormDialog from './FormDialog'
+import Loader from '../../../../shared/Loader'
+import { fetchEmployees, searchEmployees, setCurrentEmployee } from '../actions'
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles(theme => ({
   form: {
-    marginLeft: 20,
-    marginTop: 20,
+    marginLeft: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
   result: {
-    marginTop: 25,
-    marginLeft: 20,
+    marginLeft: theme.spacing(3),
+    marginTop: theme.spacing(2),
   },
   root: {
-    width: 500,
+    width: 600,
   },
   searchEle: {
-    marginLeft: 50,
+    marginLeft: theme.spacing(4),
+    marginRight: theme.spacing(4),
+    width: 260,
+  },
+  submitButton: {
+    height: 40,
+    marginTop: 10,
   },
   title: {
     flexGrow: 1,
   },
 }))
 
-const List = ({ employees, handleClickOpen }) => {
-  // If null, no match
-  if (employees === null) {
+const List = (props) => {
+  const {
+    employees,
+    fetchAll,
+    handleClickOpen,
+    searchTerm,
+  } = props
+  if (!searchTerm && !fetchAll) return null
+  if (employees === null) { // If null, no match
     return <div>There are no results for your request. Please try a different search.</div>
   }
-  // Empty array is prior to actual search
-  if (Array.isArray(employees)) {
-    return <div />
+  if (Array.isArray(employees)) { // Empty array is prior to actual search
+    return null
   }
 
   return (
-    <div className="tbl" style={{ width: '100%' }}>
-      <div className="tbl-head">
-        <div className="tbl-col text-left">Last</div>
-        <div className="tbl-col text-left">First</div>
-      </div>
-      {Object.values(employees).map(e => (
-        <div
-          className="tbl-row as-link"
-          key={e.id}
-          onClick={() => handleClickOpen(e.id)}
-          onKeyDown={handleClickOpen}
-          role="button"
-          tabIndex="0"
-        >
-          <div className="tbl-cell no-wrap">{e.nameLast}</div>
-          <div className="tbl-cell no-wrap">{e.nameFirst}</div>
-        </div>
-      ))}
-    </div>
+    <Table size="small">
+      <TableHead>
+        <TableRow>
+          <TableCell>Last</TableCell>
+          <TableCell>First</TableCell>
+        </TableRow>
+      </TableHead>
+
+      <TableBody>
+        {Object.values(employees).map(e => (
+          <TableRow
+            key={e.id}
+            hover
+            onClick={() => handleClickOpen(e.id)}
+          >
+            <TableCell>{e.nameLast}</TableCell>
+            <TableCell>{e.nameFirst}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   )
 }
 List.propTypes = {
   employees: PropTypes.instanceOf(Object),
+  fetchAll: PropTypes.bool.isRequired,
   handleClickOpen: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string,
 }
 List.defaultProps = {
   employees: null,
+  searchTerm: null,
 }
 
 export default function Employee() {
@@ -85,6 +109,7 @@ export default function Employee() {
   const employees = useSelector(state => state.employee)
   const dispatch = useDispatch()
   const [open, setOpen] = React.useState(false)
+  const [fetchAll, setFetchAll] = React.useState(false)
   const [state, setState] = React.useState({
     active: true,
   })
@@ -95,6 +120,12 @@ export default function Employee() {
 
   const handleSearch = (e) => {
     setState({ ...state, search: e.currentTarget.value })
+    setFetchAll(false)
+  }
+
+  const handleFetchAll = () => {
+    setFetchAll(true)
+    dispatch(fetchEmployees({ active: state.active }))
   }
 
   function handleClickOpen(id) {
@@ -120,7 +151,6 @@ export default function Employee() {
     }
   }, [dispatch, state, state.active, state.search])
 
-
   return (
     <div className={classes.root}>
       <AppBar position="static" color="secondary">
@@ -131,6 +161,7 @@ export default function Employee() {
           <Button color="inherit" onClick={handleClickOpen}>Add Employee</Button>
         </Toolbar>
       </AppBar>
+
       <FormGroup row className={classes.form}>
         <FormControlLabel
           control={(
@@ -156,23 +187,34 @@ export default function Employee() {
             Enter the first letter(s) of employee last name
           </FormHelperText>
         </FormControl>
+
+        <Button
+          color="primary"
+          className={classes.submitButton}
+          onClick={handleFetchAll}
+          variant="contained"
+        >
+          Show All
+        </Button>
       </FormGroup>
 
       <div className={classes.result}>
         {employees.isFetching ? (
-          <div>Loading...</div>
+          <Loader />
         ) : (
-          <List employees={employees.items} handleClickOpen={handleClickOpen} />
+          <List
+            employees={employees.items}
+            fetchAll={fetchAll}
+            handleClickOpen={handleClickOpen}
+            searchTerm={state.search}
+          />
         )}
       </div>
-      <Dialog
-        open={open}
+
+      <EmployeeFormDialog
         onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-        maxWidth="lg"
-      >
-        <EmployeeForm onCloseHandler={handleClose} />
-      </Dialog>
+        open={open}
+      />
     </div>
   )
 }

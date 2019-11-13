@@ -1,10 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Button from '@material-ui/core/Button'
+
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import LockIcon from '@material-ui/icons/Lock'
-// import LockOpenIcon from '@material-ui/icons/LockOpen'
+import SearchIcon from '@material-ui/icons/Search'
+
 import { makeStyles } from '@material-ui/core/styles'
+
+import ShiftCloseDialog from './ShiftCloseDialog'
+import ShiftReportDialog from './ShiftReportDialog'
+import { patchShift } from '../../actions'
+
+const R = require('ramda')
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -25,9 +34,56 @@ const useStyles = makeStyles(theme => ({
 
 export default function ButtonsView() {
   const classes = useStyles()
+  const [openDelete, setOpenDialog] = useState(false)
+  const [openReport, setOpenReport] = useState(false)
+  const sales = useSelector(state => state.sales)
+  const dispatch = useDispatch()
+
+  if (!R.hasPath(['shift', 'sales', 'result'], sales)) return null
+  const { shift } = sales.shift.sales.result
+  const enableCloseShift = shift.shift.flag === false
+
+  function handleOpenDialog() {
+    setOpenDialog(true)
+  }
+
+  function handleCloseDialog() {
+    setOpenDialog(false)
+  }
+
+  function handleCloseShift() {
+    const params = {
+      action: 'closeShift',
+      shiftID: shift.id,
+      stationID: shift.stationID,
+      recordNum: shift.recordNum,
+      actionArgs: {
+        method: 'closeShift',
+      },
+    }
+    dispatch(patchShift(params))
+    setOpenDialog(false)
+  }
+
+  const handleOpenReportDialog = () => {
+    setOpenReport(true)
+  }
+
+  const handleCloseReportDialog = () => {
+    setOpenReport(false)
+  }
 
   return (
     <div className={classes.root}>
+      <Button
+        className={classes.actionButton}
+        onClick={handleOpenReportDialog}
+        variant="contained"
+      >
+        Shift History
+        <SearchIcon className={classes.rightIcon} />
+      </Button>
+
       <Button
         // disabled={pristine || submitting}
         className={classes.actionButton}
@@ -38,27 +94,39 @@ export default function ButtonsView() {
         Shift Report
         <CloudDownloadIcon className={classes.rightIcon} />
       </Button>
+
       <Button
         // disabled={pristine || submitting}
         className={classes.actionButton}
         color="secondary"
-        type="submit"
+        // type="submit"
         variant="contained"
       >
         Day Report
         <CloudDownloadIcon className={classes.rightIcon} />
       </Button>
+
       <Button
-        // disabled={pristine || submitting}
-        disabled
         className={classes.actionButton}
         color="primary"
-        type="submit"
+        disabled={!enableCloseShift}
+        onClick={handleOpenDialog}
         variant="contained"
       >
         Close Shift
         <LockIcon className={classes.rightIcon} />
       </Button>
+
+      <ShiftCloseDialog
+        handler={handleCloseShift}
+        onClose={handleCloseDialog}
+        open={openDelete}
+      />
+      <ShiftReportDialog
+        onClose={handleCloseReportDialog}
+        open={openReport}
+        shift={shift}
+      />
     </div>
   )
 }

@@ -11,7 +11,6 @@ import ShiftList from './ShiftList'
 import FuelSummary from './FuelSummary'
 import FuelCosts from './FuelCosts'
 
-
 const R = require('ramda')
 
 const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars

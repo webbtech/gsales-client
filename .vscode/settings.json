@@ -3,10 +3,17 @@
     "browserslist",
     "camelcase",
     "cmsn",
+    "date",
     "describedby",
     "fuelsales",
     "haspopup",
     "labelledby",
-    "mastercard"
+    "mastercard",
+    "otherfuel",
+    "strt"
+  ],
+  "cSpell.ignoreWords": [
+    "esnext",
+    "interop"
   ]
 }

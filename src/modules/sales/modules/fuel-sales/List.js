@@ -1,29 +1,28 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import Paper from '@material-ui/core/Paper'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import Typography from '@material-ui/core/Typography'
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@material-ui/core'
+
 import { makeStyles } from '@material-ui/core/styles'
 
+import FormatNumber from '../../../shared/FormatNumber'
+import SectionTitle from '../../../shared/SectionTitle'
 import { fmtNumber } from '../../../../utils/fmt'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles({
   root: {
     width: '100%',
-    paddingBottom: theme.spacing(1),
   },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-  },
-}))
+})
 
 export default function List() {
   const classes = useStyles()
@@ -36,10 +35,9 @@ export default function List() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Sales
-      </Typography>
-      <Table className={classes.table} size="small">
+      <SectionTitle title="Sales" />
+
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell colSpan={2}>Nozzle</TableCell>
@@ -53,9 +51,10 @@ export default function List() {
             <TableCell align="center" size="small">Difference</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           {fuelSales.map(fs => (
-            <TableRow key={fs.id}>
+            <TableRow key={fs.id} hover>
               <TableCell>{fs.dispenserID.number}</TableCell>
               <TableCell>{fuelDefinitions[fs.dispenserID.gradeID].label}</TableCell>
               <TableCell align="right">{fmtNumber(fs.dollars.open)}</TableCell>
@@ -65,7 +64,9 @@ export default function List() {
               <TableCell align="right">{fmtNumber(fs.litres.close, 3)}</TableCell>
               <TableCell align="right">{fmtNumber(fs.litres.net, 3)}</TableCell>
               <TableCell align="right">{fmtNumber(fs.dollars.theoretical)}</TableCell>
-              <TableCell align="right">{fmtNumber(fs.dollars.diff)}</TableCell>
+              <TableCell align="right">
+                <FormatNumber value={fs.dollars.diff} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
