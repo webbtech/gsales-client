@@ -20,7 +20,8 @@ import MenuIcon from '@material-ui/icons/ArrowBackIos'
 import { makeStyles } from '@material-ui/core/styles'
 import moment from 'moment'
 
-import { fetchStation, fetchStationDispensers } from '../actions'
+import Loader from '../../../../shared/Loader'
+import { fetchMonthlyStation, fetchStationDispensers } from '../actions'
 import { fmtNumber } from '../../../../../utils/fmt'
 
 const R = require('ramda')
@@ -61,7 +62,7 @@ const Dispensers = ({ match }) => {
 
   useEffect(() => {
     const { stationID } = match.params
-    dispatch(fetchStation(stationID))
+    dispatch(fetchMonthlyStation(stationID))
     dispatch(fetchStationDispensers({ stationID }))
   }, [dispatch, match.params])
 
@@ -82,7 +83,7 @@ const Dispensers = ({ match }) => {
       </AppBar>
 
       {station.isFetching || dispensers.isFetching ? (
-        <div>Loading...</div>
+        <Loader />
       ) : (
         <Table size="small" className={classes.table}>
           <TableHead>

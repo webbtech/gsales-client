@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import {
@@ -8,13 +8,14 @@ import {
   TableCell,
   TableRow,
   Tooltip,
-  Typography,
 } from '@material-ui/core'
 
 import IconButton from '@material-ui/core/IconButton'
 import UpdateIcon from '@material-ui/icons/Update'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SectionTitle from '../../../shared/SectionTitle'
+import OtherFuelAdjustDialog from './OtherFuelAdjustDialog'
 import { fmtNumber } from '../../../../utils/fmt'
 
 const useStyles = makeStyles(theme => ({
@@ -28,10 +29,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     marginBottom: theme.spacing(2),
   },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-  },
   totalsCell: {
     fontWeight: '600',
   },
@@ -40,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 export default function SalesView() {
   const classes = useStyles()
   const sales = useSelector(state => state.sales)
+  const [openDialog, setOpenDialog] = useState(false)
 
   const shift = sales.dayInfo.activeShift
   if (!shift) return null
@@ -49,18 +47,24 @@ export default function SalesView() {
   const editOK = shift.shift.flag
   const haveOtherFuel = !!shift.otherFuel
 
-  function displayEmptyCell(isEdit, isOtherFuel) {
+  const displayEmptyCell = (isEdit, isOtherFuel) => {
     if (!isEdit || !isOtherFuel) return null
     return (
       <TableCell />
     )
   }
 
+  const handleOpenDialog = () => {
+    setOpenDialog(true)
+  }
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
+  }
+
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-      Sales
-      </Typography>
+      <SectionTitle title="Sales" />
 
       <Table className={classes.table} size="small">
         <TableBody>
@@ -76,7 +80,11 @@ export default function SalesView() {
               <TableCell align="right">{fmtNumber(shift.salesSummary.otherFuelDollar)}</TableCell>
               {editOK === true && (
                 <TableCell className={classes.iconCell} padding="none">
-                  <IconButton className={classes.iconButton} aria-label="edit" disabled={!editOK}>
+                  <IconButton
+                    className={classes.iconButton}
+                    disabled={!editOK}
+                    onClick={handleOpenDialog}
+                  >
                     <Tooltip title="Adjust Other Fuel" placement="right">
                       <UpdateIcon />
                     </Tooltip>
@@ -113,6 +121,12 @@ export default function SalesView() {
           )}
         </TableBody>
       </Table>
+
+      <OtherFuelAdjustDialog
+        onClose={handleCloseDialog}
+        open={openDialog}
+        shift={shift}
+      />
     </Paper>
   )
 }

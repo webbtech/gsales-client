@@ -3,11 +3,8 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import {
-  AppBar,
-  Button,
   Dialog,
   DialogContent,
-  Fab,
   FormControl,
   FormHelperText,
   Grid,
@@ -16,21 +13,17 @@ import {
   TableRow,
   TableCell,
   TextField,
-  Toolbar,
-  Typography,
 } from '@material-ui/core'
 
-import CloseIcon from '@material-ui/icons/Close'
-import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 
+import CancelButton from '../../../shared/CancelButton'
+import DialogAppBar from '../../../shared/DialogAppBar'
+import SaveButton from '../../../shared/SaveButton'
 import { fmtNumber } from '../../../../utils/fmt'
 import { adjustFuelSale } from '../../actions'
 
 const useStyles = makeStyles(theme => ({
-  button: {
-    width: '100%',
-  },
   content: {
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
@@ -45,17 +38,11 @@ const useStyles = makeStyles(theme => ({
   numberInput: {
     textAlign: 'right',
   },
-  rightIcon: {
-    marginLeft: theme.spacing(1),
-  },
   table: {
     marginBottom: theme.spacing(2),
   },
   textField: {
     width: 160,
-  },
-  title: {
-    flexGrow: 1,
   },
 }))
 
@@ -140,16 +127,10 @@ export default function FuelSaleAdjustDialog(props) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <AppBar position="static" color="secondary">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" className={classes.title}>
-            Adjust Fuel Sale Record
-          </Typography>
-          <Fab onClick={handleClose} size="small">
-            <CloseIcon />
-          </Fab>
-        </Toolbar>
-      </AppBar>
+      <DialogAppBar
+        closeHandler={handleClose}
+        title="Adjust Fuel Sale Record"
+      />
 
       <DialogContent className={classes.content}>
         <Table size="small" className={classes.table}>
@@ -231,28 +212,17 @@ export default function FuelSaleAdjustDialog(props) {
 
         <Grid container spacing={2}>
           <Grid item xs={7}>
-            <Button
-              color="primary"
-              className={classes.button}
-              onClick={handleSubmit}
-              type="submit"
-              variant="contained"
-            >
-              Save Adjustment
-              <SaveIcon className={classes.rightIcon} />
-            </Button>
+            <SaveButton
+              submitHandler={handleSubmit}
+              label="Save Adjustment"
+            />
           </Grid>
 
           <Grid item xs={5}>
-            <Button
-              className={classes.button}
-              onClick={handleClose}
-              type="button"
-              variant="contained"
-            >
-              Cancel
-              <CloseIcon className={classes.rightIcon} />
-            </Button>
+            <CancelButton
+              cancelHandler={handleClose}
+              label="Cancel"
+            />
           </Grid>
         </Grid>
       </DialogContent>

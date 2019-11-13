@@ -14,6 +14,7 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles'
 
+import Loader from '../../../../shared/Loader'
 import { RenderTextField } from '../../../../shared/FormFields'
 import { fetchConfig, persistConfig } from '../actions'
 
@@ -25,9 +26,6 @@ const useStyles = makeStyles(theme => ({
   },
   form: {
     padding: theme.spacing(1),
-  },
-  submitButton: {
-    // marginTop: theme.spacing.unit * 2,
   },
   textField: {
     width: '100%',
@@ -91,7 +89,7 @@ let Config = (props) => {
 
       <div className={classes.form}>
         {config.isFetching ? (
-          <div>Loading...</div>
+          <Loader />
         ) : (
           <form
             onSubmit={handleSubmit(onHandleSubmit)}

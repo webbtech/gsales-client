@@ -77,7 +77,7 @@ export function* shiftPatch({
     return
   }
 
-  const { shiftEntity, shiftPatchEntity } = salesActions
+  const { shiftEntity, patchShiftEntity } = salesActions
   let endpoint
   let apiParams
 
@@ -88,7 +88,7 @@ export function* shiftPatch({
         method: 'PATCH',
         body: actionArgs,
       }
-      yield call(callApi, shiftPatchEntity, endpoint, Schemas.SHIFT, apiParams)
+      yield call(callApi, patchShiftEntity, endpoint, Schemas.SHIFT, apiParams)
 
       endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
       yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
@@ -102,7 +102,7 @@ export function* shiftPatch({
         method: 'PATCH',
         body: actionArgs,
       }
-      yield call(callApi, shiftPatchEntity, endpoint, Schemas.SHIFT, apiParams)
+      yield call(callApi, patchShiftEntity, endpoint, Schemas.SHIFT, apiParams)
 
       // Now reload shift data
       endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
@@ -119,9 +119,69 @@ function* watchShiftPatch() {
   yield takeLatest(salesActions.SHIFT_PATCH.REQUEST, shiftPatch)
 }
 
+// ============================== Shift Patch ================================================== //
+
+export function* shiftPatchField({
+  params: {
+    field,
+    value,
+    recordNum,
+    shiftID,
+    stationID,
+  },
+}) {
+  if (!field) {
+    const msg = 'Missing field parameter in shiftPatchField'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!value) {
+    const msg = 'Missing value parameter in shiftPatchField'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!recordNum) {
+    const msg = 'Missing recordNum parameter in shiftPatchField'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!shiftID) {
+    const msg = 'Missing shiftID parameter in shiftPatchField'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!stationID) {
+    const msg = 'Missing stationID parameter in shiftPatchField'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+
+  const { shiftEntity, patchShiftFieldEntity } = salesActions
+  let endpoint
+
+  endpoint = `sale/${shiftID}`
+  const apiParams = {
+    method: 'PATCH',
+    body: {
+      field,
+      value,
+      method: 'simple',
+    },
+  }
+  yield call(callApi, patchShiftFieldEntity, endpoint, Schemas.SHIFT, apiParams)
+
+  endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
+  yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+  yield put(alertActions.alertSend({ message: 'Shift successfully updated', type: 'success', dismissAfter: 2000 }))
+}
+
+function* watchShiftPatchField() {
+  yield takeLatest(salesActions.SHIFT_FIELD_PATCH.REQUEST, shiftPatchField)
+}
+
 // ============================== Shift Action ================================================= //
 
-export function* shiftAction({
+function* shiftAction({
   params: {
     action,
     date,
@@ -203,7 +263,7 @@ function* watchShiftAction() {
 
 // ============================== Save Fuel Sales Action ======================================= //
 
-export function* persistFuelSales({
+function* persistFuelSales({
   params: {
     fuelSales,
     stationID,
@@ -253,7 +313,7 @@ function* watchSaveFuelSales() {
 
 // ============================== Save Fuel Sales Adjustment Action ============================ //
 
-export function* persistFuelSalesAdjustment({
+function* persistFuelSalesAdjustment({
   params: {
     dispenserID,
     recordNum,
@@ -316,7 +376,7 @@ function* watchFuelSalesAdjustment() {
 
 // ============================== Save Dispenser Reset Action ================================== //
 
-export function* persistResetDispenser({
+function* persistResetDispenser({
   params: {
     dispenserID,
     recordNum,
@@ -379,7 +439,7 @@ function* watchResetDispenser() {
 
 // ============================== Save NonFuel Misc Action ===================================== //
 
-export function* persistNonFuelMisc({
+function* persistNonFuelMisc({
   params: {
     items,
     recordNum,
@@ -431,7 +491,7 @@ function* watchSaveNonFuelMisc() {
 
 // ============================== Save NonFuel Products Action ================================= //
 
-export function* persistNonFuelProducts({
+function* persistNonFuelProducts({
   params: {
     products,
     recordNum,
@@ -494,7 +554,7 @@ function* watchSaveNonFuelProducts() {
 
 // ============================== Save NonFuel Product Adjustment Action ======================= //
 
-export function* persistNonFuelProductAdjust({
+function* persistNonFuelProductAdjust({
   params: {
     description,
     nonFuelID,
@@ -790,12 +850,76 @@ function* watchSaveOtherFuel() {
   yield takeLatest(salesActions.OTHER_FUEL_SAVE.REQUEST, persistOtherFuel)
 }
 
+// ============================== Adjust OtherFuel Action ======================================= //
+
+function* patchOtherFuel({
+  params: {
+    description,
+    dollar,
+    litre,
+    recordNum,
+    shiftID,
+    stationID,
+  },
+}) {
+  if (!dollar) {
+    const msg = 'Missing dollar parameter in patchOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!litre) {
+    const msg = 'Missing litre parameter in patchOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!stationID) {
+    const msg = 'Missing stationID parameter in patchOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!shiftID) {
+    const msg = 'Missing shiftID parameter in patchOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+  if (!recordNum) {
+    const msg = 'Missing recordNum parameter in patchOtherFuel'
+    yield put(alertActions.alertSend({ message: msg, type: 'danger' }))
+    return
+  }
+
+  const { patchOtherFuelEntity, shiftEntity } = salesActions
+  let endpoint = `sale-otherfuel/${shiftID}`
+  const apiParams = {
+    method: 'PATCH',
+    body: {
+      values: {
+        description,
+        fuel: 'propane',
+        otherDollar: dollar,
+        otherLitre: litre,
+      },
+    },
+  }
+  yield call(callApi, patchOtherFuelEntity, endpoint, Schemas.SHIFT, apiParams)
+
+  // Now reload shift data
+  endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
+  yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+  yield put(alertActions.alertSend({ message: 'Other Fuel adjustment successfully saved', type: 'success', dismissAfter: 2000 }))
+}
+
+function* watchPatchOtherFuel() {
+  yield takeLatest(salesActions.OTHER_FUEL_PATCH.REQUEST, patchOtherFuel)
+}
+
 // ============================== Root Saga ==================================================== //
 
 export default function* rootSaga() {
   yield all([
     watchFetchDay(),
     watchFuelSalesAdjustment(),
+    watchPatchOtherFuel(),
     watchPatchShiftSummary(),
     watchResetDispenser(),
     watchSaveAttendant(),
@@ -807,6 +931,7 @@ export default function* rootSaga() {
     watchSaveShiftSummary(),
     watchShiftAction(),
     watchShiftPatch(),
+    watchShiftPatchField(),
     watchShiftSales(),
   ])
 }

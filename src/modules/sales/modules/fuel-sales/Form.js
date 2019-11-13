@@ -16,21 +16,23 @@ import {
   TableRow,
   TextField,
   Tooltip,
-  Typography,
 } from '@material-ui/core'
 
 import RestoreIcon from '@material-ui/icons/SettingsBackupRestore'
 import SaveIcon from '@material-ui/icons/SaveAlt'
 import UpdateIcon from '@material-ui/icons/Update'
 import { makeStyles } from '@material-ui/core/styles'
+import { amber } from '@material-ui/core/colors'
 
 import clsx from 'clsx'
 
 import DispenserResetDialog from './DispenserResetDialog'
 import FormatNumber from '../../../shared/FormatNumber'
+import SectionTitle from '../../../shared/SectionTitle'
 import FuelSaleAdjustDialog from './FuelSaleAdjustDialog'
 import { fmtNumber } from '../../../../utils/fmt'
 import { saveFuelSales } from '../../actions'
+import { DISCREPANCY_LIMIT } from '../../constants'
 
 const R = require('ramda')
 
@@ -45,6 +47,9 @@ const useStyles = makeStyles(theme => ({
   dataCell: {
     minWidth: 130,
     paddingTop: 0,
+  },
+  errorRow: {
+    backgroundColor: amber[100],
   },
   errorTxt: {
     color: 'red',
@@ -62,8 +67,8 @@ const useStyles = makeStyles(theme => ({
   },
   narrowCell: {
     minWidth: 20,
-    paddingLeft: 0,
-    paddingRight: 0,
+    paddingLeft: 6,
+    paddingRight: 6,
   },
   numberInput: {
     textAlign: 'right',
@@ -74,14 +79,11 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     width: '100%',
+    marginBottom: theme.spacing(1.5),
   },
   textField: {
     width: 110,
     margin: 0,
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
 }))
 
@@ -297,8 +299,11 @@ export default function Form() {
     const lCtr = c * 10 + 2
 
     return (
-      <TableRow key={fs.id}>
-        <TableCell align="center" className={clsx(classes.dataCell, classes.narrowCell)}>
+      <TableRow
+        key={fs.id}
+        className={clsx({ [classes.errorRow]: Math.abs(fs.dollars.diff) > DISCREPANCY_LIMIT })}
+      >
+        <TableCell className={clsx(classes.dataCell, classes.narrowCell)}>
           {fs.dispenserID.number}
         </TableCell>
         <TableCell className={clsx(classes.dataCell, classes.narrowCell)}>
@@ -364,6 +369,7 @@ export default function Form() {
               <UpdateIcon />
             </Tooltip>
           </IconButton>
+
           <IconButton
             className={clsx(classes.iconButton, classes.iconSpaceLeft)}
             onClick={() => handleOpenReset(fs.id)}
@@ -379,9 +385,7 @@ export default function Form() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Sales
-      </Typography>
+      <SectionTitle title="Sales" />
 
       <Table className={classes.table} size="small">
         <TableHead>

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  Button,
   Grid,
   FormControl,
   FormHelperText,
@@ -12,21 +11,18 @@ import {
   TableBody,
   TableCell,
   TableRow,
-  Typography,
   TextField,
 } from '@material-ui/core'
 
-import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SectionTitle from '../../../shared/SectionTitle'
+import SaveButton from '../../../shared/SaveButton'
 import { fmtNumber } from '../../../../utils/fmt'
 import { saveNonFuelMisc } from '../../actions'
 import { selectNonFuelMisc } from '../../selectors'
 
 const useStyles = makeStyles(theme => ({
-  actionButton: {
-    width: '100%',
-  },
   buttonRow: {
     padding: theme.spacing(2),
     paddingBottom: theme.spacing(1),
@@ -47,15 +43,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
     marginRight: theme.spacing(1),
   },
-  rightIcon: {
-    marginLeft: theme.spacing(1),
-  },
   root: {
     width: '100%',
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
 }))
 
@@ -232,27 +221,20 @@ export default function OtherForm() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        {title}
-      </Typography>
+      <SectionTitle title={title} />
+
       {isBobs && haveVals ? (
         <BobsNonFuelForm stateValues={miscValues} setStateValues={setMiscValues} />
       ) : haveVals && (
         <NonFuelForm stateValues={miscValues} setStateValues={setMiscValues} />
       )}
-      <Grid container spacing={2} className={classes.buttonRow}>
-        <Grid item xs={6} />
+
+      <Grid container spacing={2} className={classes.buttonRow} justify="flex-end">
         <Grid item xs={6}>
-          <Button
-            className={classes.actionButton}
-            color="primary"
-            onClick={handleSubmit}
-            type="submit"
-            variant="contained"
-          >
-            {`Save ${title}`}
-            <SaveIcon className={classes.rightIcon} />
-          </Button>
+          <SaveButton
+            submitHandler={handleSubmit}
+            label={`Save ${title}`}
+          />
         </Grid>
       </Grid>
     </Paper>

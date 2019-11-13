@@ -32,7 +32,7 @@ export const persistStationEntity = {
   failure: error => action(STATION_PERSIST.FAILURE, { error }),
 }
 
-export const fetchStation = stationID => action(STATION.REQUEST, { stationID })
+export const fetchMonthlyStation = stationID => action(STATION.REQUEST, { stationID })
 export const fetchStationDispensers = stationID => action(STATION_DISPENSERS.REQUEST, stationID)
 export const fetchStationList = () => action(STATIONS.REQUEST, {})
 export const persistStation = params => action(STATION_PERSIST.REQUEST, { params })

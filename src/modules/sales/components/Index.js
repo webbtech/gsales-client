@@ -4,14 +4,13 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
   Redirect,
   Route,
   Switch,
-  withRouter,
+  useHistory,
 } from 'react-router-dom'
 
 import {
@@ -81,12 +80,13 @@ const tabs = [
   },
 ]
 
-function Index({ history }) {
+export default function Index() {
   const classes = useStyles()
   const [tabKey, setTabKey] = useState(0)
-  const sales = useSelector(state => state.sales)
   const dispatch = useDispatch()
+  const history = useHistory()
 
+  const sales = useSelector(state => state.sales)
   const { shiftParams, setShiftParams } = useContext(ParamContext)
 
   /**
@@ -245,6 +245,8 @@ function Index({ history }) {
     history.push(url)
   }
 
+  // console.log('shiftParams in Index:', shiftParams)
+
   return (
     <div className={classes.root}>
       <TitleBar />
@@ -279,8 +281,3 @@ function Index({ history }) {
     </div>
   )
 }
-Index.propTypes = {
-  history: PropTypes.instanceOf(Object).isRequired,
-}
-
-export default withRouter(Index)

@@ -1,18 +1,38 @@
-{/* <Table size="small"> */}
-          {/* <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Cost</TableCell>
-              <TableCell>Tax</TableCell>
-              <TableCell>Commission</TableCell>
-              <TableCell>Oil</TableCell>
-              <TableCell>Sort</TableCell>
-            </TableRow>
-          </TableHead> */}
+cashBills
+cashDebit
+cashDieselDiscount
+cashDriveOffNSF
+cashGalesLoyaltyRedeem
+cashGiftCertRedeem
+cashLotteryPayout
+cashOsAdjusted
+cashOther
+cashPayout
+cashWriteOff
+creditCardAmex
+creditCardDiscover
+creditCardGales
+creditCardMc
+creditCardVisa
+salesCash
+salesCashAndCards
+salesCreditCard
 
-          {/* <TableBody>
-            <List products={product.items} handleClickOpen={handleClickOpen} />
-          </TableBody> */}
-        {/* <Table> */}
+export const cashAndCards = {
+  'creditCard.visa': 'VISA',
+  'creditCard.mc': 'Mastercard',
+  'creditCard.gales': 'Gales Card',
+  'creditCard.amex': 'AMEX',
+  'creditCard.discover': 'Discover',
+  'cash.debit': 'Debit',
+  'cash.dieselDiscount': 'Diesel Discount',
+  'cash.lotteryPayout': 'Lottery Payout',
+  'cash.payout': 'Supplier Payout',
+  'cash.bills': 'Cash',
+  'cash.galesLoyaltyRedeem': 'Gales Loyalty Redeemed',
+  'cash.giftCertRedeem': 'Gift Certificate Redeemed',
+  'cash.osAdjusted': 'OS Adjust',
+  'cash.driveOffNSF': 'Drive offs / NSF',
+  'cash.writeOff': 'Write offs',
+  'cash.other': 'Other',
+}

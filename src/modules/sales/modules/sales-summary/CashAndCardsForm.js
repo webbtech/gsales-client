@@ -11,12 +11,12 @@ import {
   TableCell,
   TableRow,
   TextField,
-  Typography,
 } from '@material-ui/core'
 
 import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SectionTitle from '../../../shared/SectionTitle'
 import { cashAndCardFields, splitFields as splitCashAndCardFields } from '../../constants'
 import { fmtNumber } from '../../../../utils/fmt'
 import { saveShiftSummary } from '../../actions'
@@ -45,10 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: 100,
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
   totalsCell: {
     fontWeight: '600',
@@ -213,9 +209,7 @@ export default function CashAndCardsForm() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Cash & Cards
-      </Typography>
+      <SectionTitle title="Cash & Cards" />
 
       {haveVals && (
         <Table className={classes.table} size="small">
@@ -259,8 +253,7 @@ export default function CashAndCardsForm() {
         </Table>
       )}
 
-      <Grid container spacing={2} className={classes.buttonRow}>
-        <Grid item xs={6} />
+      <Grid container spacing={2} className={classes.buttonRow} justify="flex-end">
         <Grid item xs={6}>
           <Button
             className={classes.actionButton}

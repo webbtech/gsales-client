@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  Button,
   Grid,
   Paper,
   TextField,
-  Typography,
 } from '@material-ui/core'
 
-import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SaveButton from '../../../shared/SaveButton'
+import SectionTitle from '../../../shared/SectionTitle'
 import { saveOtherFuel } from '../../actions'
 
 const useStyles = makeStyles(theme => ({
@@ -36,16 +35,9 @@ const useStyles = makeStyles(theme => ({
   numberInput: {
     textAlign: 'right',
   },
-  rightIcon: {
-    marginLeft: theme.spacing(1),
-  },
   textField: {
     width: 110,
     margin: 0,
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
 }))
 
@@ -90,9 +82,7 @@ const PropaneForm = () => {
 
   return (
     <Paper square className={classes.paper}>
-      <Typography variant="h6" className={classes.title}>
-        Other Propane Sales
-      </Typography>
+      <SectionTitle title="Other Propane Sales" />
 
       {error && <div className={classes.error}>{error}</div>}
 
@@ -130,16 +120,10 @@ const PropaneForm = () => {
         </Grid>
 
         <Grid item xs={3}>
-          <Button
-            className={classes.actionButton}
-            color="primary"
-            onClick={handleSubmit}
-            type="submit"
-            variant="contained"
-          >
-            Save Propane Sales
-            <SaveIcon className={classes.rightIcon} />
-          </Button>
+          <SaveButton
+            submitHandler={handleSubmit}
+            label="Save Propane Sales"
+          />
         </Grid>
       </Grid>
 

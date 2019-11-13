@@ -18,7 +18,8 @@ import MenuIcon from '@material-ui/icons/ArrowBackIos'
 
 import { makeStyles } from '@material-ui/core/styles'
 
-import { fetchStation, persistStation } from '../actions'
+import Loader from '../../../../shared/Loader'
+import { fetchMonthlyStation, persistStation } from '../actions'
 
 import {
   RenderCheckboxWithLabel,
@@ -64,7 +65,7 @@ let Form = (props) => {
   useEffect(() => {
     if (match.params && match.params.stationID) {
       const { stationID } = match.params
-      dispatch(fetchStation(stationID))
+      dispatch(fetchMonthlyStation(stationID))
     }
   }, [dispatch, match.params])
 
@@ -72,7 +73,7 @@ let Form = (props) => {
     dispatch(persistStation({ stationID: values.id, values: R.pick(fields, values) }))
   }
 
-  if (station.isFetching) return <div>Loading...</div>
+  if (station.isFetching) return <Loader />
 
   return (
     <div className={classes.root}>

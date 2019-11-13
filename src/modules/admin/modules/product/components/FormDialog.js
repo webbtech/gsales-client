@@ -5,16 +5,11 @@ import { Field, reduxForm } from 'redux-form'
 import { connect, useSelector, useDispatch } from 'react-redux'
 
 import {
-  AppBar,
   Button,
-  DialogContent,
-  Fab,
+  Dialog,
   Grid,
-  Toolbar,
-  Typography,
 } from '@material-ui/core'
 
-import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/core/styles'
 
 import {
@@ -23,17 +18,15 @@ import {
   RenderTextField,
 } from '../../../../shared/FormFields'
 
+import DialogAppBar from '../../../../shared/DialogAppBar'
 import { ProductCategories, ProductTypes } from '../constants'
 import { persistProduct } from '../actions'
 
 const R = require('ramda')
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginBottom: theme.spacing(2),
-  },
-  form: {
-    marginTop: theme.spacing(1),
+  container: {
+    margin: theme.spacing(3),
   },
   submitButton: {
     width: '100%',
@@ -81,13 +74,18 @@ const defaultValues = {
 let Form = (props) => {
   const {
     handleSubmit,
-    onCloseHandler,
+    onClose,
+    open,
     pristine,
     submitting,
   } = props
   const classes = useStyles()
   const product = useSelector(state => state.product)
   const dispatch = useDispatch()
+
+  const handleClose = () => {
+    onClose()
+  }
 
   function onHandleSubmit(vals) {
     const productID = vals.id || null
@@ -99,7 +97,7 @@ let Form = (props) => {
       formVals.sortOrder = 1
     }
     dispatch(persistProduct({ productID, values: R.pick(fields, formVals) }))
-    onCloseHandler()
+    handleClose()
   }
 
   const categoryChildren = ProductCategories.map(pc => <option key={pc} value={pc}>{pc}</option>)
@@ -109,22 +107,15 @@ let Form = (props) => {
   const formLabel = isEdit ? 'Edit Product' : 'Create New Product'
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static" color="secondary">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" className={classes.title}>
-            {formLabel}
-          </Typography>
-          <Fab onClick={onCloseHandler} size="small">
-            <CloseIcon />
-          </Fab>
-        </Toolbar>
-      </AppBar>
+    <Dialog onClose={handleClose} open={open}>
+      <DialogAppBar
+        closeHandler={handleClose}
+        title={formLabel}
+      />
 
-      <DialogContent>
+      <div className={classes.container}>
         <form
           onSubmit={handleSubmit(onHandleSubmit)}
-          className={classes.form}
         >
           <Grid container spacing={3}>
             <Grid item xs={6}>
@@ -142,15 +133,6 @@ let Form = (props) => {
                 component={RenderTextField}
                 label="Cost"
                 name="cost"
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              <Field
-                className={classes.textField}
-                component={RenderTextField}
-                label="Sort Order"
-                name="sortOrder"
                 type="number"
               />
             </Grid>
@@ -159,6 +141,19 @@ let Form = (props) => {
               <Field
                 className={classes.textField}
                 component={RenderSelectField}
+                helperText="Select Type"
+                label="Type"
+                name="type"
+              >
+                {typeChildren}
+              </Field>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Field
+                className={classes.textField}
+                component={RenderSelectField}
+                helperText="Select Category"
                 label="Category"
                 name="category"
               >
@@ -169,12 +164,11 @@ let Form = (props) => {
             <Grid item xs={6}>
               <Field
                 className={classes.textField}
-                component={RenderSelectField}
-                label="Type"
-                name="type"
-              >
-                {typeChildren}
-              </Field>
+                component={RenderTextField}
+                label="Sort Order"
+                name="sortOrder"
+                type="number"
+              />
             </Grid>
 
             <Grid item xs={6}>
@@ -217,13 +211,14 @@ let Form = (props) => {
             </Grid>
           </Grid>
         </form>
-      </DialogContent>
-    </div>
+      </div>
+    </Dialog>
   )
 }
 Form.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
-  onCloseHandler: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
 }

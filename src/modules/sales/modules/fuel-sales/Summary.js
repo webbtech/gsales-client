@@ -8,29 +8,16 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
 } from '@material-ui/core'
 
-import { makeStyles } from '@material-ui/core/styles'
-
-import { setFuelCosts, setFuelSummaries, setFuelSummaryTotals } from '../../utils'
-import { fmtNumber } from '../../../../utils/fmt'
 import FormatNumber from '../../../shared/FormatNumber'
+import SectionTitle from '../../../shared/SectionTitle'
+import { fmtNumber } from '../../../../utils/fmt'
+import { setFuelCosts, setFuelSummaries, setFuelSummaryTotals } from '../../utils'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    paddingBottom: theme.spacing(1),
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-  },
-}))
-
 export default function Summary() {
-  const classes = useStyles()
   const sales = useSelector(state => state.sales)
 
   let shiftData
@@ -40,9 +27,7 @@ export default function Summary() {
   if (!shiftData) return null
   if (!R.hasPath(['salesSummary', 'fuel'], shiftData)) return null
 
-  // this assumes that if we have salesSummary.otherFuelLitre,
-  // we would also have salesSummary.otherFuelDollar
-  const haveOtherPropane = R.hasPath(['salesSummary', 'otherFuelLitre'], shiftData)
+  const havePropane = !!shiftData.fuelCosts.fuel6
 
   const { fuelDefinitions } = sales.shift.sales.entities
 
@@ -51,12 +36,10 @@ export default function Summary() {
   const fuelSummaryTotals = setFuelSummaryTotals(fuelSummaries)
 
   return (
-    <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Summary
-      </Typography>
+    <Paper square>
+      <SectionTitle title="Summary" />
 
-      <Table className={classes.table} size="small">
+      <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell />
@@ -69,7 +52,7 @@ export default function Summary() {
               </TableCell>
             ))}
             <TableCell align="center">Total</TableCell>
-            {haveOtherPropane && <TableCell align="center">Other Propane</TableCell>}
+            {havePropane && <TableCell align="center">Other Propane</TableCell>}
           </TableRow>
         </TableHead>
 
@@ -89,7 +72,7 @@ export default function Summary() {
               <FormatNumber value={fuelSummaryTotals.dollar} />
             </TableCell>
 
-            {haveOtherPropane && (
+            {havePropane && (
               <TableCell align="right">
                 <FormatNumber value={shiftData.salesSummary.otherFuelDollar} />
               </TableCell>
@@ -108,10 +91,10 @@ export default function Summary() {
             ))}
 
             <TableCell align="right" size="small">
-              {fmtNumber(fuelSummaryTotals.litre)}
+              {fmtNumber(fuelSummaryTotals.litre, 3)}
             </TableCell>
 
-            {haveOtherPropane && (
+            {havePropane && (
               <TableCell align="right">
                 <FormatNumber value={shiftData.salesSummary.otherFuelLitre} decimal={3} />
               </TableCell>

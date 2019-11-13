@@ -1,0 +1,5 @@
+export const CASH = 'CASH'
+export const FUEL = 'FUEL'
+export const NON_FUEL = 'NON_FUEL'
+export const STATION = 'STATION'
+export const STATION_SUMMARY = 'STATION_SUMMARY'

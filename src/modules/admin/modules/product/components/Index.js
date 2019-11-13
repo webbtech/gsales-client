@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   AppBar,
   Button,
-  Dialog,
   Table,
   TableCell,
   TableHead,
@@ -17,7 +16,8 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles'
 
-import ProductForm from './Form'
+import FormDialog from './FormDialog'
+import Loader from '../../../../shared/Loader'
 import { fetchProducts, setCurrentProduct } from '../actions'
 import { fmtNumberSimple } from '../../../../../utils/fmt'
 
@@ -59,7 +59,7 @@ export default function Product() {
   const dispatch = useDispatch()
   const [open, setOpen] = React.useState(false)
 
-  function handleClickOpen(id) {
+  const handleClickOpen = (id) => {
     let productID = null
     if (typeof id === 'string') {
       productID = id
@@ -68,7 +68,7 @@ export default function Product() {
     setOpen(true)
   }
 
-  function handleClose() {
+  const handleClose = () => {
     setOpen(false)
   }
 
@@ -90,7 +90,7 @@ export default function Product() {
       </AppBar>
 
       {!haveProducts ? (
-        <div>Loading...</div>
+        <Loader />
       ) : (
         <Table size="small" className={classes.table}>
           <TableHead>
@@ -112,13 +112,10 @@ export default function Product() {
         </Table>
       )}
 
-      <Dialog
+      <FormDialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <ProductForm onCloseHandler={handleClose} />
-      </Dialog>
+      />
     </div>
   )
 }

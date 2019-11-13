@@ -3,31 +3,24 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import {
-  AppBar,
-  Button,
   Dialog,
-  Fab,
   FormControl,
   FormHelperText,
   Grid,
   TextField,
-  Toolbar,
-  Typography,
 } from '@material-ui/core'
 
-import CloseIcon from '@material-ui/icons/Close'
-import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 import { getMiscFieldLabel, getCashCardsFieldLabel } from '../../utils'
 
+import DialogAppBar from '../../../shared/DialogAppBar'
+import CancelButton from '../../../shared/CancelButton'
+import SaveButton from '../../../shared/SaveButton'
 import { adjustShiftSummary } from '../../actions'
 
 const R = require('ramda')
 
 const useStyles = makeStyles(theme => ({
-  button: {
-    width: '100%',
-  },
   content: {
     margin: theme.spacing(2),
   },
@@ -37,18 +30,12 @@ const useStyles = makeStyles(theme => ({
   numberInput: {
     textAlign: 'right',
   },
-  rightIcon: {
-    marginLeft: theme.spacing(1),
-  },
   textField: {
     width: '100%',
   },
-  title: {
-    flexGrow: 1,
-  },
 }))
 
-const MiscAdjustDialog = (props) => {
+const ShiftAdjustDialog = (props) => {
   const {
     field,
     onClose,
@@ -80,7 +67,6 @@ const MiscAdjustDialog = (props) => {
       recordNum: shift.recordNum,
       stationID: shift.stationID,
     }
-
     dispatch(adjustShiftSummary(params))
     handleClose()
   }
@@ -118,16 +104,10 @@ const MiscAdjustDialog = (props) => {
       open={open}
       fullWidth
     >
-      <AppBar position="static" color="secondary">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" className={classes.title}>
-            {title}
-          </Typography>
-          <Fab onClick={handleClose} size="small">
-            <CloseIcon />
-          </Fab>
-        </Toolbar>
-      </AppBar>
+      <DialogAppBar
+        closeHandler={handleClose}
+        title={title}
+      />
 
       <div className={classes.content}>
         <Grid container spacing={3}>
@@ -172,43 +152,32 @@ const MiscAdjustDialog = (props) => {
           </Grid>
 
           <Grid item xs={7}>
-            <Button
-              color="primary"
-              className={classes.button}
-              onClick={handleSubmit}
-              type="submit"
-              variant="contained"
-            >
-              Save Adjustment
-              <SaveIcon className={classes.rightIcon} />
-            </Button>
+            <SaveButton
+              submitHandler={handleSubmit}
+              label="Save Adjustment"
+            />
           </Grid>
 
           <Grid item xs={5}>
-            <Button
-              className={classes.button}
-              onClick={handleClose}
-              type="button"
-              variant="contained"
-            >
-              Cancel
-              <CloseIcon className={classes.rightIcon} />
-            </Button>
+            <CancelButton
+              cancelHandler={handleClose}
+              label="Cancel"
+            />
           </Grid>
         </Grid>
       </div>
     </Dialog>
   )
 }
-MiscAdjustDialog.propTypes = {
+ShiftAdjustDialog.propTypes = {
   field: PropTypes.string,
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   shift: PropTypes.instanceOf(Object).isRequired,
   type: PropTypes.string.isRequired,
 }
-MiscAdjustDialog.defaultProps = {
+ShiftAdjustDialog.defaultProps = {
   field: null,
 }
 
-export default MiscAdjustDialog
+export default ShiftAdjustDialog

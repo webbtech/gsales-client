@@ -23,7 +23,8 @@ import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/ArrowBackIos'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { fetchStation, persistStation } from '../actions'
+import Loader from '../../../../shared/Loader'
+import { fetchMonthlyStation, persistStation } from '../actions'
 import { fetchProducts } from '../../product/actions'
 
 
@@ -78,7 +79,7 @@ function ProductListEdit({ match }) {
   const { stationID } = match.params
 
   useEffect(() => {
-    dispatch(fetchStation(stationID))
+    dispatch(fetchMonthlyStation(stationID))
     dispatch(fetchProducts())
   }, [dispatch, stationID])
 
@@ -131,7 +132,7 @@ function ProductListEdit({ match }) {
         </Toolbar>
       </AppBar>
       {station.isFetching || product.isFetching ? (
-        <div>Loading...</div>
+        <Loader />
       ) : (
         <Table size="small">
           <TableHead>

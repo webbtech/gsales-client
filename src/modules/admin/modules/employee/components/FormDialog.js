@@ -5,16 +5,11 @@ import { Field, reduxForm } from 'redux-form'
 import { connect, useSelector, useDispatch } from 'react-redux'
 
 import {
-  AppBar,
   Button,
-  DialogContent,
-  Fab,
+  Dialog,
   Grid,
-  Toolbar,
-  Typography,
 } from '@material-ui/core'
 
-import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/core/styles'
 
 import {
@@ -23,6 +18,7 @@ import {
   RenderTextField,
 } from '../../../../shared/FormFields'
 
+import DialogAppBar from '../../../../shared/DialogAppBar'
 import { persistEmployee } from '../actions'
 import { fetchStationList } from '../../station/actions'
 import { capitalize } from '../../../../../utils/fmt'
@@ -30,20 +26,14 @@ import { capitalize } from '../../../../../utils/fmt'
 const R = require('ramda')
 
 const useStyles = makeStyles(theme => ({
-  root: {
-  },
-  form: {
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(2),
+  container: {
+    padding: theme.spacing(3),
   },
   submitButton: {
     width: '100%',
   },
   textField: {
     width: '100%',
-  },
-  title: {
-    flexGrow: 1,
   },
 }))
 
@@ -76,7 +66,8 @@ let Form = (props) => {
   const {
     handleSubmit,
     initialValues,
-    onCloseHandler,
+    onClose,
+    open,
     pristine,
     submitting,
   } = props
@@ -100,12 +91,16 @@ let Form = (props) => {
     setState({ ...state, [name]: event.target.checked })
   }
 
-  function onHandleSubmit(vals) {
+  const handleClose = () => {
+    onClose()
+  }
+
+  const onHandleSubmit = (vals) => {
     const employeeID = vals.id || null
     const formVals = Object.assign({}, { ...vals })
 
     dispatch(persistEmployee({ employeeID, values: R.pick(fields, formVals) }))
-    onCloseHandler()
+    handleClose()
   }
 
   const isEdit = !!(employee.item && employee.item.employeeID)
@@ -119,19 +114,13 @@ let Form = (props) => {
   }
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static" color="secondary">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" className={classes.title}>
-            {formLabel}
-          </Typography>
-          <Fab onClick={onCloseHandler} size="small">
-            <CloseIcon />
-          </Fab>
-        </Toolbar>
-      </AppBar>
+    <Dialog onClose={handleClose} open={open}>
+      <DialogAppBar
+        closeHandler={handleClose}
+        title={formLabel}
+      />
 
-      <DialogContent>
+      <div className={classes.container}>
         <form
           onSubmit={handleSubmit(onHandleSubmit)}
           className={classes.form}
@@ -207,14 +196,15 @@ let Form = (props) => {
             </Grid>
           </Grid>
         </form>
-      </DialogContent>
-    </div>
+      </div>
+    </Dialog>
   )
 }
 Form.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   initialValues: PropTypes.instanceOf(Object),
-  onCloseHandler: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
   pristine: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
 }

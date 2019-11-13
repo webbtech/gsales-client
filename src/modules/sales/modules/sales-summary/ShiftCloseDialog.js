@@ -4,13 +4,15 @@ import PropTypes from 'prop-types'
 import {
   Button,
   Dialog,
-  DialogTitle,
   Grid,
   Typography,
 } from '@material-ui/core'
 
 import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/core/styles'
+
+import DialogAppBar from '../../../shared/DialogAppBar'
+import CancelButton from '../../../shared/CancelButton'
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -20,27 +22,32 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 420,
     margin: theme.spacing(2),
   },
-  rightIcon: {
-    marginLeft: theme.spacing(1),
-  },
 }))
 
 export default function ShiftDeleteDialog(props) {
+  const {
+    handler,
+    onClose,
+    open,
+  } = props
   const classes = useStyles()
-  const { handler, onClose, open } = props
 
-  function handleClose() {
+  const handleClose = () => {
     onClose()
   }
 
-  function handleConfirm() {
+  const handleConfirm = () => {
     handler()
   }
 
   return (
     <Dialog onClose={handleClose} open={open}>
+      <DialogAppBar
+        closeHandler={handleClose}
+        title="Close Shift Confirmation"
+      />
+
       <div className={classes.container}>
-        <DialogTitle id="dialog-title">Close Shift Confirmation</DialogTitle>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography variant="body1">
@@ -50,6 +57,7 @@ export default function ShiftDeleteDialog(props) {
               {'Cash & Cards, Attendant and Overshort Details are saved.'}
             </Typography>
           </Grid>
+
           <Grid item xs={8}>
             <Button
               color="primary"
@@ -64,14 +72,10 @@ export default function ShiftDeleteDialog(props) {
           </Grid>
 
           <Grid item xs={4}>
-            <Button
-              className={classes.button}
-              onClick={handleClose}
-              type="button"
-              variant="contained"
-            >
-              Cancel
-            </Button>
+            <CancelButton
+              cancelHandler={handleClose}
+              label="Cancel"
+            />
           </Grid>
         </Grid>
       </div>

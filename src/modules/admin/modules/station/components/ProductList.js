@@ -20,7 +20,8 @@ import {
 import MenuIcon from '@material-ui/icons/ArrowBackIos'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { fetchStation } from '../actions'
+import Loader from '../../../../shared/Loader'
+import { fetchMonthlyStation } from '../actions'
 import { fetchProducts } from '../../product/actions'
 
 const useStyles = makeStyles(theme => ({
@@ -60,7 +61,7 @@ function ProductList({ match }) {
   const { stationID } = match.params
 
   useEffect(() => {
-    dispatch(fetchStation(stationID))
+    dispatch(fetchMonthlyStation(stationID))
     dispatch(fetchProducts())
   }, [dispatch, stationID])
 
@@ -81,7 +82,7 @@ function ProductList({ match }) {
       </AppBar>
 
       {station.isFetching || product.isFetching ? (
-        <div>Loading...</div>
+        <Loader />
       ) : (
         <Table size="small">
           <TableHead>

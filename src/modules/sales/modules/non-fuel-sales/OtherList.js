@@ -10,12 +10,12 @@ import {
   TableCell,
   TableRow,
   Tooltip,
-  Typography,
 } from '@material-ui/core'
 
 import UpdateIcon from '@material-ui/icons/Update'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SectionTitle from '../../../shared/SectionTitle'
 import ShiftAdjustDialog from '../sales-summary/ShiftAdjustDialog'
 import { getMiscFieldLabel } from '../../utils'
 import FormatNumber from '../../../shared/FormatNumber'
@@ -29,10 +29,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     marginBottom: theme.spacing(2),
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
 }))
 
@@ -172,9 +168,8 @@ export default function OtherList() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        {title}
-      </Typography>
+      <SectionTitle title={title} />
+
       {isBobs ? (
         <BobsNonFuelView shift={shift} />
       ) : (

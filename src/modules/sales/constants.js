@@ -31,3 +31,6 @@ export const splitFields = () => {
   ret[1] = vals.second.map(f => ({ field: f, label: cashAndCards[f] }))
   return ret
 }
+
+// Maximum discrepancy amount in fuel sales
+export const DISCREPANCY_LIMIT = 10

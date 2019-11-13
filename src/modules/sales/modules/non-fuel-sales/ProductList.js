@@ -11,14 +11,14 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography,
 } from '@material-ui/core'
 
 import UpdateIcon from '@material-ui/icons/Update'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { fmtNumber } from '../../../../utils/fmt'
 import ProductAdjustDialog from './ProductAdjustDialog'
+import SectionTitle from '../../../shared/SectionTitle'
+import { fmtNumber } from '../../../../utils/fmt'
 
 const useStyles = makeStyles(theme => ({
   iconButton: {
@@ -29,10 +29,6 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     width: '100%',
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
 }))
 
@@ -76,9 +72,8 @@ const ProductList = () => {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Products
-      </Typography>
+      <SectionTitle title="Products" />
+
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>

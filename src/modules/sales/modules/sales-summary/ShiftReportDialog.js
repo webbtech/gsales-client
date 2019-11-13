@@ -3,27 +3,25 @@ import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  AppBar,
   Dialog,
-  Fab,
   Grid,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Toolbar,
   Typography,
   Paper,
 } from '@material-ui/core'
 
-import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/core/styles'
 
 import moment from 'moment'
 
 import CheckComplete from '../../../shared/CheckComplete'
+import DialogAppBar from '../../../shared/DialogAppBar'
 import FormatNumber from '../../../shared/FormatNumber'
+import { NlToBr } from '../../../../utils/utils'
 import { fetchShiftHistory } from '../../../reports/actions'
 import { fmtNumber } from '../../../../utils/fmt'
 import { splitFields as splitCashAndCardFields } from '../../constants'
@@ -43,7 +41,8 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 6,
   },
   title: {
-    flexGrow: 1,
+    paddingBottom: theme.spacing(1),
+    paddingTop: theme.spacing(1),
   },
   totalsCell: {
     fontWeight: '600',
@@ -64,7 +63,7 @@ const RecordView = ({ record }) => {
   return (
     <Grid container xs={9} spacing={2} alignContent="flex-start">
       <Grid item xs={12} style={{ marginBottom: -16 }}>
-        <Typography variant="h6" className={classes.paperTitle}>
+        <Typography variant="h6" className={classes.title}>
           {`Record: ${record.recordNum}`}
         </Typography>
       </Grid>
@@ -215,8 +214,8 @@ const RecordView = ({ record }) => {
               </TableRow>
 
               <TableRow>
-                <TableCell>Description</TableCell>
-                <TableCell>{record.overshort.descrip}</TableCell>
+                <TableCell>Comments</TableCell>
+                <TableCell>{NlToBr(record.overshort.descrip)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -257,14 +256,13 @@ const ShiftReportDialog = (props) => {
     }
   }, [dispatch, open, shift.recordDate, shift.stationID])
 
-
   if (report && report.isLoading) {
     return <div>Loading...</div>
   }
 
   let reportItems = []
-  if (report.report && R.hasPath(['report', 'result', 'keys'], report)) {
-    reportItems = report.report.result.keys
+  if (report.report && R.hasPath(['report', 'result', 'records'], report)) {
+    reportItems = report.report.result.records
   }
 
   const handleDisplayShift = (id) => {
@@ -282,16 +280,10 @@ const ShiftReportDialog = (props) => {
       fullWidth
       PaperProps={{ style: { maxWidth: 1024 } }}
     >
-      <AppBar position="static" color="secondary">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" className={classes.title}>
-            Shift Report
-          </Typography>
-          <Fab onClick={handleClose} size="small">
-            <CloseIcon />
-          </Fab>
-        </Toolbar>
-      </AppBar>
+      <DialogAppBar
+        closeHandler={handleClose}
+        title="Shift Report"
+      />
 
       <div className={classes.container}>
         <Grid container spacing={4}>
@@ -323,8 +315,9 @@ const ShiftReportDialog = (props) => {
               </Table>
             </Paper>
           </Grid>
+
           {!shiftRecordID ? (
-            <Typography variant="h6" className={classes.paperTitle}>Select Record</Typography>
+            <Typography variant="h6" className={classes.title}>Select Record</Typography>
           ) : (
             <RecordView record={shiftRecord} />
           )}

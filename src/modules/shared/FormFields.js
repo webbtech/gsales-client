@@ -100,8 +100,6 @@ export const RenderSelectField = ({
     </TextField>
   </FormControl>
 )
-
-
 RenderSelectField.propTypes = {
   children: PropTypes.instanceOf(Object),
   input: PropTypes.instanceOf(Object).isRequired,

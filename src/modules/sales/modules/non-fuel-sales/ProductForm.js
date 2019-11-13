@@ -13,13 +13,13 @@ import {
   TableHead,
   TableCell,
   TextField,
-  Typography,
   TableRow,
 } from '@material-ui/core'
 
 import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SectionTitle from '../../../shared/SectionTitle'
 import { fmtNumber } from '../../../../utils/fmt'
 import { saveNonFuelProducts } from '../../actions'
 
@@ -56,13 +56,10 @@ const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
   },
   root: {
     width: '100%',
+    marginBottom: theme.spacing(1.5)
   },
   textField: {
     width: 60,
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
   totalsCell: {
     fontWeight: '600',
@@ -295,9 +292,8 @@ export default function ProductForm() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Products
-      </Typography>
+      <SectionTitle title="Products" />
+
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>

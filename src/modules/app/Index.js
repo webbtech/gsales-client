@@ -14,8 +14,10 @@ import mainTheme from '../../themes/main'
 import Menu from './Menu'
 import Admin from '../admin/Index'
 import Reports from '../reports/components/Index'
+import Toaster from '../shared/Toaster'
 import Sales from '../sales/components/Index'
 import { ParamProvider } from '../sales/components/ParamContext'
+import { ToasterProvider } from '../shared/ToasterContext'
 
 import ForgotPassword from '../auth/components/ForgotPassword'
 import RequireNewPassword from '../auth/components/RequireNewPassword'
@@ -36,15 +38,18 @@ function Index({ authState }) {
   if (authState !== 'signedIn') return null
   return (
     <React.Fragment>
-      <Alerts />
-      <Router>
-        <Switch>
-          <Route exact path="/" component={Menu} />
-          <Route path="/admin" component={Admin} />
-          <Route path="/reports" component={Reports} />
-          <Route path="/sales" component={SalesWithProvider} />
-        </Switch>
-      </Router>
+      <ToasterProvider>
+        <Alerts />
+        <Router>
+          <Switch>
+            <Route exact path="/" component={Menu} />
+            <Route path="/admin" component={Admin} />
+            <Route path="/reports" component={Reports} />
+            <Route path="/sales" component={SalesWithProvider} />
+          </Switch>
+        </Router>
+        <Toaster />
+      </ToasterProvider>
     </React.Fragment>
   )
 }

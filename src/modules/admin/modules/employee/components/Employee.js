@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import {
   AppBar,
   Button,
-  Dialog,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -25,8 +24,9 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles'
 
+import EmployeeFormDialog from './FormDialog'
+import Loader from '../../../../shared/Loader'
 import { fetchEmployees, searchEmployees, setCurrentEmployee } from '../actions'
-import EmployeeForm from './Form'
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -200,7 +200,7 @@ export default function Employee() {
 
       <div className={classes.result}>
         {employees.isFetching ? (
-          <div>Loading...</div>
+          <Loader />
         ) : (
           <List
             employees={employees.items}
@@ -211,12 +211,10 @@ export default function Employee() {
         )}
       </div>
 
-      <Dialog
-        open={open}
+      <EmployeeFormDialog
         onClose={handleClose}
-      >
-        <EmployeeForm onCloseHandler={handleClose} />
-      </Dialog>
+        open={open}
+      />
     </div>
   )
 }

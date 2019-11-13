@@ -22,15 +22,12 @@ import { makeStyles } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state'
 
+import Loader from '../../../../shared/Loader'
 import { fetchStationList } from '../actions'
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    height: 'calc(100vh - 65px)',
-  },
-  main: {
-    padding: theme.spacing(2.5),
+  table: {
+    marginTop: theme.spacing(1),
   },
 }))
 
@@ -44,6 +41,7 @@ const MenuPopupState = ({ station }) => (
           aria-label="menu"
           color="inherit"
           edge="start"
+          size="small"
           {...bindTrigger(popupState)}
         >
           <MenuIcon />
@@ -77,7 +75,7 @@ MenuPopupState.propTypes = {
   station: PropTypes.instanceOf(Object).isRequired,
 }
 
-const List = () => {
+export default function List() {
   const classes = useStyles()
   const station = useSelector(state => state.station)
   const dispatch = useDispatch()
@@ -86,7 +84,7 @@ const List = () => {
     dispatch(fetchStationList())
   }, [dispatch])
 
-  if (station.isFetching) return <div>Loading...</div>
+  if (station.isFetching) return <Loader />
 
   return (
     <React.Fragment>
@@ -110,7 +108,7 @@ const List = () => {
 
         <TableBody>
           {Object.values(station.items).map(s => (
-            <TableRow key={s.id}>
+            <TableRow key={s.id} hover>
               <TableCell>{s.name}</TableCell>
               <TableCell>{s.street}</TableCell>
               <TableCell>{s.phone}</TableCell>
@@ -124,5 +122,3 @@ const List = () => {
     </React.Fragment>
   )
 }
-
-export default List

@@ -11,17 +11,20 @@ import { withRouter } from 'react-router-dom'
 
 import moment from 'moment'
 
-import Paper from '@material-ui/core/Paper'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import Typography from '@material-ui/core/Typography'
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@material-ui/core'
+
 import LockIcon from '@material-ui/icons/Lock'
 import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SectionTitle from '../../../shared/SectionTitle'
 import { loadShift } from '../../actions'
 import { ParamContext } from '../../components/ParamContext'
 
@@ -29,7 +32,7 @@ const R = require('ramda')
 
 const useStyles = makeStyles(theme => ({
   activeShift: {
-    backgroundColor: '#FFFEC0',
+    backgroundColor: theme.palette.grey[50],
   },
   root: {
     flexGrow: 1,
@@ -37,12 +40,7 @@ const useStyles = makeStyles(theme => ({
   table: {
     minWidth: 200,
   },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-  },
 }))
-
 
 function ShiftList({ dayID, history, match }) {
   const classes = useStyles()
@@ -92,9 +90,7 @@ function ShiftList({ dayID, history, match }) {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Shifts
-      </Typography>
+      <SectionTitle title="Shifts" />
 
       <Table className={classes.table} size="small">
         <TableHead>
@@ -114,7 +110,7 @@ function ShiftList({ dayID, history, match }) {
               selected={shiftParams.shiftNo === shift.shift.number}
             >
               <TableCell>{shift.shift.number}</TableCell>
-              <TableCell align="center" padding="none">
+              <TableCell align="center" padding="bullet">
                 {shift.shift.flag ? (<LockIcon />) : (<LockOpenIcon color="primary" />)}
               </TableCell>
             </TableRow>

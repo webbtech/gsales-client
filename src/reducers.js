@@ -7,7 +7,7 @@ import employee from './modules/admin/modules/employee/reducers'
 import journal from './modules/journal/reducers'
 import product from './modules/admin/modules/product/reducers'
 import sales from './modules/sales/reducers'
-import report from './modules/reports/reducers'
+import { monthlyReport, report, report2 } from './modules/reports/reducers'
 import { dispensers, station } from './modules/admin/modules/station/reducers'
 
 export default combineReducers({
@@ -19,6 +19,8 @@ export default combineReducers({
   journal,
   product,
   report,
+  monthlyReport,
   sales,
+  report2,
   station,
 })

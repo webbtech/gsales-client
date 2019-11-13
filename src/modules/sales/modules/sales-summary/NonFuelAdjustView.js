@@ -1,31 +1,27 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
 import {
   Table,
   TableHead,
   TableCell,
   TableBody,
   TableRow,
+  Paper,
 } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 
 import FormatNumber from '../../../shared/FormatNumber'
+import SectionTitle from '../../../shared/SectionTitle'
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles({
   root: {
     width: '100%',
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
   totalsCell: {
     fontWeight: '600',
   },
-}))
+})
 
 export default function NonFuelAdjustView() {
   const classes = useStyles()
@@ -38,9 +34,7 @@ export default function NonFuelAdjustView() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Non-fuel Attendant Adjustment Summary
-      </Typography>
+      <SectionTitle title="Non-fuel Attendant Adjustment Summary" />
 
       <Table className={classes.table} size="small">
         <TableHead>
@@ -50,6 +44,7 @@ export default function NonFuelAdjustView() {
             <TableCell align="right">Amount</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           {haveAdjust && shift.nonFuelAdjustVals.map(av => (
             <TableRow key={`${av.productID}${av.amount}`}>

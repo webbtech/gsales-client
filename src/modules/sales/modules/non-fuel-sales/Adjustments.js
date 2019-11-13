@@ -1,26 +1,26 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import Paper from '@material-ui/core/Paper'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableHead from '@material-ui/core/TableHead'
-import TableCell from '@material-ui/core/TableCell'
-import TableRow from '@material-ui/core/TableRow'
-import Typography from '@material-ui/core/Typography'
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@material-ui/core'
+
 import { makeStyles } from '@material-ui/core/styles'
+
+import SectionTitle from '../../../shared/SectionTitle'
 
 const R = require('ramda')
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     flexGrow: 1,
   },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
-  },
-}))
+})
 
 export default function Adjustments() {
   const classes = useStyles()
@@ -37,9 +37,8 @@ export default function Adjustments() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Adjustments
-      </Typography>
+      <SectionTitle title="Adjustments" />
+
       <Table className={classes.table} size="small">
         <TableHead>
           <TableRow>

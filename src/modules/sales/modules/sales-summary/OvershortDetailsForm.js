@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  Button,
   Grid,
   Paper,
   Table,
@@ -10,19 +9,16 @@ import {
   TableCell,
   TableRow,
   TextField,
-  Typography,
 } from '@material-ui/core'
 
-import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 
+import SaveButton from '../../../shared/SaveButton'
+import SectionTitle from '../../../shared/SectionTitle'
 import FormatNumber from '../../../shared/FormatNumber'
 import { patchShift } from '../../actions'
 
 const useStyles = makeStyles(theme => ({
-  actionButton: {
-    width: '100%',
-  },
   buttonRow: {
     padding: theme.spacing(2),
     paddingBottom: theme.spacing(1),
@@ -37,19 +33,12 @@ const useStyles = makeStyles(theme => ({
   numberInput: {
     textAlign: 'right',
   },
-  rightIcon: {
-    marginLeft: theme.spacing(1),
-  },
   root: {
     flexGrow: 1,
     marginBottom: theme.spacing(2),
   },
   textField: {
     width: 100,
-  },
-  title: {
-    padding: theme.spacing(1),
-    paddingLeft: theme.spacing(2),
   },
 }))
 
@@ -81,9 +70,7 @@ export default function OvershortDetailsForm() {
 
   return (
     <Paper className={classes.root} square>
-      <Typography variant="h6" className={classes.title}>
-        Overshort Details
-      </Typography>
+      <SectionTitle title="Overshort Details" />
 
       <Table className={classes.table} size="small">
         <TableBody>
@@ -95,7 +82,7 @@ export default function OvershortDetailsForm() {
           </TableRow>
 
           <TableRow>
-            <TableCell>Description</TableCell>
+            <TableCell>Comments</TableCell>
             <TableCell align="right">
               <TextField
                 className={classes.commentsField}
@@ -115,19 +102,12 @@ export default function OvershortDetailsForm() {
         </TableBody>
       </Table>
 
-      <Grid container spacing={2} className={classes.buttonRow}>
-        <Grid item xs={6} />
+      <Grid container spacing={2} className={classes.buttonRow} justify="flex-end">
         <Grid item xs={6}>
-          <Button
-            className={classes.actionButton}
-            color="primary"
-            onClick={handleSubmit}
-            type="submit"
-            variant="contained"
-          >
-            Save Overshort
-            <SaveIcon className={classes.rightIcon} />
-          </Button>
+          <SaveButton
+            submitHandler={handleSubmit}
+            label="Save Overshort"
+          />
         </Grid>
       </Grid>
     </Paper>

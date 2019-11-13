@@ -5,16 +5,6 @@ import {
 
 // ===================================== Action Definitions ================================== //
 
-// export const CONFIG = createRequestTypes('CONFIG')
-// export const FUEL_SALE = createRequestTypes('FUEL_SALE')
-// export const NON_FUEL_SALE = createRequestTypes('NON_FUEL_SALE')
-// export const NON_FUEL_SALE_SAVE = createRequestTypes('NON_FUEL_SALES_SAVE')
-// export const PATCH_SIMPLE = createRequestTypes('PATCH_SIMPLE')
-// export const SET_ADJUST_RECORD_ID = createRequestTypes('SET_ADJUST_RECORD_ID')
-// export const SHIFT_ITEM = createRequestTypes('SHIFT_ITEM')
-// export const STATIONS = createRequestTypes('STATIONS')
-
-
 export const ATTENDANT_SAVE = createRequestTypes('ATTENDANT_SAVE')
 export const SHIFT_SUMMARY_PATCH = createRequestTypes('SHIFT_SUMMARY_PATCH')
 export const DAYSALES = createRequestTypes('DAYSALES')
@@ -24,13 +14,14 @@ export const NON_FUEL_MISC_SAVE = createRequestTypes('NON_FUEL_MISC_SAVE')
 export const NON_FUEL_PRODUCT_ADJUST = createRequestTypes('NON_FUEL_PRODUCT_ADJUST')
 export const NON_FUEL_PRODUCTS_SAVE = createRequestTypes('NON_FUEL_PRODUCTS_SAVE')
 export const OTHER_FUEL_SAVE = createRequestTypes('OTHER_FUEL_SAVE')
+export const OTHER_FUEL_PATCH = createRequestTypes('OTHER_FUEL_PATCH')
 export const RESET_DISPENSER = createRequestTypes('RESET_DISPENSER')
 export const SHIFT_ACTION = createRequestTypes('SHIFT_ACTION')
+export const SHIFT_FIELD_PATCH = createRequestTypes('SHIFT_FIELD_PATCH')
 export const SHIFT_PATCH = createRequestTypes('SHIFT_PATCH')
 export const SHIFT_SALES = createRequestTypes('SHIFT_SALES')
 export const SHIFT_SUMMARY = createRequestTypes('SHIFT_SUMMARY')
 
-// export const PROPANE_SALE = 'PROPANE_SALE'
 export const CLEAR_ALL_SALES = 'CLEAR_ALL_SALES'
 
 
@@ -40,6 +31,18 @@ export const daySalesEntity = {
   request: daySales => action(DAYSALES.REQUEST, { daySales }),
   success: response => action(DAYSALES.SUCCESS, { response }),
   failure: error => action(DAYSALES.FAILURE, { error }),
+}
+
+export const patchShiftEntity = {
+  request: request => action(SHIFT_PATCH.REQUEST, { request }),
+  success: response => action(SHIFT_PATCH.SUCCESS, { response }),
+  failure: error => action(SHIFT_PATCH.FAILURE, { error }),
+}
+
+export const patchShiftFieldEntity = {
+  request: request => action(SHIFT_FIELD_PATCH.REQUEST, { request }),
+  success: response => action(SHIFT_FIELD_PATCH.SUCCESS, { response }),
+  failure: error => action(SHIFT_FIELD_PATCH.FAILURE, { error }),
 }
 
 export const patchShiftSummaryEntity = {
@@ -64,6 +67,12 @@ export const persistFuelSalesEntity = {
   request: request => action(FUEL_SALE_SAVE.REQUEST, { request }),
   success: response => action(FUEL_SALE_SAVE.SUCCESS, { response }),
   failure: error => action(FUEL_SALE_SAVE.FAILURE, { error }),
+}
+
+export const patchOtherFuelEntity = {
+  request: request => action(OTHER_FUEL_PATCH.REQUEST, { request }),
+  success: response => action(OTHER_FUEL_PATCH.SUCCESS, { response }),
+  failure: error => action(OTHER_FUEL_PATCH.FAILURE, { error }),
 }
 
 export const persistOtherFuelEntity = {
@@ -114,12 +123,6 @@ export const shiftEntity = {
   failure: error => action(SHIFT_SALES.FAILURE, { error }),
 }
 
-export const shiftPatchEntity = {
-  request: request => action(SHIFT_PATCH.REQUEST, { request }),
-  success: response => action(SHIFT_PATCH.SUCCESS, { response }),
-  failure: error => action(SHIFT_PATCH.FAILURE, { error }),
-}
-
 // ===================================== Actions ============================================== //
 
 export const loadShift = params => action(SHIFT_SALES.REQUEST, { params })
@@ -132,6 +135,7 @@ export const createShift = params => action(SHIFT_ACTION.REQUEST, { params })
 export const clearSalesShift = () => action(CLEAR_ALL_SALES)
 export const deleteShift = params => action(SHIFT_ACTION.REQUEST, { params })
 export const patchShift = params => action(SHIFT_PATCH.REQUEST, { params })
+export const patchShiftField = params => action(SHIFT_FIELD_PATCH.REQUEST, { params })
 
 export const adjustFuelSale = params => action(FUEL_SALE_ADJUST.REQUEST, { params })
 export const resetDispenser = params => action(RESET_DISPENSER.REQUEST, { params })
@@ -146,3 +150,4 @@ export const saveShiftSummary = params => action(SHIFT_SUMMARY.REQUEST, { params
 
 export const saveAttendant = params => action(ATTENDANT_SAVE.REQUEST, { params })
 export const saveOtherFuel = params => action(OTHER_FUEL_SAVE.REQUEST, { params })
+export const patchOtherFuel = params => action(OTHER_FUEL_PATCH.REQUEST, { params })

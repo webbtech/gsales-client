@@ -2,16 +2,21 @@ import React from 'react'
 
 import { Link } from 'react-router-dom'
 
-import AppBar from '@material-ui/core/AppBar'
-import IconButton from '@material-ui/core/IconButton'
-import Menu from '@material-ui/core/Menu'
+import {
+  AppBar,
+  Button,
+  Menu,
+  MenuItem,
+  Toolbar,
+} from '@material-ui/core'
+
 import MenuIcon from '@material-ui/icons/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
+  iconLeft: {
+    marginRight: theme.spacing(1),
+  },
   root: {
     flexGrow: 1,
   },
@@ -21,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const menuItems = [
+export const menuItems = [
   { id: 'attendant', link: '/reports/attendant-activity', title: 'Attendant Activity' },
   { id: 'monthly', link: '/reports/monthly-sales', title: 'Monthly Sales' },
   { id: 'shift', link: '/reports/shift', title: 'Shifts' },
@@ -46,7 +51,7 @@ export default function ReportMenu() {
     <div>
       <AppBar position="static" color="inherit">
         <Toolbar>
-          <IconButton
+          <Button
             edge="start"
             // className={classes.menuButton}
             color="inherit"
@@ -55,11 +60,9 @@ export default function ReportMenu() {
             aria-haspopup="true"
             onClick={handleClick}
           >
-            <MenuIcon />
-            <Typography variant="subtitle1" className={classes.title}>
-              Select Report
-            </Typography>
-          </IconButton>
+            <MenuIcon className={classes.iconLeft} />
+            Select Report
+          </Button>
           <Menu
             id="long-menu"
             anchorEl={anchorEl}

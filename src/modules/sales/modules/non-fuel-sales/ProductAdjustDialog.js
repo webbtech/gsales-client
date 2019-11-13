@@ -3,11 +3,8 @@ import PropTypes from 'prop-types'
 import { useDispatch } from 'react-redux'
 
 import {
-  AppBar,
-  Button,
   Dialog,
   DialogContent,
-  Fab,
   FormControl,
   FormControlLabel,
   Grid,
@@ -19,14 +16,14 @@ import {
   TableRow,
   TableCell,
   TextField,
-  Toolbar,
-  Typography,
 } from '@material-ui/core'
 
-import CloseIcon from '@material-ui/icons/Close'
-import SaveIcon from '@material-ui/icons/SaveAlt'
 import { makeStyles } from '@material-ui/core/styles'
 
+import CancelButton from '../../../shared/CancelButton'
+import DialogAppBar from '../../../shared/DialogAppBar'
+import SaveButton from '../../../shared/SaveButton'
+import SectionTitle from '../../../shared/SectionTitle'
 import { fmtNumber } from '../../../../utils/fmt'
 import { adjustNonFuelProduct } from '../../actions'
 
@@ -53,21 +50,11 @@ const useStyles = makeStyles(theme => ({
   rightIcon: {
     marginLeft: theme.spacing(1),
   },
-  subtitle: {
-    borderBottomColor: theme.palette.text.secondary,
-    borderBottomStyle: 'solid',
-    borderBottomWidth: 1.5,
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2),
-  },
   table: {
     marginBottom: theme.spacing(3),
   },
   textField: {
     width: 60,
-  },
-  title: {
-    flexGrow: 1,
   },
 }))
 
@@ -177,21 +164,13 @@ const ProductAdjustDialog = (props) => {
       onClose={handleClose}
       open={open}
     >
-      <AppBar position="static" color="secondary">
-        <Toolbar>
-          <Typography variant="h6" color="inherit" className={classes.title}>
-            Adjust Product
-          </Typography>
-          <Fab onClick={handleClose} size="small">
-            <CloseIcon />
-          </Fab>
-        </Toolbar>
-      </AppBar>
+      <DialogAppBar
+        closeHandler={handleClose}
+        title="Adjust Product"
+      />
 
       <DialogContent className={classes.content}>
-        <Typography variant="h6" className={classes.subtitle}>
-          Product Info
-        </Typography>
+        <SectionTitle title="Product Info" />
 
         <Table size="small" className={classes.table}>
           <TableHead>
@@ -217,9 +196,7 @@ const ProductAdjustDialog = (props) => {
           </TableBody>
         </Table>
 
-        <Typography variant="h6" className={classes.subtitle}>
-          Adjustment
-        </Typography>
+        <SectionTitle title="Adjustment" />
 
         <Table size="small" className={classes.table}>
           <TableHead>
@@ -268,9 +245,7 @@ const ProductAdjustDialog = (props) => {
           </TableBody>
         </Table>
 
-        <Typography variant="h6" className={classes.subtitle}>
-          Attendant Details
-        </Typography>
+        <SectionTitle title="Attendant Details" />
 
         <Table size="small" className={classes.table}>
           <TableHead>
@@ -313,28 +288,17 @@ const ProductAdjustDialog = (props) => {
 
         <Grid container spacing={2}>
           <Grid item xs={7}>
-            <Button
-              color="primary"
-              className={classes.button}
-              onClick={handleSubmit}
-              type="submit"
-              variant="contained"
-            >
-              Save Product Adjustment
-              <SaveIcon className={classes.rightIcon} />
-            </Button>
+            <SaveButton
+              submitHandler={handleSubmit}
+              label="Save Comments"
+            />
           </Grid>
 
           <Grid item xs={5}>
-            <Button
-              className={classes.button}
-              onClick={handleClose}
-              type="button"
-              variant="contained"
-            >
-              Cancel
-              <CloseIcon className={classes.rightIcon} />
-            </Button>
+            <CancelButton
+              cancelHandler={handleClose}
+              label="Cancel"
+            />
           </Grid>
         </Grid>
       </DialogContent>
