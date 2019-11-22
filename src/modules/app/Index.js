@@ -5,25 +5,24 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import 'typeface-roboto'
 import Amplify, { Auth } from 'aws-amplify'
 import { Authenticator } from 'aws-amplify-react'
+import LogRocket from 'logrocket'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 
-import Alerts from '../alert/components/Alerts'
-import mainTheme from '../../themes/main'
-import Menu from './Menu'
 import Admin from '../admin/Index'
+import Alerts from '../alert/components/Alerts'
+import ForgotPassword from '../auth/components/ForgotPassword'
+import Menu from './Menu'
 import Reports from '../reports/components/Index'
-import Toaster from '../shared/Toaster'
+import RequireNewPassword from '../auth/components/RequireNewPassword'
 import Sales from '../sales/components/Index'
+import SignIn from '../auth/components/SignIn'
+import Toaster from '../shared/Toaster'
+import awsExports from '../auth/awsExports'
+import mainTheme from '../../themes/main'
 import { ParamProvider } from '../sales/components/ParamContext'
 import { ToasterProvider } from '../shared/ToasterContext'
-
-import ForgotPassword from '../auth/components/ForgotPassword'
-import RequireNewPassword from '../auth/components/RequireNewPassword'
-import SignIn from '../auth/components/SignIn'
-
-import awsExports from '../auth/awsExports'
 
 Amplify.configure(awsExports)
 
@@ -35,6 +34,7 @@ const SalesWithProvider = () => (
 
 function Index({ authState }) {
   // console.log('authState:', authState)
+
   if (authState !== 'signedIn') return null
   return (
     <React.Fragment>
@@ -70,12 +70,17 @@ export default function AppWithAuth() {
       } catch (e) {
         console.error(e) // eslint-disable-line
       }
-      // console.log('user:', user.signInUserSession.accessToken)
       if (cancel) return
       if (user) {
-        // console.log('user', user.signInUserSession.accessToken.jwtToken) // eslint-disable-line
+        const username = user.signInUserSession.idToken.payload['cognito:username']
+        const { name } = user.signInUserSession.idToken.payload
         const storage = window.localStorage
         storage.setItem('userToken', user.signInUserSession.accessToken.jwtToken)
+        // FIXME: the logrocket id needs to go into .env
+        LogRocket.identify('cee2gx/gsales-v2', {
+          name,
+          username,
+        })
       }
     }
     getAuthUser()

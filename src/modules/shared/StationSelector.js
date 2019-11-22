@@ -49,6 +49,13 @@ export default function StationSelector(props) {
     }
   }, [dispatch, haveStationItems])
 
+  /* useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('This will run after 1 second!')
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, []) */
+
   if (station.isFetching) return <div className={classes.loader}>Loading...</div>
 
   return (

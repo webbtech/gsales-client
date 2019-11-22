@@ -1,13 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Auth } from 'aws-amplify'
 import { Link, withRouter } from 'react-router-dom'
 
-import Divider from '@material-ui/core/Divider'
-import IconButton from '@material-ui/core/IconButton'
-import Menu from '@material-ui/core/Menu'
+import {
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@material-ui/core'
+
 import MenuIcon from '@material-ui/icons/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 
 const menuItems = [
@@ -23,22 +27,24 @@ const menuItems = [
     link: '/reports',
     label: 'Reports',
   },
-  /* {
-    link: '/profile/',
-    label: 'Profile',
-  }, */
 ]
 
-const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
+const useStyles = makeStyles(theme => ({
+  name: {
+    marginRight: theme.spacing(1),
+  },
   root: {
     flexGrow: 1,
   },
-  menuButton: {
-  },
 }))
 
-function MainMenu({ history }) {
-  const [anchorEl, setAnchorEl] = React.useState(null)
+function MainMenu() {
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [user, setUser] = useState({
+    email: '',
+    name: '',
+    username: '',
+  })
   const open = Boolean(anchorEl)
   const classes = useStyles()
 
@@ -51,17 +57,26 @@ function MainMenu({ history }) {
   }
 
   function handleLogout() {
-    console.log('logging out')
     Auth.signOut()
       .then((data) => {
-        console.log('data form then: ', data)
-        // window.location.replace('/')
-        // history.push('/')
+        console.log('data form then: ', data) // eslint-disable-line no-console
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err)) // eslint-disable-line no-console
   }
 
-  // console.log('history:', history)
+  useEffect(() => {
+    const getAuthUser = async () => {
+      try {
+        const u = await Auth.currentAuthenticatedUser()
+        const { email, name } = u.signInUserSession.idToken.payload
+        const { username } = u
+        setUser({ email, name, username })
+      } catch (e) {
+        console.error(e) // eslint-disable-line
+      }
+    }
+    getAuthUser()
+  }, [])
 
   return (
     <React.Fragment>
@@ -74,6 +89,7 @@ function MainMenu({ history }) {
         aria-haspopup="true"
         onClick={handleClick}
       >
+        <Typography variant="body1" className={classes.name}>{user.name}</Typography>
         <MenuIcon />
       </IconButton>
       <Menu

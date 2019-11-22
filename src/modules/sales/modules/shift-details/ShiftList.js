@@ -110,7 +110,7 @@ function ShiftList({ dayID, history, match }) {
               selected={shiftParams.shiftNo === shift.shift.number}
             >
               <TableCell>{shift.shift.number}</TableCell>
-              <TableCell align="center" padding="bullet">
+              <TableCell align="center" padding="none">
                 {shift.shift.flag ? (<LockIcon />) : (<LockOpenIcon color="primary" />)}
               </TableCell>
             </TableRow>

@@ -158,7 +158,7 @@ export default function AttendantForm() {
                 onChange={handleTextChange('adjustment')}
                 rows="2"
                 rowsMax="4"
-                value={attendantValues.adjustment}
+                value={attendantValues.adjustment || ''}
               />
             </TableCell>
           </TableRow>
