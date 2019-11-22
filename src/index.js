@@ -1,14 +1,19 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-// import './index.css'
-// import './styles/main.scss'
+import LogRocket from 'logrocket'
+
 import App from './modules/app/Index'
 import * as serviceWorker from './serviceWorker'
 
 import configureStore from './store/configureStore'
 
 const store = configureStore()
+
+if (process.env.NODE_ENV === 'production') {
+  // FIXME: this need to go into .env
+  LogRocket.init('cee2gx/gsales-v2')
+}
 
 const renderApp = () => render(
   <Provider store={store}>

@@ -27,6 +27,7 @@
     "aws-amplify-react": "2.5.2",
     "classnames": "2.2.6",
     "clsx": "1.0.4",
+    "dotenv": "8.2.0",
     "humps": "2.0.1",
     "immer": "3.2.0",
     "logrocket": "1.0.3",
