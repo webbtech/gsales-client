@@ -119,7 +119,7 @@ export default function Index() {
                 // onClick={}
                 variant="contained"
               >
-                Download CSV File
+                Download XLS File
                 <CloudDownloadIcon className={classes.rightIcon} />
               </Button>
             </Grid>
