@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 
 import Button from '@material-ui/core/Button'
 
@@ -12,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import ShiftCloseDialog from './ShiftCloseDialog'
 import ShiftReportDialog from './ShiftReportDialog'
 import { patchShift } from '../../actions'
+import { ParamContext } from '../../components/ParamContext'
 
 const R = require('ramda')
 
@@ -36,8 +38,10 @@ export default function ButtonsView() {
   const classes = useStyles()
   const [openDelete, setOpenDialog] = useState(false)
   const [openReport, setOpenReport] = useState(false)
-  const sales = useSelector(state => state.sales)
   const dispatch = useDispatch()
+  const history = useHistory()
+  const sales = useSelector(state => state.sales)
+  const { setShiftParams } = useContext(ParamContext)
 
   if (!R.hasPath(['shift', 'sales', 'result'], sales)) return null
   const { shift } = sales.shift.sales.result
@@ -61,8 +65,15 @@ export default function ButtonsView() {
         method: 'closeShift',
       },
     }
-    dispatch(patchShift(params))
     setOpenDialog(false)
+
+    dispatch(patchShift(params))
+    // FIXME: although the shiftNo is set, I believe out callbacks recognize the shift as something
+    // unwanted and changes the shiftNo
+    setShiftParams({ tabName: 'shift-details', shiftNo: null })
+    const date = shift.recordNum.substring(0, 10)
+    const url = `/sales/shift-details/${shift.stationID}/${date}`
+    history.push(url)
   }
 
   const handleOpenReportDialog = () => {

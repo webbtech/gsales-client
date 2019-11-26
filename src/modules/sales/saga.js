@@ -77,7 +77,7 @@ export function* shiftPatch({
     return
   }
 
-  const { shiftEntity, patchShiftEntity } = salesActions
+  const { daySalesEntity, shiftEntity, patchShiftEntity } = salesActions
   let endpoint
   let apiParams
 
@@ -104,9 +104,14 @@ export function* shiftPatch({
       }
       yield call(callApi, patchShiftEntity, endpoint, Schemas.SHIFT, apiParams)
 
-      // Now reload shift data
+      // Now reload daysales
+      const date = recordNum.substring(0, 10) // eslint-disable-line
+      endpoint = `sales/lastDay?stationID=${stationID}&date=${date}&populate=true`
+      yield call(callApi, daySalesEntity, endpoint, Schemas.DAYSALES_ARRAY)
+
       endpoint = `sales/shiftSales?shiftID=${shiftID}&stationID=${stationID}&recordNum=${recordNum}`
       yield call(callApi, shiftEntity, endpoint, Schemas.SHIFT_SALES)
+
       yield put(alertActions.alertSend({ message: 'Shift successfully closed', type: 'success', dismissAfter: 2000 }))
       break
 
