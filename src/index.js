@@ -8,13 +8,13 @@ import App from './modules/app/Index'
 import * as serviceWorker from './serviceWorker'
 
 import configureStore from './store/configureStore'
+import { LogRocketID, SentryURL } from './config/privateConstants'
 
 const store = configureStore()
 
 if (process.env.NODE_ENV === 'production') {
-  // FIXME: this need to go into .env
-  LogRocket.init('cee2gx/gsales-v2')
-  Sentry.init({ dsn: "https://d62cc289e0304caeae0e6b825510c887@sentry.io/1807088" })
+  LogRocket.init(LogRocketID)
+  Sentry.init({ dsn: SentryURL })
 }
 
 const renderApp = () => render(
