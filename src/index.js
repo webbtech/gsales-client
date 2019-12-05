@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import LogRocket from 'logrocket'
+import * as Sentry from '@sentry/browser'
 
 import App from './modules/app/Index'
 import * as serviceWorker from './serviceWorker'
@@ -13,6 +14,7 @@ const store = configureStore()
 if (process.env.NODE_ENV === 'production') {
   // FIXME: this need to go into .env
   LogRocket.init('cee2gx/gsales-v2')
+  Sentry.init({ dsn: "https://d62cc289e0304caeae0e6b825510c887@sentry.io/1807088" })
 }
 
 const renderApp = () => render(

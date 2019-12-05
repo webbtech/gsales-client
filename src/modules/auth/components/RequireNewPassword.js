@@ -10,25 +10,57 @@ import React from 'react'
 import { Auth } from 'aws-amplify'
 import { JS, ConsoleLogger as Logger } from '@aws-amplify/core'
 
-// import AppBar from '@material-ui/core/AppBar'
-// import Button from '@material-ui/core/Button'
-// import FormControl from '@material-ui/core/FormControl'
-// import Input from '@material-ui/core/Input'
-// import InputLabel from '@material-ui/core/InputLabel'
-// import Paper from '@material-ui/core/Paper'
-// import Typography from '@material-ui/core/Typography'
-// import { withStyles } from '@material-ui/core/styles'
+import {
+  AppBar,
+  Button,
+  FormControl,
+  Input,
+  InputLabel,
+  Paper,
+  Typography,
+} from '@material-ui/core'
+
+import { withStyles } from '@material-ui/core/styles'
 
 import AuthPiece from './AuthPiece'
-// import { auth } from '../Amplify-UI/data-test-attributes'
+import { auth } from '../Amplify-UI/data-test-attributes'
 
 const logger = new Logger('RequireNewPassword')
 
-/* function convertToPlaceholder(str) {
+const styles = theme => ({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    fontFamily: theme.typography.fontFamily,
+    width: theme.spacing(50),
+    margin: 'auto',
+    marginTop: theme.spacing(8),
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  formControl: {
+    margin: theme.spacing(2),
+  },
+  submitButton: {
+    margin: theme.spacing(2),
+  },
+  title: {
+    padding: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
+  },
+})
+
+function convertToPlaceholder(str) {
   return str.split('_')
     .map(part => part.charAt(0).toUpperCase() + part.substr(1).toLowerCase())
     .join(' ')
-} */
+}
 
 function objectWithProperties(obj, keys) {
   const target = {}
@@ -44,7 +76,7 @@ function objectWithProperties(obj, keys) {
   return target
 }
 
-export default class RequireNewPassword extends AuthPiece {
+class RequireNewPassword extends AuthPiece {
   constructor(props) {
     super(props)
 
@@ -93,14 +125,78 @@ export default class RequireNewPassword extends AuthPiece {
   }
 
   showComponent() {
-    const { hide } = this.props
+    const { classes, hide } = this.props
     if (hide && hide.includes(RequireNewPassword)) return null
 
-    // const user = this.props.authData
-    // const { requiredAttributes } = user.challengeParam
+    const user = this.props.authData
+    const { requiredAttributes } = user.challengeParam
 
     return (
-      <div>Require New Password</div>
+      <div>
+        <Paper className={classes.container}>
+          <AppBar
+            color="secondary"
+            position="static"
+          >
+            <Typography
+              color="inherit"
+              className={classes.title}
+              variant="h6"
+            >
+              Require New Password
+            </Typography>
+          </AppBar>
+
+          <form className={classes.form}>
+            <FormControl className={classes.formControl}>
+              <InputLabel htmlFor="password">New Password</InputLabel>
+              <Input
+                autoFocus
+                id="password"
+                name="password"
+                type="password"
+                onChange={this.handleInputChange}
+                data-test={auth.requireNewPassword.newPasswordInput}
+              />
+            </FormControl>
+
+            {requiredAttributes.map(attribute => (
+              <FormControl
+                className={classes.formControl}
+                key={attribute}
+              >
+                <InputLabel htmlFor="password">{convertToPlaceholder(attribute)}</InputLabel>
+                <Input
+                  
+                  id={attribute}
+                  name={attribute}
+                  type="text"
+                  onChange={this.handleInputChange}
+                />
+              </FormControl>
+            ))}
+            <Button
+              className={classes.submitButton}
+              color="primary"
+              data-test={auth.requireNewPassword.backToSignInLink}
+              onClick={this.change}
+              variant="contained"
+            >
+              Submit
+            </Button>
+            <Button
+              className={classes.smallButton}
+              data-test={auth.forgotPassword.backToSignInLink}
+              onClick={() => this.changeState('signIn')}
+              size="small"
+            >
+              Back to Sign In
+            </Button>
+          </form>
+        </Paper>
+      </div>
     )
   }
 }
+
+export default withStyles(styles)(RequireNewPassword)

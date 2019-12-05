@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({ // eslint-disable-line no-unused-vars
   },
   root: {
     width: '100%',
-    marginBottom: theme.spacing(1.5)
+    marginBottom: theme.spacing(1.5),
   },
   textField: {
     width: 60,

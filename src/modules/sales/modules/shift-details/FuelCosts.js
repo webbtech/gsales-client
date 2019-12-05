@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 })
 
 function CostCell({ fuelCost, shift }) {
-  const editableTypes = [1, 4]
+  const editableTypes = [1, 4, 6]
   const dispatch = useDispatch()
 
   function handleChange(e) {
