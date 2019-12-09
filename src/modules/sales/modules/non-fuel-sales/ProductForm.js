@@ -125,6 +125,7 @@ const InputField = (props) => {
   }
 
   function handleFocus(e) {
+    e.target.focus()
     e.target.select()
   }
 
@@ -219,6 +220,8 @@ export default function ProductForm() {
         nextField = (ref.row * 10) + 1
       }
       refsArray.current[nextField].focus()
+      // preventDefault to ensure target is selected
+      e.preventDefault()
     } else if (e.keyCode === 40) { // down arrow key
       if (ref.cell === 1) { // move to next cell
         nextField = (ref.row * 10) + ref.cell + 1
@@ -231,6 +234,8 @@ export default function ProductForm() {
         return
       }
       refsArray.current[nextField].focus()
+      // preventDefault to ensure target is selected
+      e.preventDefault()
     }
   }
 
