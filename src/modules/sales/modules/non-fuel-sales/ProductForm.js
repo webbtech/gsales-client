@@ -85,7 +85,8 @@ const InputField = (props) => {
   function getError() {
     switch (fieldType) {
       case 'restock':
-        return nfs.qty.restock ? !(/^\d*$/.test(nfs.qty.restock)) : false
+        // here we are allowing negative values
+        return nfs.qty.restock ? !(/^-?\d*$/.test(nfs.qty.restock)) : false
 
       case 'sold':
         return nfs.qty.sold ? !(/^\d*$/.test(nfs.qty.sold)) : false
