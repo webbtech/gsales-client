@@ -91,6 +91,25 @@ SumRow.propTypes = {
   value: PropTypes.number.isRequired,
 }
 
+const Report1 = ({ report }) => {
+  if (!report) return null
+  return (
+    <>
+      <HeadingRow label="Report1" />
+      {report.map(rep => (
+        <TableRow key={rep.id}>
+          <TableCell>{rep.name}</TableCell>
+          <TableCell>{rep.qty}</TableCell>
+          <TableCell />
+        </TableRow>
+      ))}
+    </>
+  )
+}
+Report1.propTypes = {
+  report: PropTypes.instanceOf(Object).isRequired,
+}
+
 const Report = ({ report }) => {
   const classes = useStyles()
   if (!report) return null
@@ -170,15 +189,7 @@ const Report = ({ report }) => {
               </TableRow>
             ))}
 
-            <HeadingRow label="Report1" />
-
-            {result.report1.map(rep => (
-              <TableRow key={rep.id}>
-                <TableCell>{rep.name}</TableCell>
-                <TableCell>{rep.qty}</TableCell>
-                <TableCell />
-              </TableRow>
-            ))}
+            <Report1 report={result.report1} />
           </TableBody>
         </Table>
       </Paper>
