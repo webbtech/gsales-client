@@ -46,6 +46,8 @@ export default function SalesView() {
 
   const editOK = shift.shift.flag
   const haveOtherFuel = !!shift.otherFuel
+  const haveBobFuelAdj = !!shift.salesSummary.bobsFuelAdj
+  const isBobs = shift.otherNonFuel.bobs > 0
 
   const displayEmptyCell = (isEdit, isOtherFuel) => {
     if (!isEdit || !isOtherFuel) return null
@@ -100,6 +102,20 @@ export default function SalesView() {
             {displayEmptyCell(editOK, haveOtherFuel)}
           </TableRow>
 
+          {haveBobFuelAdj && (
+            <TableRow>
+              <TableCell>Bobs Fuel Misc. Adj.</TableCell>
+              <TableCell align="right">{fmtNumber(salesSummary.bobsFuelAdj)}</TableCell>
+            </TableRow>
+          )}
+
+          {isBobs && (
+            <TableRow>
+              <TableCell>Bobs Non-Fuel Adj.</TableCell>
+              <TableCell align="right">{fmtNumber(shift.nonFuelAdjustOS)}</TableCell>
+            </TableRow>
+          )}
+
           <TableRow>
             <TableCell className={classes.totalsCell}>Total ($)</TableCell>
             <TableCell align="right" className={classes.totalsCell}>{fmtNumber(salesSummary.totalSales)}</TableCell>
@@ -119,6 +135,7 @@ export default function SalesView() {
               {displayEmptyCell(editOK, haveOtherFuel)}
             </TableRow>
           )}
+
         </TableBody>
       </Table>
 
