@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import {
@@ -18,6 +18,9 @@ import Report from './Report'
 import SearchButton from '../../shared/SearchButton'
 import Title from '../../shared/Title'
 import YearSelector from '../../shared/YearSelector'
+import useDataApi from '../../shared/fetchXLSAPI'
+import { DWNLD_XLS_MONTHLY_SALES } from '../../constants'
+import { ToasterContext } from '../../../shared/ToasterContext'
 import { clearReport, fetchMonthlySales } from '../../actions'
 
 const useStyles = makeStyles(theme => ({
@@ -42,6 +45,8 @@ export default function Index() {
   const classes = useStyles()
   const dispatch = useDispatch()
   const [formValues, setFormValues] = useState(defaultFormValues)
+  const [{ payload, isLoading, isError }, doFetch] = useDataApi()
+  const { setToaster } = useContext(ToasterContext)
 
   const getDate = () => (
     moment()
@@ -66,6 +71,29 @@ export default function Index() {
     setFormValues(defaultFormValues)
   }
 
+  const downloadReport = () => {
+    const date = moment().month(formValues.month).year(formValues.year).format('YYYY-MM')
+    const postObj = {
+      date,
+      type: DWNLD_XLS_MONTHLY_SALES,
+    }
+    doFetch(postObj)
+  }
+
+  useEffect(() => {
+    if (isError) {
+      setToaster({ message: 'An error occurred creating the requested report. Please report this error to the application administrator.', duration: 10000 })
+    }
+  }, [isError, setToaster])
+
+  const url = payload && payload.data ? payload.data.url : null
+  useEffect(() => {
+    if (url) {
+      window.location.href = url
+      // we could also do: window.open(url)
+    }
+  }, [url])
+
   useEffect(() => (
     () => {
       dispatch(clearReport())
@@ -82,7 +110,7 @@ export default function Index() {
       <Title>Monthly Sales Report</Title>
 
       <Grid container spacing={2}>
-        <Grid item xs={2}>
+        <Grid item xs={1}>
           <YearSelector
             label="Year"
             setValueHandler={value => handleChangeField(value, 'year')}
@@ -115,11 +143,11 @@ export default function Index() {
               <Button
                 className={classes.button}
                 color="secondary"
-                disabled
-                // onClick={}
+                disabled={isLoading}
+                onClick={downloadReport}
                 variant="contained"
               >
-                Download XLS File
+                {isLoading ? 'Stand By...' : 'Download XLS File'}
                 <CloudDownloadIcon className={classes.rightIcon} />
               </Button>
             </Grid>

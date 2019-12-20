@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
 import {
@@ -20,6 +20,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 import { makeStyles } from '@material-ui/core/styles'
 
+import moment from 'moment'
+
 import CancelButton from '../../../shared/CancelButton'
 import DateSelect from '../../../shared/DateSelect'
 import FormatNumber from '../../../shared/FormatNumber'
@@ -29,10 +31,19 @@ import RecordDialog from './RecordDialog'
 import SearchButton from '../../shared/SearchButton'
 import StationSelector from '../../../shared/StationSelector'
 import Title from '../../shared/Title'
+import useDataApi from '../../shared/fetchXLSAPI'
+import { ToasterContext } from '../../../shared/ToasterContext'
 import { clearReport, fetchShifts } from '../../actions'
 import { fetchStationList } from '../../../admin/modules/station/actions'
 import { fmtNumber } from '../../../../utils/fmt'
-import { REPORT_SHIFTS } from '../../constants'
+
+import {
+  DWNLD_XLS_BACK_CARDS,
+  DWNLD_XLS_EMPLOYEE_OS,
+  DWNLD_XLS_PAY_PERIOD,
+  DWNLD_XLS_PRODUCT_NUMBERS,
+  REPORT_SHIFTS,
+} from '../../constants'
 
 const useStyles = makeStyles(theme => ({
   instruct: {
@@ -155,6 +166,8 @@ export default function Index() {
   const station = useSelector(state => state.station)
   const report = useSelector(state => state.report)
   const [formValues, setFormValues] = useState(defaultFormValues)
+  const [{ payload, isLoading, isError }, doFetch] = useDataApi()
+  const { setToaster } = useContext(ToasterContext)
 
   let stationChildren
   const items = Object.values(station.items)
@@ -199,6 +212,34 @@ export default function Index() {
     }
     dispatch(fetchShifts(params))
   }
+
+  const downloadReport = (type) => {
+    // console.log('formValues:', formValues)
+    const dateFrom = moment(formValues.startDate).format('YYYY-MM-DD')
+    const dateTo = moment(formValues.endDate).format('YYYY-MM-DD')
+    const postObj = {
+      dateFrom,
+      dateTo,
+      type,
+    }
+    doFetch(postObj)
+  }
+
+  useEffect(() => {
+    if (isError) {
+      setToaster({ message: 'An error occurred creating the requested report. Please report this error to the application administrator.', duration: 10000 })
+    }
+  }, [isError, setToaster])
+
+  const url = payload && payload.data ? payload.data.url : null
+  useEffect(() => {
+    if (url) {
+      window.location.href = url
+      // we could also do: window.open(url)
+    }
+  }, [url])
+
+  const showDownload = !!(formValues.startDate && formValues.endDate)
 
   return (
     <div className={classes.root}>
@@ -249,24 +290,60 @@ export default function Index() {
       <Grid container>
         <Grid item xs={2}>
           <Typography variant="h6">
-            <CloudDownloadIcon className={classes.leftIcon} />
-            Downloads
+            {isLoading
+              ? (<>Stand By...</>)
+              : (
+                <>
+                  <CloudDownloadIcon className={classes.leftIcon} />
+                  Downloads
+                </>
+              )
+            }
           </Typography>
         </Grid>
 
         <Grid item xs={6}>
-          <ButtonGroup size="medium" color="secondary" variant="contained" aria-label="small outlined button group">
-            <Button disabled>Pay Period</Button>
-            <Button disabled>Bank Card</Button>
-            <Button disabled>Product Count</Button>
-            <Button disabled>Employee Overshort</Button>
+          <ButtonGroup
+            aria-label="small outlined button group"
+            color="secondary"
+            size="medium"
+            variant="contained"
+          >
+            <Button
+              disabled={!showDownload}
+              onClick={() => downloadReport(DWNLD_XLS_PAY_PERIOD)}
+            >
+              Pay Period
+            </Button>
+            <Button
+              disabled={!showDownload}
+              onClick={() => downloadReport(DWNLD_XLS_BACK_CARDS)}
+            >
+              Bank Card
+            </Button>
+            <Button
+              disabled={!showDownload}
+              onClick={() => downloadReport(DWNLD_XLS_PRODUCT_NUMBERS)}
+            >
+              Product Count
+            </Button>
+            <Button
+              disabled={!showDownload}
+              onClick={() => downloadReport(DWNLD_XLS_EMPLOYEE_OS)}
+            >
+              Employee Overshort
+            </Button>
           </ButtonGroup>
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={2}>
             <Grid item xs={2} />
             <Grid item xs={10}>
-              <div className={classes.instruct}>Enter both start and end dates for download</div>
+              <div className={classes.instruct}>
+                Enter both start and end dates for Excel file download.
+                <br />
+                (Station is not considered in downloaded reports)
+              </div>
             </Grid>
           </Grid>
         </Grid>
