@@ -8,8 +8,9 @@ import App from './modules/app/Index'
 import * as serviceWorker from './serviceWorker'
 
 import configureStore from './store/configureStore'
-import { LogRocketID, SentryURL } from './config/privateConstants'
 
+const LogRocketID = process.env.REACT_APP_LOGROCKET_ID
+const SentryURL = process.env.REACT_APP_SENTRY_URL
 const store = configureStore()
 
 if (process.env.NODE_ENV === 'production') {

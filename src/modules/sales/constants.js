@@ -34,3 +34,10 @@ export const splitFields = () => {
 
 // Maximum discrepancy amount in fuel sales
 export const DISCREPANCY_LIMIT = 10
+
+
+// ===================== Download Service constants ============================================ //
+
+export const DWNLD_PDF_SERVICE_URL = 'https://pgnvjso0mb.execute-api.ca-central-1.amazonaws.com/Prod/report'
+export const DWNLD_PDF_DAY = 'day'
+export const DWNLD_PDF_SHIFT = 'shift'

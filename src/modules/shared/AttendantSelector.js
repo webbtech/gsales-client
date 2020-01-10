@@ -131,7 +131,8 @@ const Selector = ({ employeeHandler }) => {
 
   if (!employeeState.isFetching && employeeState.items) {
     const es = Object.values(employeeState.items)
-    suggestions = es.map(e => ({ value: e.id, label: `${e.nameLast}, ${e.nameFirst}` }))
+    // suggestions = es.map(e => ({ value: e.id, label: `${e.nameLast}, ${e.nameFirst}` }))
+    suggestions = es.map(e => ({ value: e.id, label: `${e.nameFirst} ${e.nameLast}` }))
   }
 
   const [stateSuggestions, setSuggestions] = useState([])

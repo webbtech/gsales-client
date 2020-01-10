@@ -13,7 +13,13 @@
     "strt"
   ],
   "cSpell.ignoreWords": [
+    "employeeos",
     "esnext",
-    "interop"
+    "interop",
+    "monthlysales",
+    "payperiod",
+    "pdfapi",
+    "productnumbers",
+    "xlsapi"
   ]
 }
