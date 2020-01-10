@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
@@ -14,6 +14,13 @@ import ShiftCloseDialog from './ShiftCloseDialog'
 import ShiftReportDialog from './ShiftReportDialog'
 import { patchShift } from '../../actions'
 import { ParamContext } from '../../components/ParamContext'
+import useDataApi from '../../../shared/fetchPDFAPI'
+import { ToasterContext } from '../../../shared/ToasterContext'
+
+import {
+  DWNLD_PDF_DAY,
+  DWNLD_PDF_SHIFT,
+} from '../../constants'
 
 const R = require('ramda')
 
@@ -38,10 +45,27 @@ export default function ButtonsView() {
   const classes = useStyles()
   const [openDelete, setOpenDialog] = useState(false)
   const [openReport, setOpenReport] = useState(false)
+  const [reportType, setReportType] = useState(null)
   const dispatch = useDispatch()
   const history = useHistory()
   const sales = useSelector(state => state.sales)
   const { setShiftParams } = useContext(ParamContext)
+  const [{ payload, isLoading, isError }, doFetch] = useDataApi()
+  const { setToaster } = useContext(ToasterContext)
+
+  useEffect(() => {
+    if (isError) {
+      setToaster({ message: 'An error occurred creating the requested report. Please report this error to the application administrator.', duration: 10000 })
+    }
+  }, [isError, setToaster])
+
+  const url = payload && payload.data ? payload.data.url : null
+  useEffect(() => {
+    if (url) {
+      window.location.href = url
+      // we could also do: window.open(url)
+    }
+  }, [url])
 
   if (!R.hasPath(['shift', 'sales', 'result'], sales)) return null
   const { shift } = sales.shift.sales.result
@@ -84,6 +108,27 @@ export default function ButtonsView() {
     setOpenReport(false)
   }
 
+  const downloadReport = (type) => {
+    setReportType(type)
+
+    const { recordNum, stationID } = shift
+    const dateStr = recordNum.substring(0, 10)
+    const postObj = {
+      stationID,
+      type,
+    }
+
+    if (type === DWNLD_PDF_DAY) {
+      postObj.date = dateStr
+    } else if (type === DWNLD_PDF_SHIFT) {
+      postObj.recordNumber = recordNum
+    }
+    doFetch(postObj)
+  }
+
+  const requestDayReport = reportType === DWNLD_PDF_DAY && isLoading
+  const requestShiftReport = reportType === DWNLD_PDF_SHIFT && isLoading
+
   return (
     <div className={classes.root}>
       <Button
@@ -96,24 +141,24 @@ export default function ButtonsView() {
       </Button>
 
       <Button
-        // disabled={pristine || submitting}
+        disabled={requestShiftReport}
         className={classes.actionButton}
         color="secondary"
-        type="submit"
+        onClick={() => downloadReport(DWNLD_PDF_SHIFT)}
         variant="contained"
       >
-        Shift Report
+        {requestShiftReport ? ('Loading') : ('Shift Report')}
         <CloudDownloadIcon className={classes.rightIcon} />
       </Button>
 
       <Button
-        // disabled={pristine || submitting}
+        disabled={requestDayReport}
         className={classes.actionButton}
         color="secondary"
-        // type="submit"
+        onClick={() => downloadReport(DWNLD_PDF_DAY)}
         variant="contained"
       >
-        Day Report
+        {requestDayReport ? ('Loading') : ('Day Report')}
         <CloudDownloadIcon className={classes.rightIcon} />
       </Button>
 

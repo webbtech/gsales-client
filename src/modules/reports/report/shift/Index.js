@@ -214,7 +214,6 @@ export default function Index() {
   }
 
   const downloadReport = (type) => {
-    // console.log('formValues:', formValues)
     const dateFrom = moment(formValues.startDate).format('YYYY-MM-DD')
     const dateTo = moment(formValues.endDate).format('YYYY-MM-DD')
     const postObj = {

@@ -18,6 +18,7 @@
     "interop",
     "monthlysales",
     "payperiod",
+    "pdfapi",
     "productnumbers",
     "xlsapi"
   ]
