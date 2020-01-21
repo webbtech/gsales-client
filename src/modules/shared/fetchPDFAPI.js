@@ -41,7 +41,13 @@ const useDataApi = () => {
       dispatch({ type: 'FETCH_INIT' })
 
       try {
-        const result = await axios.post(DWNLD_PDF_SERVICE_URL, postData)
+        const token = localStorage.getItem('userToken')
+        const result = await axios({
+          method: 'POST',
+          url: DWNLD_PDF_SERVICE_URL,
+          headers: { authorization: token },
+          data: postData,
+        })
 
         if (!didCancel) {
           dispatch({ type: 'FETCH_SUCCESS', payload: result.data })
