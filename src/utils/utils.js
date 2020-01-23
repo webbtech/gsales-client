@@ -1,6 +1,9 @@
 import React from 'react'
 
 export function getEnv() {
+  if (window.location.hostname.indexOf('stage') > -1) {
+    return 'stage'
+  }
   return process.env.NODE_ENV
 }
 
