@@ -10,7 +10,10 @@ const conf = {
     BASE_URL: `http://${localhostIP}:${localAppPort}/`,
   },
   production: {
-    BASE_URL: 'https://ylhsjc593d.execute-api.ca-central-1.amazonaws.com/Prod/',
+    BASE_URL: 'https://api-prod.gsales.pfapi.io/',
+  },
+  stage: {
+    BASE_URL: 'https://api-stage.gsales.pfapi.io/',
   },
 }
 
