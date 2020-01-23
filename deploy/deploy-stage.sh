@@ -11,7 +11,7 @@ PRT="/usr/bin/printf"
 RM="/bin/rm"
 
 # Vars
-SITE="Gales Sales Client"
+SITE="Gales Sales Staging Client"
 SEP="=========================================================================="
 
 $PRT "%s\n" $SEP

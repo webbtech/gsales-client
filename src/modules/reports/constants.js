@@ -18,7 +18,7 @@ export const REPORT_SHIFT_HISTORY = 'REPORT_SHIFT_HISTORY'
 
 // ===================== Download Service ====================================================== //
 
-export const DWNLD_XLS_SERVICE_URL = 'https://t71a1oad0b.execute-api.ca-central-1.amazonaws.com/Prod/report'
+export const DWNLD_XLS_SERVICE_URL = 'https://xls-reports.gsales.pfapi.io/report'
 export const DWNLD_XLS_BACK_CARDS = 'bankcards'
 export const DWNLD_XLS_EMPLOYEE_OS = 'employeeos'
 export const DWNLD_XLS_PRODUCT_NUMBERS = 'productnumbers'

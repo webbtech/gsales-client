@@ -94,7 +94,7 @@ const ProductAdjustDialog = (props) => {
         adjustClose: selectedRecord.qty.close + value,
         adjustSales: '',
         adjustSold: '',
-        adjustStock: selectedRecord.qty.restock - value,
+        adjustStock: value,
         adjustType: 'stock',
         adjustValue: value,
       })
@@ -122,6 +122,7 @@ const ProductAdjustDialog = (props) => {
     const sold = Number(state.adjustSold) || 0
     const stock = Number(state.adjustStock) || 0
     const description = `${selectedRecord.productID.name} - sold: ${sold}, stock: ${stock}, close: ${state.adjustClose}, sales: ${state.adjustSales}`
+    const restock = state.adjustType === 'stock' ? stock : selectedRecord.qty.restock
 
     const adjustAttend = {
       amount: parseFloat(state.adjustAttendantAmount),
@@ -144,7 +145,7 @@ const ProductAdjustDialog = (props) => {
         close: state.adjustClose || null,
         sales: state.adjustSales,
         sold,
-        stock: selectedRecord.qty.restock,
+        stock: restock,
         type: state.adjustType,
       },
     }

@@ -61,7 +61,17 @@ const useDataApi = () => {
       dispatch({ type: 'FETCH_INIT' })
 
       try {
-        const result = await axios.post(DWNLD_XLS_SERVICE_URL, postData)
+        // const result = await axios.post(DWNLD_XLS_SERVICE_URL, postData)
+        // NOTE: If the page has been idle for longer than the token expiry
+        // user will receive error with 401 status. Is it possible to test
+        // then renew token here first?
+        const token = localStorage.getItem('userToken')
+        const result = await axios({
+          method: 'POST',
+          url: DWNLD_XLS_SERVICE_URL,
+          headers: { authorization: token },
+          data: postData,
+        })
 
         if (!didCancel) {
           dispatch({ type: 'FETCH_SUCCESS', payload: result.data })
