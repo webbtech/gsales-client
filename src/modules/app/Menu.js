@@ -13,6 +13,9 @@ import { makeStyles } from '@material-ui/core/styles'
 import TitleBar from './TitleBar'
 import Loader from '../shared/Loader'
 import { fetchStationList } from '../admin/modules/station/actions'
+import { getEnv } from '../../utils/utils'
+
+const isLive = getEnv() === 'production'
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -31,6 +34,13 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     width: '100%',
+  },
+  warning: {
+    fontWeight: 600,
+    fontSize: '120%',
+    margin: '20px auto 0',
+    textAlign: 'center',
+    width: 600,
   },
 }))
 
@@ -90,6 +100,13 @@ export default function Menu() {
           </>
         )}
       </Paper>
+      {!isLive && (
+        <div className={classes.warning}>
+          Warning: you are not currently in a live (production) environment.
+          <br />
+          Any data entered or edited will NOT be recorded in the production database.
+        </div>
+      )}
     </div>
   )
 }

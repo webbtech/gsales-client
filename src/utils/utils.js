@@ -16,3 +16,24 @@ export function NlToBr(string) {
     </span>
   ))
 }
+
+export function getTitle() {
+  const env = getEnv()
+
+  const mainTitle = 'Gales Sales'
+  let title = ''
+  switch (env) {
+    case 'development':
+      title = `${mainTitle} \u00b7 Dev`
+      break
+    case 'stage':
+      title = `${mainTitle} \u00b7 Staging`
+      break
+    case 'production':
+      title = `${mainTitle} \u00b7 Live`
+      break
+    default:
+      title = mainTitle
+  }
+  return title
+}
