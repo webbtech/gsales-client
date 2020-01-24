@@ -6,6 +6,7 @@ import 'typeface-roboto'
 import Amplify, { Auth } from 'aws-amplify'
 import { Authenticator } from 'aws-amplify-react'
 import LogRocket from 'logrocket'
+import { Helmet } from 'react-helmet'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { MuiThemeProvider } from '@material-ui/core/styles'
@@ -23,6 +24,7 @@ import awsExports from '../auth/awsExports'
 import mainTheme from '../../themes/main'
 import { ParamProvider } from '../sales/components/ParamContext'
 import { ToasterProvider } from '../shared/ToasterContext'
+import { getTitle } from '../../utils/utils'
 
 Amplify.configure(awsExports)
 
@@ -38,6 +40,9 @@ function Index({ authState }) {
   if (authState !== 'signedIn') return null
   return (
     <React.Fragment>
+      <Helmet>
+        <title>{getTitle()}</title>
+      </Helmet>
       <ToasterProvider>
         <Alerts />
         <Router>
