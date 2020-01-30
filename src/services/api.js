@@ -1,8 +1,9 @@
 import { schema, normalize } from 'normalizr'
 import { camelizeKeys } from 'humps'
+import * as Sentry from '@sentry/browser'
 
 import { config as cfg } from '../config'
-
+import getToken from '../utils/token'
 
 const configSchema = new schema.Entity('config')
 const daySalesSchema = new schema.Entity('shifts', {
@@ -38,11 +39,6 @@ const stationsSchema = new schema.Entity('items', {
   idAttribute: 'name',
 })
 
-
-// const salesReportSchema = new schema.Entity('record')
-// const fuelSales = new schema.Entity('fuelSales')
-// const nonFuelSales = new schema.Entity('nonFuelSales')
-// const reportData = new schema.Entity('reportData')
 const newShift = {
   configSchema,
   shiftSchema,
@@ -50,12 +46,22 @@ const newShift = {
 }
 const reports = {
   reportSchema,
-  // keys: arrayOf(reportData),
-}
-const salesReport = {
-  // keys: arrayOf(salesReportschema),
 }
 
+/**
+ * Error Response
+ *
+ * Logs errors and returns object with error response
+ * @param {string} errString
+ */
+function errorResponse(errString) {
+  console.error(errString) // eslint-disable-line
+  Sentry.captureMessage(errString)
+  return {
+    response: null,
+    error: new Error(`Error: ${errString}`),
+  }
+}
 
 export const Schemas = {
   CONFIG: configSchema,
@@ -70,7 +76,6 @@ export const Schemas = {
   PRODUCT: productSchema,
   PRODUCT_ARRAY: new schema.Array(productsSchema),
   REPORTS: reports,
-  SALES_REPORTS: salesReport,
   REPORT_DETAIL: reportSchema,
   SHIFT: shiftSchema,
   SHIFT_SALES: shiftSalesSchema,
@@ -78,9 +83,17 @@ export const Schemas = {
   STATION_ARRAY: new schema.Array(stationsSchema),
 }
 
-// Fetches an API response and normalizes the result JSON according to schema.
-// This makes every API response have the same shape, regardless of how nested it was.
-export default function api(endpoint, requestSchema, params = {}) {
+/**
+ * API Fetcher
+ *
+ * Fetches an API response and normalizes the result JSON according to schema.
+ * This makes every API response have the same shape, regardless of how nested it was.
+ *
+ * @param {string} endpoint
+ * @param {object} requestSchema
+ * @param {object} params
+ */
+export default async function api(endpoint, requestSchema, params = {}) {
   const ps = {}
 
   const fullUrl = (endpoint.indexOf(cfg.BASE_URL) === -1) ? cfg.BASE_URL + endpoint : endpoint
@@ -91,18 +104,14 @@ export default function api(endpoint, requestSchema, params = {}) {
   }
   const t = /^(DELETE|GET|POST|PUT|PATCH|DELETE)$/i.test(method)
   method = method.toUpperCase()
-
   if (!t) {
-    console.error('Missing valid method') // eslint-disable-line
-    return 'ERROR' // TODO: need to handle this better
+    return errorResponse('Missing valid method')
   }
   ps.method = method
 
-  // get token from local storage
-  const token = localStorage.getItem('userToken')
+  const token = await getToken()
   if (!token) {
-    console.error('Missing token in services.api') // eslint-disable-line
-    return 'ERROR' // TODO: need to handle this better
+    return errorResponse('Missing token in services.api')
   }
 
   // TODO: perhaps we need to join to existing default headers
@@ -114,7 +123,6 @@ export default function api(endpoint, requestSchema, params = {}) {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       Authorization: token,
-      // Authorization: `Bearer ${token}`,
     }
   }
 
@@ -130,9 +138,6 @@ export default function api(endpoint, requestSchema, params = {}) {
         return Promise.reject(json)
       }
       const camelizedJson = camelizeKeys(json)
-      // console.log('fetch result:', camelizedJson)
-      // const nextPageUrl = getNextPageUrl(response)
-      // console.log('json: ', camelizedJson)
 
       if (method === 'DELETE') {
         return Object.assign({}, response, response)
@@ -142,15 +147,9 @@ export default function api(endpoint, requestSchema, params = {}) {
     .then(
       response => ({ response }),
       (error) => {
+        Sentry.captureMessage(`${error} - ${fullUrl}`)
         console.log('error in fetch: ', error) // eslint-disable-line no-console
         return ({ error })
-        // If not authorized, redirect to login
-        // todo: should add path to redirect here
-        /* if (error.statusCode === 401) {
-          browserHistory.push('/auth/')
-        } else {
-          return ({ error })
-        } */
       }
     )
 }

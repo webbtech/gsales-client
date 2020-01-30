@@ -223,7 +223,7 @@ export default function Index() {
     resetTab()
   }, [resetSales, resetShiftData, resetTab, setContextInfo, setUrlParams])
 
-  function handleChange(event, newValue) {
+  const handleChange = (event, newValue) => {
     const hasShiftResult = R.hasPath(['shift', 'sales', 'result'], sales)
     if (newValue > 0 && !hasShiftResult) {
       dispatch(alertSend({ message: 'Select both Station and Shift first.', type: 'warning', dismissAfter: 3000 }))
@@ -244,8 +244,6 @@ export default function Index() {
     const url = `${tabs[newValue].path}/${stationID}/${date}/${shift}`
     history.push(url)
   }
-
-  // console.log('shiftParams in Index:', shiftParams)
 
   return (
     <div className={classes.root}>

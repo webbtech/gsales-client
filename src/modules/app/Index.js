@@ -81,8 +81,7 @@ export default function AppWithAuth() {
         const { name } = user.signInUserSession.idToken.payload
         const storage = window.localStorage
         storage.setItem('userToken', user.signInUserSession.accessToken.jwtToken)
-        // FIXME: the logrocket id needs to go into .env
-        LogRocket.identify('cee2gx/gsales-v2', {
+        LogRocket.identify(process.env.REACT_APP_LOGROCKET_ID, {
           name,
           username,
         })
