@@ -70,6 +70,7 @@ export default function ButtonsView() {
   if (!R.hasPath(['shift', 'sales', 'result'], sales)) return null
   const { shift } = sales.shift.sales.result
   const enableCloseShift = shift.shift.flag === false
+  const shiftOpen = !shift.shift.flag
 
   function handleOpenDialog() {
     setOpenDialog(true)
@@ -79,7 +80,7 @@ export default function ButtonsView() {
     setOpenDialog(false)
   }
 
-  function handleCloseShift() {
+  const handleCloseShift = () => {
     const params = {
       action: 'closeShift',
       shiftID: shift.id,
@@ -96,8 +97,8 @@ export default function ButtonsView() {
     // unwanted and changes the shiftNo
     setShiftParams({ tabName: 'shift-details', shiftNo: null })
     const date = shift.recordNum.substring(0, 10)
-    const url = `/sales/shift-details/${shift.stationID}/${date}`
-    history.push(url)
+    const url2 = `/sales/shift-details/${shift.stationID}/${date}`
+    history.push(url2)
   }
 
   const handleOpenReportDialog = () => {
@@ -108,6 +109,8 @@ export default function ButtonsView() {
     setOpenReport(false)
   }
 
+  // FIXME: when token times out, we get error
+  // use getToken function here
   const downloadReport = (type) => {
     setReportType(type)
 
@@ -141,7 +144,7 @@ export default function ButtonsView() {
       </Button>
 
       <Button
-        disabled={requestShiftReport}
+        disabled={requestShiftReport || shiftOpen}
         className={classes.actionButton}
         color="secondary"
         onClick={() => downloadReport(DWNLD_PDF_SHIFT)}
@@ -152,7 +155,7 @@ export default function ButtonsView() {
       </Button>
 
       <Button
-        disabled={requestDayReport}
+        disabled={requestDayReport || shiftOpen}
         className={classes.actionButton}
         color="secondary"
         onClick={() => downloadReport(DWNLD_PDF_DAY)}

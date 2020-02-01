@@ -264,7 +264,7 @@ export default function Form() {
     }
   }
 
-  function handleSubmit() {
+  const handleSubmit = async () => {
     const params = {
       recordNum: shift.recordNum,
       shiftID: shift.id,
@@ -383,6 +383,7 @@ export default function Form() {
     )
   })
 
+  // console.log('in fuel sales form:', fuelValues)
   return (
     <Paper className={classes.root} square>
       <SectionTitle title="Sales" />
