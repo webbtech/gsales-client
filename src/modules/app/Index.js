@@ -25,6 +25,7 @@ import mainTheme from '../../themes/main'
 import { ParamProvider } from '../sales/components/ParamContext'
 import { ToasterProvider } from '../shared/ToasterContext'
 import { getTitle } from '../../utils/utils'
+import { LOCAL_TOKEN_KEY } from '../../config/constants'
 
 Amplify.configure(awsExports)
 
@@ -80,7 +81,7 @@ export default function AppWithAuth() {
         const username = user.signInUserSession.idToken.payload['cognito:username']
         const { name } = user.signInUserSession.idToken.payload
         const storage = window.localStorage
-        storage.setItem('userToken', user.signInUserSession.accessToken.jwtToken)
+        storage.setItem(LOCAL_TOKEN_KEY, user.signInUserSession.accessToken.jwtToken)
         LogRocket.identify(process.env.REACT_APP_LOGROCKET_ID, {
           name,
           username,

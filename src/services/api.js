@@ -109,10 +109,18 @@ export default async function api(endpoint, requestSchema, params = {}) {
   }
   ps.method = method
 
-  const token = await getToken()
+  // const token = await getToken()
+  let token
+  try {
+    token = await getToken()
+  } catch (err) {
+    return errorResponse(err)
+  }
+  // return false
   if (!token) {
     return errorResponse('Missing token in services.api')
   }
+  // return
 
   // TODO: perhaps we need to join to existing default headers
   // that way we can just add and authorization header to default
