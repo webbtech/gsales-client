@@ -27,6 +27,7 @@ const useStyles = makeStyles({
   },
   headerField: {
     fontWeight: '600',
+    marginBottom: 5,
   },
 })
 
