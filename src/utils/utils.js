@@ -37,3 +37,17 @@ export function getTitle() {
   }
   return title
 }
+
+
+/**
+ * Remove duplicates from array.
+ *
+ * Removes duplicates based on object property provided (prop)
+ * found this at: https://ilikekillnerds.com/2016/05/removing-duplicate-objects-array-property-name-javascript/
+ *
+ * @param {array} myArr
+ * @param {string} prop
+ */
+export function removeDuplicates(myArr, prop) {
+  return myArr.filter((obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos)
+}

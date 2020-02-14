@@ -86,21 +86,21 @@ const ProductAdjustDialog = (props) => {
   }
 
   const handleValueChange = (e) => {
-    const value = Number(e.currentTarget.value)
-
+    const value = Number(e.currentTarget.value) // either 'Stock' or 'Sold' value
     if (state.type === 'stock') {
+      const close = selectedRecord.qty.open - selectedRecord.qty.sold + value
       setState({
         ...state,
-        adjustClose: selectedRecord.qty.close + value,
+        adjustClose: close,
         adjustSales: '',
         adjustSold: '',
-        adjustStock: value,
+        adjustStock: value, // here the 'Stock' adjustment value
         adjustType: 'stock',
         adjustValue: value,
       })
     } else if (state.type === 'sold') {
-      const close = selectedRecord.qty.close - value
-      const sold = selectedRecord.qty.sold + value || 0
+      const close = selectedRecord.qty.open - value + selectedRecord.qty.restock
+      const sold = value
       const sales = selectedRecord.productID.cost * sold
       setState({
         ...state,
@@ -109,7 +109,7 @@ const ProductAdjustDialog = (props) => {
         adjustSold: sold,
         adjustStock: selectedRecord.qty.restock,
         adjustType: 'sales',
-        adjustValue: value,
+        adjustValue: value, // here the 'Sold' adjustment value
       })
     }
   }
@@ -291,7 +291,7 @@ const ProductAdjustDialog = (props) => {
           <Grid item xs={7}>
             <SaveButton
               submitHandler={handleSubmit}
-              label="Save Comments"
+              label="Save Adjustment"
             />
           </Grid>
 
