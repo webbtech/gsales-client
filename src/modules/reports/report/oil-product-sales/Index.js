@@ -16,7 +16,6 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import moment from 'moment'
 
-
 import CancelButton from '../../../shared/CancelButton'
 import FormatNumber from '../../../shared/FormatNumber'
 import Loader from '../../../shared/Loader'
