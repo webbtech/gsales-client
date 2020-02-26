@@ -175,7 +175,8 @@ export default function Index() {
     dispatch(fetchProductSalesAdjustments(params))
   }
 
-  const submitOK = !Object.values(formValues).filter(f => !f).length
+  // const submitOK = !Object.values(formValues).filter(f => !f).length
+  const submitOK = !!formValues.stationID
 
   return (
     <div className={classes.root}>
