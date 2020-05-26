@@ -12,6 +12,10 @@ export function setFuelCosts(fuelDefs, fCosts) {
 }
 
 export function setFuelSummaries(fuelCosts, fuelSummary) {
+  if (!fuelCosts || !fuelSummary) {
+    console.error('Invalid fuelCosts or fuelSummary argument') // eslint-disable-line no-console
+    return []
+  }
   return fuelCosts.map((fc) => {
     const fs = fuelSummary[`fuel${fc.id}`]
     return Object.assign({}, { ...fc, ...fs })
