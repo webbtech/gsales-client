@@ -115,6 +115,7 @@ const Report = ({ report }) => {
   if (!report) return null
 
   const { result } = report.result
+  console.log('rsult: ', result)
 
   return (
     <div className={classes.reportContainer}>
@@ -149,6 +150,7 @@ const Report = ({ report }) => {
             <ValueRow label={getCashFieldLabel('cashDebit')} value={result.cashDebit} />
             <ValueRow label={getCashFieldLabel('cashDieselDiscount')} value={result.cashDieselDiscount} />
             <ValueRow label={getCashFieldLabel('cashDriveOffNSF')} value={result.cashDriveOffNSF} />
+            <ValueRow label={getCashFieldLabel('cashGalesLoyaltyRedeem')} value={result.cashGalesLoyaltyRedeem} />
             <ValueRow label={getCashFieldLabel('cashGiftCertRedeem')} value={result.cashGiftCertRedeem} />
             <ValueRow label={getCashFieldLabel('cashOther')} value={result.cashOther} />
             <ValueRow label={getCashFieldLabel('cashLotteryPayout')} value={result.cashLotteryPayout} />
