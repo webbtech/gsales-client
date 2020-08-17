@@ -15,10 +15,10 @@ import {
 import UpdateIcon from '@material-ui/icons/Update'
 import { makeStyles } from '@material-ui/core/styles'
 
+import { getFieldLabel } from '../../utils'
+import FormatNumber from '../../../shared/FormatNumber'
 import SectionTitle from '../../../shared/SectionTitle'
 import ShiftAdjustDialog from '../sales-summary/ShiftAdjustDialog'
-import { getMiscFieldLabel } from '../../utils'
-import FormatNumber from '../../../shared/FormatNumber'
 
 const R = require('ramda')
 
@@ -53,8 +53,10 @@ DialogButton.propTypes = {
 function NonFuelView({ shift }) {
   const classes = useStyles()
   const [openAdjust, setOpenAdjust] = useState(false)
+  const [field, setField] = useState(null)
 
-  const handleOpenAdjust = () => {
+  const handleOpenAdjust = (f) => {
+    setField(f)
     setOpenAdjust(true)
   }
 
@@ -72,14 +74,24 @@ function NonFuelView({ shift }) {
               <FormatNumber value={shift.otherNonFuel.giftCerts} />
             </TableCell>
             <TableCell align="center" padding="none">
-              <DialogButton openHandler={handleOpenAdjust} />
+              <DialogButton openHandler={() => handleOpenAdjust('otherNonFuel.giftCerts')} />
+            </TableCell>
+          </TableRow>
+
+        <TableRow>
+            <TableCell>{getFieldLabel('salesSummary.fuelAdjust')}</TableCell>
+            <TableCell align="right">
+              <FormatNumber value={shift.salesSummary.fuelAdjust} />
+            </TableCell>
+            <TableCell align="center" padding="none">
+              <DialogButton openHandler={() => handleOpenAdjust('salesSummary.fuelAdjust')} />
             </TableCell>
           </TableRow>
         </TableBody>
       </Table>
 
       <ShiftAdjustDialog
-        field="otherNonFuel.giftCerts"
+        field={field}
         onClose={handleCloseAdjust}
         open={openAdjust}
         shift={shift}
@@ -111,7 +123,7 @@ function BobsNonFuelView({ shift }) {
       <Table className={classes.table} size="small">
         <TableBody>
           <TableRow>
-            <TableCell>{getMiscFieldLabel('otherNonFuelBobs.bobsGiftCerts')}</TableCell>
+            <TableCell>{getFieldLabel('otherNonFuelBobs.bobsGiftCerts')}</TableCell>
             <TableCell align="right">
               <FormatNumber value={shift.otherNonFuelBobs.bobsGiftCerts} />
             </TableCell>
@@ -121,7 +133,7 @@ function BobsNonFuelView({ shift }) {
           </TableRow>
 
           <TableRow>
-            <TableCell>{getMiscFieldLabel('otherNonFuel.bobs')}</TableCell>
+            <TableCell>{getFieldLabel('otherNonFuel.bobs')}</TableCell>
             <TableCell align="right">
               <FormatNumber value={shift.otherNonFuel.bobs} />
             </TableCell>
@@ -131,12 +143,12 @@ function BobsNonFuelView({ shift }) {
           </TableRow>
 
           <TableRow>
-            <TableCell>{getMiscFieldLabel('salesSummary.bobsFuelAdj')}</TableCell>
+            <TableCell>{getFieldLabel('salesSummary.fuelAdjust')}</TableCell>
             <TableCell align="right">
-              <FormatNumber value={shift.salesSummary.bobsFuelAdj} />
+              <FormatNumber value={shift.salesSummary.fuelAdjust} />
             </TableCell>
             <TableCell align="center" padding="none">
-              <DialogButton openHandler={() => handleOpenAdjust('salesSummary.bobsFuelAdj')} />
+              <DialogButton openHandler={() => handleOpenAdjust('salesSummary.fuelAdjust')} />
             </TableCell>
           </TableRow>
         </TableBody>

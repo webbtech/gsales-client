@@ -31,9 +31,9 @@ function extractMisc(misc) {
         break
 
       case 'salesSummary':
-        ret['salesSummary.bobsFuelAdj'] = {
-          value: misc.salesSummary.bobsFuelAdj || null,
-          calc: calculations && calculations['salesSummary:bobsFuelAdj'] ? calculations['salesSummary:bobsFuelAdj'] : null,
+        ret['salesSummary.fuelAdjust'] = {
+          value: misc.salesSummary.fuelAdjust || null,
+          calc: calculations && calculations['salesSummary:fuelAdjust'] ? calculations['salesSummary:fuelAdjust'] : null,
         }
         break
 

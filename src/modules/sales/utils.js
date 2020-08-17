@@ -34,7 +34,7 @@ export function setFuelSummaryTotals(fuelSummaries) {
   return vals
 }
 
-export const getMiscFieldLabel = (field) => {
+export const getFieldLabel = (field) => {
   switch (field) {
     case 'otherNonFuel.giftCerts':
     case 'otherNonFuelBobs.bobsGiftCerts':
@@ -43,8 +43,8 @@ export const getMiscFieldLabel = (field) => {
     case 'otherNonFuel.bobs':
       return 'Non-Fuel'
 
-    case 'salesSummary.bobsFuelAdj':
-      return 'Fuel Misc. Adjustment'
+    case 'salesSummary.fuelAdjust':
+      return 'Fuel Adjustment'
 
     default:
       return ''
