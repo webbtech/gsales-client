@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/core/styles'
-import { getMiscFieldLabel, getCashCardsFieldLabel } from '../../utils'
+import { getFieldLabel, getCashCardsFieldLabel } from '../../utils'
 
 import DialogAppBar from '../../../shared/DialogAppBar'
 import CancelButton from '../../../shared/CancelButton'
@@ -79,7 +79,7 @@ const ShiftAdjustDialog = (props) => {
     [field, shift] // eslint-disable-line
   )
 
-  const getFieldLabelFunc = type === 'misc' ? getMiscFieldLabel : getCashCardsFieldLabel
+  const getFieldLabelFunc = type === 'misc' ? getFieldLabel : getCashCardsFieldLabel
 
   useEffect(() => {
     if (field) {

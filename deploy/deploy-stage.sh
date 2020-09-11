@@ -2,7 +2,7 @@
 
 . $HOME/.bashrc
 
-S3_BUCKET="s3://gsales-staging-fe-origin/"
+S3_BUCKET="s3://gsales-stage-fe-origin/"
 
 # Commands
 CP="/bin/cp"
@@ -11,7 +11,7 @@ PRT="/usr/bin/printf"
 RM="/bin/rm"
 
 # Vars
-SITE="Gales Sales Staging Client"
+SITE="Gales Sales Stage Client"
 SEP="=========================================================================="
 
 $PRT "%s\n" $SEP
