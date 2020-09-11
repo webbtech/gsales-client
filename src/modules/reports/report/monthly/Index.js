@@ -147,7 +147,7 @@ export default function Index() {
                 onClick={downloadReport}
                 variant="contained"
               >
-                {isLoading ? 'Stand By...' : 'Download XLS File'}
+                {isLoading ? 'Stand By...' : 'Download XLS'}
                 <CloudDownloadIcon className={classes.rightIcon} />
               </Button>
             </Grid>

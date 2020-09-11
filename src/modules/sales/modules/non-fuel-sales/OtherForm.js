@@ -16,11 +16,12 @@ import {
 
 import { makeStyles } from '@material-ui/core/styles'
 
-import SectionTitle from '../../../shared/SectionTitle'
-import SaveButton from '../../../shared/SaveButton'
 import { fmtNumber } from '../../../../utils/fmt'
+import { getFieldLabel } from '../../utils'
 import { saveNonFuelMisc } from '../../actions'
 import { selectNonFuelMisc } from '../../selectors'
+import SaveButton from '../../../shared/SaveButton'
+import SectionTitle from '../../../shared/SectionTitle'
 
 const useStyles = makeStyles(theme => ({
   buttonRow: {
@@ -132,6 +133,17 @@ function NonFuelForm(props) {
             />
           </TableCell>
         </TableRow>
+
+        <TableRow>
+          <TableCell>{getFieldLabel('salesSummary.fuelAdjust')}</TableCell>
+          <TableCell align="right" className={classes.inputCell}>
+            <InputField
+              field="salesSummary.fuelAdjust"
+              stateValues={stateValues}
+              setStateValues={setStateValues}
+            />
+          </TableCell>
+        </TableRow>
       </TableBody>
     </Table>
   )
@@ -161,6 +173,7 @@ function BobsNonFuelForm(props) {
             />
           </TableCell>
         </TableRow>
+
         <TableRow>
           <TableCell>Non-Fuel</TableCell>
           <TableCell align="right" className={classes.inputCell}>
@@ -171,11 +184,12 @@ function BobsNonFuelForm(props) {
             />
           </TableCell>
         </TableRow>
+
         <TableRow>
-          <TableCell>Fuel Misc. Adjustment</TableCell>
+          <TableCell>{getFieldLabel('salesSummary.fuelAdjust')}</TableCell>
           <TableCell align="right" className={classes.inputCell}>
             <InputField
-              field="salesSummary.bobsFuelAdj"
+              field="salesSummary.fuelAdjust"
               stateValues={stateValues}
               setStateValues={setStateValues}
             />

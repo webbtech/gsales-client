@@ -17,6 +17,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import SectionTitle from '../../../shared/SectionTitle'
 import OtherFuelAdjustDialog from './OtherFuelAdjustDialog'
 import { fmtNumber } from '../../../../utils/fmt'
+import { getFieldLabel } from '../../utils'
 
 const useStyles = makeStyles(theme => ({
   iconButton: {
@@ -46,7 +47,6 @@ export default function SalesView() {
 
   const editOK = shift.shift.flag
   const haveOtherFuel = !!shift.otherFuel
-  const haveBobFuelAdj = !!shift.salesSummary.bobsFuelAdj
   const isBobs = shift.otherNonFuel.bobs > 0
 
   const displayEmptyCell = (isEdit, isOtherFuel) => {
@@ -102,12 +102,10 @@ export default function SalesView() {
             {displayEmptyCell(editOK, haveOtherFuel)}
           </TableRow>
 
-          {haveBobFuelAdj && (
-            <TableRow>
-              <TableCell>Bobs Fuel Misc. Adj.</TableCell>
-              <TableCell align="right">{fmtNumber(salesSummary.bobsFuelAdj)}</TableCell>
-            </TableRow>
-          )}
+          <TableRow>
+            <TableCell>{getFieldLabel('salesSummary.fuelAdjust')}</TableCell>
+            <TableCell align="right">{fmtNumber(salesSummary.fuelAdjust)}</TableCell>
+          </TableRow>
 
           {isBobs && (
             <TableRow>
