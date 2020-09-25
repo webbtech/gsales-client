@@ -10,6 +10,7 @@ import ReportMenu from './Menu'
 import Dashboard from './Dashboard'
 
 import Attendant from '../report/attendant/Index'
+import FuelSales from '../report/fuel-sales/Index'
 import Monthly from '../report/monthly/Index'
 import OilProductSales from '../report/oil-product-sales/Index'
 import ProductSales from '../report/product-sales/Index'
@@ -41,6 +42,7 @@ export default function Index() {
           <Switch>
             <Route exact path="/reports" component={Dashboard} />
             <Route path="/reports/attendant-activity" component={Attendant} />
+            <Route path="/reports/fuel-sales" component={FuelSales} />
             <Route path="/reports/monthly-sales" component={Monthly} />
             <Route path="/reports/oil-product-sales" component={OilProductSales} />
             <Route path="/reports/product-sales" component={ProductSales} />

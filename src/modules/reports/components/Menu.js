@@ -28,10 +28,11 @@ const useStyles = makeStyles(theme => ({
 
 export const menuItems = [
   { id: 'attendant', link: '/reports/attendant-activity', title: 'Attendant Activity' },
+  { id: 'fuel-sales', link: '/reports/fuel-sales', title: 'Fuel Sales' },
   { id: 'monthly', link: '/reports/monthly-sales', title: 'Monthly Sales' },
-  { id: 'shift', link: '/reports/shift', title: 'Shifts' },
-  { id: 'product-sales', link: '/reports/product-sales', title: 'Product Sales' },
   { id: 'oil-product-sales', link: '/reports/oil-product-sales', title: 'Oil Product Sales' },
+  { id: 'product-sales', link: '/reports/product-sales', title: 'Product Sales' },
+  { id: 'shift', link: '/reports/shift', title: 'Shifts' },
 ]
 
 export default function ReportMenu() {
