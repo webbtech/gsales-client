@@ -130,7 +130,7 @@ export default function Index() {
           <Grid container spacing={2}>
             <Grid item xs={2}>
               <SearchButton
-                disabled={!(formValues.month && formValues.year)}
+                disabled={!(formValues.month !== null && formValues.year)}
                 submitHandler={handleSubmit}
               />
             </Grid>
