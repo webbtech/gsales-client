@@ -1,7 +1,8 @@
 import { useEffect, useReducer, useState } from 'react'
 import axios from 'axios'
 
-import { DWNLD_XLS_SERVICE_URL } from '../constants'
+import { getXlsServiceUrl } from '../constants'
+import { LOCAL_TOKEN_KEY } from '../../../config/constants'
 
 // https://www.robinwieruch.de/react-hooks-fetch-data
 // https://github.com/the-road-to-learn-react/react-hooks-introduction/blob/master/src/useDataApiHook-example/index.js
@@ -22,6 +23,7 @@ setTimeout(() => {
   // you could also do:
   // window.open(response.file);
 }, 2000) */
+
 
 const dataFetchReducer = (state, action) => {
   switch (action.type) {
@@ -65,10 +67,10 @@ const useDataApi = () => {
         // NOTE: If the page has been idle for longer than the token expiry
         // user will receive error with 401 status. Is it possible to test
         // then renew token here first?
-        const token = localStorage.getItem('userToken')
+        const token = localStorage.getItem(LOCAL_TOKEN_KEY)
         const result = await axios({
           method: 'POST',
-          url: DWNLD_XLS_SERVICE_URL,
+          url: getXlsServiceUrl(),
           headers: { authorization: token },
           data: postData,
         })
