@@ -3,6 +3,9 @@
  *
  * Inspiration for this found here https://stackoverflow.com/questions/53375350/how-handle-refresh-token-service-in-aws-amplify-js
  * Docs for amazon-cognito-identity-js https://www.npmjs.com/package/amazon-cognito-identity-js
+ *
+ * I've switched from using the accessToken to the idToken, as the AWS token authentication
+ * for lambdas requires the idToken, I suspect that it should have been used all along G
  */
 import { CognitoUserPool } from 'amazon-cognito-identity-js'
 
@@ -85,7 +88,7 @@ export default async function getToken() {
   // if (tokenObj && cutoffTime < expire) return storage.getItem(LOCAL_TOKEN_KEY)
 
   const rSession = await refreshSession(cognitoUser, session)
-  const userToken = rSession.accessToken.jwtToken
+  const userToken = rSession.idToken.jwtToken
   storage.setItem('userToken', userToken)
   console.log('userToken refreshed') // eslint-disable-line no-console
 
