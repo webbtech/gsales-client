@@ -20,7 +20,6 @@ export const REPORT_SHIFT_HISTORY = 'REPORT_SHIFT_HISTORY'
 
 // ===================== Download Service ====================================================== //
 
-export const DWNLD_XLS_SERVICE_URL = 'https://xls-reports.gsales.pfapi.io/report'
 export const DWNLD_XLS_BACK_CARDS = 'bankcards'
 export const DWNLD_XLS_EMPLOYEE_OS = 'employeeos'
 export const DWNLD_XLS_FUEL_SALES = 'fuelsales'
@@ -35,10 +34,10 @@ export const getXlsServiceUrl = () => {
   switch (env) {
     case 'development':
     case 'stage':
-      url = 'https://xls-reports.gsales.pfapi.io/report'
+      url = 'https://xls-reports-stage.gsales.pfapi.io'
       break
     case 'production':
-      url = 'https://xls-reports.gsales.pfapi.io/report'
+      url = 'https://xls-reports-prod.gsales.pfapi.io'
       break
     default:
       break

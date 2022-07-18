@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 
 import {
   Button,
@@ -39,17 +38,8 @@ const defaultFormValues = {
 
 export default function Index() {
   const classes = useStyles()
-  const dispatch = useDispatch()
   const [formValues, setFormValues] = useState(defaultFormValues)
   const [{ payload, isLoading, isError }, doFetch] = useDataApi()
-
-  const getDate = () => (
-    moment()
-      .date(1)
-      .month(formValues.month)
-      .year(formValues.year)
-      .format('YYYY-MM-DD')
-  )
 
   const handleChangeField = (value, field) => {
     setFormValues({ ...formValues, [field]: value })
@@ -64,13 +54,17 @@ export default function Index() {
     doFetch(postObj)
   }
 
-  const url = payload && payload.data ? payload.data.url : null
+  const url = payload && payload.data ? payload.data : null
   useEffect(() => {
     if (url) {
       window.location.href = url
       // we could also do: window.open(url)
     }
   }, [url])
+
+  if (isError) {
+    console.error('Failed to fetch data') // eslint-disable-line
+  }
 
   return (
     <div className={classes.root}>
@@ -94,17 +88,17 @@ export default function Index() {
         </Grid>
 
         <Grid item xs={2}>
-              <Button
-                className={classes.button}
-                color="secondary"
-                disabled={isLoading}
-                onClick={downloadReport}
-                variant="contained"
-              >
-                {isLoading ? 'Stand By...' : 'Download XLS'}
-                <CloudDownloadIcon className={classes.rightIcon} />
-              </Button>
-            </Grid>
+          <Button
+            className={classes.button}
+            color="secondary"
+            disabled={isLoading}
+            onClick={downloadReport}
+            variant="contained"
+          >
+            {isLoading ? 'Stand By...' : 'Download XLS'}
+            <CloudDownloadIcon className={classes.rightIcon} />
+          </Button>
+        </Grid>
       </Grid>
     </div>
   )

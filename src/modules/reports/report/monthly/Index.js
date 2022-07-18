@@ -86,7 +86,7 @@ export default function Index() {
     }
   }, [isError, setToaster])
 
-  const url = payload && payload.data ? payload.data.url : null
+  const url = payload && payload.data ? payload.data : null
   useEffect(() => {
     if (url) {
       window.location.href = url

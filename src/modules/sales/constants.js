@@ -1,3 +1,5 @@
+import { getEnv } from '../../utils/utils'
+
 export const cashAndCards = {
   'creditCard.visa': 'VISA',
   'creditCard.mc': 'Mastercard',
@@ -38,6 +40,26 @@ export const DISCREPANCY_LIMIT = 10
 
 // ===================== Download Service constants ============================================ //
 
-export const DWNLD_PDF_SERVICE_URL = 'https://pdf-reports.gsales.pfapi.io/report'
+// export const DWNLD_PDF_SERVICE_URL = 'https://pdf-reports.gsales.pfapi.io/report'
 export const DWNLD_PDF_DAY = 'day'
 export const DWNLD_PDF_SHIFT = 'shift'
+
+
+export const getPdfServiceUrl = () => {
+  const env = getEnv()
+  let url = ''
+
+  switch (env) {
+    case 'development':
+    case 'stage':
+      url = 'https://pdf-reports-stage.gsales.pfapi.io/report'
+      break
+    case 'production':
+      url = 'https://pdf-reports-prod.gsales.pfapi.io/report'
+      break
+    default:
+      break
+  }
+
+  return url
+}
