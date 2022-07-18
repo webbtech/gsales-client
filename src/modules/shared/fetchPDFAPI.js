@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from 'react'
 import axios from 'axios'
 
-import { DWNLD_PDF_SERVICE_URL } from '../sales/constants'
+import { getPdfServiceUrl } from '../sales/constants'
 
 const dataFetchReducer = (state, action) => {
   switch (action.type) {
@@ -44,7 +44,7 @@ const useDataApi = () => {
         const token = localStorage.getItem('userToken')
         const result = await axios({
           method: 'POST',
-          url: DWNLD_PDF_SERVICE_URL,
+          url: getPdfServiceUrl(),
           headers: { authorization: token },
           data: postData,
         })

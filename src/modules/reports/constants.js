@@ -1,3 +1,5 @@
+import { getEnv } from '../../utils/utils'
+
 export const START_YEAR = 2013
 
 export const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -18,10 +20,28 @@ export const REPORT_SHIFT_HISTORY = 'REPORT_SHIFT_HISTORY'
 
 // ===================== Download Service ====================================================== //
 
-export const DWNLD_XLS_SERVICE_URL = 'https://xls-reports.gsales.pfapi.io/report'
 export const DWNLD_XLS_BACK_CARDS = 'bankcards'
 export const DWNLD_XLS_EMPLOYEE_OS = 'employeeos'
 export const DWNLD_XLS_FUEL_SALES = 'fuelsales'
 export const DWNLD_XLS_PRODUCT_NUMBERS = 'productnumbers'
 export const DWNLD_XLS_MONTHLY_SALES = 'monthlysales'
 export const DWNLD_XLS_PAY_PERIOD = 'payperiod'
+
+export const getXlsServiceUrl = () => {
+  const env = getEnv()
+  let url = ''
+
+  switch (env) {
+    case 'development':
+    case 'stage':
+      url = 'https://xls-reports-stage.gsales.pfapi.io'
+      break
+    case 'production':
+      url = 'https://xls-reports-prod.gsales.pfapi.io'
+      break
+    default:
+      break
+  }
+
+  return url
+}

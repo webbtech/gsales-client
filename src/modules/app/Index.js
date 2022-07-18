@@ -81,7 +81,8 @@ export default function AppWithAuth() {
         const username = user.signInUserSession.idToken.payload['cognito:username']
         const { name } = user.signInUserSession.idToken.payload
         const storage = window.localStorage
-        storage.setItem(LOCAL_TOKEN_KEY, user.signInUserSession.accessToken.jwtToken)
+        storage.setItem(LOCAL_TOKEN_KEY, user.signInUserSession.idToken.jwtToken)
+        // console.log('idToken: ', user.signInUserSession.idToken.jwtToken)
         LogRocket.identify(process.env.REACT_APP_LOGROCKET_ID, {
           name,
           username,
