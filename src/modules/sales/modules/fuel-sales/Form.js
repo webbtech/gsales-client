@@ -292,8 +292,12 @@ export default function Form() {
     setOpenReset(false)
   }
 
+  const sortByNum = R.sortBy(R.path(['dispenserID', 'number']))
+  const sFuelVals = sortByNum(Object.values(fuelValues))
+
   let c = 0
-  const dispenserRows = Object.values(fuelValues).map((fs) => {
+  // const dispenserRows = Object.values(fuelValues).map((fs) => {
+  const dispenserRows = sFuelVals.map((fs) => {
     c += 1
     const fCtr = c * 10 + 1
     const lCtr = c * 10 + 2
