@@ -298,6 +298,11 @@ export default function Form() {
   let c = 0
   // const dispenserRows = Object.values(fuelValues).map((fs) => {
   const dispenserRows = sFuelVals.map((fs) => {
+    // I've done this here instead of upstream to avoid any associated issues.
+    // This can change to upstream once successfully (fully) tested.
+    if (fs.dispenserID.active === false) {
+      return null
+    }
     c += 1
     const fCtr = c * 10 + 1
     const lCtr = c * 10 + 2
