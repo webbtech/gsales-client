@@ -8,6 +8,10 @@
   },
   "author": "Ron Dyck <rond@webbtech.net>",
   "private": true,
+  "engines": {
+    "node": ">=14.0.0 <17.0.0",
+    "npm": ">=6.0.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
